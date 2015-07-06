@@ -1,0 +1,13 @@
+"AddonInfo"
+{
+	"addonSteamAppID"				"816"
+	"addontitle"					"WarOfExalts"
+	"addonversion"					"0.1"
+	"addontagline"					"WarOfExalts"
+	"addonauthor"					"XXX"
+	"addonSteamGroupName"			""
+	"addonauthorSteamID"			""
+	"addonContent_Campaign"			"0"
+	"addonURL0"						""
+	"addonDescription"				"WarOfExalts"
+}

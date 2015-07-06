@@ -1,0 +1,58 @@
+"DOTAHeroes"
+{
+	"npc_dota_hero_ancient_apparition_warofexalts"
+	{
+		"AbilityLayout" 		"6"
+		"override_hero"			"npc_dota_hero_ancient_apparition"
+		"SoundSet"				"0"	
+		"Ability1"				"example_ability" 
+		"Ability2"				"warofexalts_empty2" 
+		"Ability3"				"warofexalts_empty3" 
+		"Ability4"				"warofexalts_empty4"
+		"Ability5"				"warofexalts_empty5"
+		"Ability6"				"warofexalts_empty6"
+		"Ability7"				""
+		"Ability8"				""
+		"Ability9"				""
+		"Ability10"				""
+		"Ability11"				""
+		"Ability12"				""
+		"Ability13"				""
+		"Ability14"				""
+		"Ability15"				""
+		"Ability16"				""
+	
+		"ArmorPhysical"				"0"									// Physical protection.
+		"MagicalResistance"				"0"									// Magical protection (percentage).
+	
+		"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED"
+		"AttackDamageMin"			"40"										// Damage range min.
+		"AttackDamageMax"			"50"										// Damage range max.
+	
+		//"AttributePrimary"			"DOTA_ATTRIBUTE_STRENGTH"
+		"AttributeBaseStrength"		"20"										// Base strength
+		"AttributeStrengthGain"		"3"										// Strength bonus per level.
+		"AttributeBaseIntelligence"	"20"										// Base intelligence
+		"AttributeIntelligenceGain"	"3"										// Intelligence bonus per level.
+		"AttributeBaseAgility"		"10"										// Base agility
+		"AttributeAgilityGain"		"1"										// Agility bonus per level.
+	
+		"BountyXP"					"0"									// Experience earn.
+		"BountyGoldMin"				"0"										// Gold earned min.
+		"BountyGoldMax"				"0"										// Gold earned max.
+	
+		//"BoundsHullName"			"DOTA_HULL_SIZE_HERO"
+		//"RingRadius"				"70"
+	
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+		"MovementSpeed"				"360"									// Speed.
+		"MovementTurnRate"			"1.0"									// Turning rate.
+	
+		"StatusHealth"				"981"									// Base health.
+		"StatusHealthRegen"			"0.0"									// Health regeneration rate.
+		"StatusMana"				"387"										// Base mana.
+		"StatusManaRegen"			"99.96"									// Mana regeneration rate.
+	
+		"VisionNighttimeRange"		"1800"									// Range of vision at night time.
+	}
+}
