@@ -1,0 +1,14 @@
+debug.log
+dota.exe
+steam_appid.txt
+installscript.vdf
+thirdpartylegalnotices.txt
+*.mdmp
+_CommonRedist/
+bin/
+config/
+dota/
+dota_lv/
+dota_ugc/
+EmptySteamDepot/
+platform/
