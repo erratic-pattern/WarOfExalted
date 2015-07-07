@@ -3,8 +3,8 @@ modifier_woe_attributes = class({})
 
 MINUS_ARMOR_PER_AGI = 0.14 -- amount of base armor reduced per point of agility
 HASTE_PER_AGI = 0.3        -- amount of spell haste increased per point of agility
-ARMOR_PER_STR = 0.7       -- amount of base armor increased per point of strength
-MR_PER_INT = 0.7          -- amount of base magic resist increased per point of intelligence
+ARMOR_PER_STR = 0.07       -- amount of base armor increased per point of strength
+MR_PER_INT = 0.07          -- amount of base magic resist increased per point of intelligence
 STAM_PER_AGI = 5          -- amount of max stamina increased per point of agi
 
 
