@@ -102,8 +102,8 @@ function WarOfExalts:OnHeroInGame(hero)
 	if not self.greetPlayers then
 		-- At this point a player now has a hero spawned in your map.
 		
-	    local firstLine = ColorIt("Welcome to ", "green") .. ColorIt("WarOfExalts! ", "magenta") .. ColorIt("v0.1", "blue");
-	    local secondLine = ColorIt("Developer: ", "green") .. ColorIt("XXX", "orange")
+	    local firstLine = ColorIt("Welcome to ", "green") .. ColorIt(self.addonInfo.addontitle, "magenta") .. ColorIt(self.addonInfo.addonversion, "blue");
+	    local secondLine = ColorIt("Developer: ", "green") .. ColorIt(self.addonInfo.addonauthor, "orange")
 		-- Send the first greeting in 4 secs.
 		Timers:CreateTimer(4, function()
 	        GameRules:SendCustomMessage(firstLine, 0, 0)
@@ -438,15 +438,15 @@ function WarOfExalts:OnWoeUnitRequest( keys )
     local unit = EntIndexToHScript(keys.unitId)
     if unit then
         keys.isWoeUnit = unit.isWoeUnit
-        keys.isWoeHero = unit.isWoeHero
         if unit.isWoeUnit then
             keys.msBase = unit:GetBaseMoveSpeed()
             keys.msTotal = unit:GetIdealSpeed()
-            keys.mrBase = unit:GetWoeMagicResistBase()
-            keys.mrTotal = unit:GetWoeMagicResist()
+            keys.magicResistTotal = unit:GetWoeMagicResist()
             keys.armorBase = unit:GetPhysicalArmorBaseValue()
             keys.armorTotal = unit:GetPhysicalArmorValue()
-            keys.spellHaste = unit:GetSpellHaste()
+            for k,v in pairs(unit._woeKeys) do
+                keys[k] = v
+            end
         end
     end
     --PrintTable(keys)
@@ -464,6 +464,7 @@ function WarOfExalts:InitWarOfExalts()
     
     --Initialize custom Lua modifiers
     LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
+    LinkLuaModifier("modifier_woe_stamina_regenerator", "modifiers/modifier_woe_stamina_regenerator", LUA_MODIFIER_MOTION_NONE)
 
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled( ENABLE_HERO_RESPAWN )
@@ -608,6 +609,9 @@ function WarOfExalts:InitWarOfExalts()
 	self.nDireKills = 0
 
 	self.bSeenWaitForPlayers = false
+    
+    self.addonInfo = LoadKeyValues("addoninfo.txt")
+    PrintTable(addonInfo)
 
 	if RECOMMENDED_BUILDS_DISABLED then
 		GameRules:GetGameModeEntity():SetHUDVisible( DOTA_HUD_VISIBILITY_SHOP_SUGGESTEDITEMS, false )

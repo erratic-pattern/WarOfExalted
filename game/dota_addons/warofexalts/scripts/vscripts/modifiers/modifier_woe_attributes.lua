@@ -5,6 +5,17 @@ MINUS_ARMOR_PER_AGI = 0.14 -- amount of base armor reduced per point of agility
 HASTE_PER_AGI = 0.3        -- amount of spell haste increased per point of agility
 ARMOR_PER_STR = 0.7       -- amount of base armor increased per point of strength
 MR_PER_INT = 0.7          -- amount of base magic resist increased per point of intelligence
+STAM_PER_AGI = 5          -- amount of max stamina increased per point of agi
+
+
+function modifier_woe_attributes:IsHidden(kv)
+    return true
+end
+
+function modifier_woe_attributes:IsPurgable()
+    return false
+end
+
 
 --initializer
 function modifier_woe_attributes:OnCreated(kv)
@@ -14,7 +25,7 @@ function modifier_woe_attributes:OnCreated(kv)
             print("Warning: modifier_woe_attributes applied to non-hero unit")
         end
         
-        self.updateInterval = kv.updateInterval or 0.1
+        self.updateInterval = kv.updateInterval or 0.01
         self.lastStr = 0
         self.lastAgi = 0
         self.lastInt = 0
@@ -39,23 +50,10 @@ function modifier_woe_attributes:OnIntervalThink()
         unit:SetPhysicalArmorBaseValue(unit:GetPhysicalArmorBaseValue() - diffAgi*MINUS_ARMOR_PER_AGI + diffStr*ARMOR_PER_STR)
         unit:SetWoeMagicResistBase(unit:GetWoeMagicResistBase() + MR_PER_INT * diffInt)
         unit:SetSpellHaste(unit:GetSpellHaste() + HASTE_PER_AGI * diffAgi)
+        unit:SetMaxStamina(unit:GetMaxStamina() + STAM_PER_AGI * diffAgi)
         
         self.lastStr = unit:GetStrength()
         self.lastAgi = unit:GetAgility()
         self.lastInt = unit:GetIntellect()
     end
 end
-
---overridden from the parent modifier
-function modifier_woe_attributes:IsHidden(kv)
-    return true
-end
-
---overridden from the parent modifier
-function modifier_woe_attributes:IsPurgable()
-    return false
-end
-
-
-
-

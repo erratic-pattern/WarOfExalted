@@ -21,10 +21,9 @@
 
 .WoeStatsRow
 {
-    height: 30px;
+    height: 25px;
     padding-top: 5px;
     flow-children: right;
-    text-align: right;
 }
 
 .WoeStatsCol
@@ -32,5 +31,4 @@
     width: 55px;
     padding-left: 3px;
     flow-children: right;
-    align: right;
 }

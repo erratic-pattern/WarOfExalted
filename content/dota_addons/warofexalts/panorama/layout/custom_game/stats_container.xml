@@ -8,22 +8,28 @@
     <Panel class="WoeStatsContainer">
         <Panel class="WoeStatsRow">
             <Panel class="WoeStatsCol">
+                <Label class="WoeStatsIcon" text="Sta" />
+                <Label class="WoeStatsNumber" id="WoeStatsStaminaLabel" />
+            </Panel>
+        </Panel>
+        <Panel class="WoeStatsRow">
+            <Panel class="WoeStatsCol">
                 <Label class="WoeStatsIcon" text="MS"/>
-                <Label class="WoeStatsNumber" id="WoeStatMSLabel" />
+                <Label class="WoeStatsNumber" id="WoeStatsMSLabel" />
             </Panel>
             <Panel class="WoeStatsCol">
                 <Label class="WoeStatsIcon" text="Haste" />
-                <Label class="WoeStatsNumber" id="WoeStatHasteLabel" />
+                <Label class="WoeStatsNumber" id="WoeStatsHasteLabel" />
             </Panel>
         </Panel>
         <Panel class="WoeStatsRow">
             <Panel class="WoeStatsCol">
                 <Label class="WoeStatsIcon" text="Armor" />
-                <Label class="WoeStatsNumber" id="WoeStatArmorLabel" />
+                <Label class="WoeStatsNumber" id="WoeStatsArmorLabel" />
             </Panel>
             <Panel class="WoeStatsCol">
                 <Label class="WoeStatsIcon" text="MR" />
-                <Label class="WoeStatsNumber" id="WoeStatMRLabel" />
+                <Label class="WoeStatsNumber" id="WoeStatsMRLabel" />
             </Panel>
         </Panel>
     </Panel>
