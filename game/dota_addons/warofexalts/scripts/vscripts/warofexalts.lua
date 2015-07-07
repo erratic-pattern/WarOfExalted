@@ -454,11 +454,12 @@ function WarOfExalts:OnWoeUnitRequest( keys )
     --CustomGameEventManager:Send_ServerToPlayer(EntIndexToHScript(keys.PlayerID), "woe_unit_response", keys)
 end
 
+--[[
 function WarOfExalts:AbilityTuningFilter( keys )
     print("[WAROFEXALTS] AbilityTuningFilter called")
-    printTable(keys)
+    PrintTable(keys)
 end
-
+]]
 
 
 -- This function initializes the game mode and is called before anyone loads into the game
@@ -472,7 +473,7 @@ function WarOfExalts:InitWarOfExalts()
     LinkLuaModifier("modifier_woe_stamina_regenerator", "modifiers/modifier_woe_stamina_regenerator", LUA_MODIFIER_MOTION_NONE)
     
     --ability tuning filter
-    GameRules:GetGameModeEntity():SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)
+    --GameRules:GetGameModeEntity():SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)
 
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled( ENABLE_HERO_RESPAWN )
