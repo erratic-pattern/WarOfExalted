@@ -52,8 +52,8 @@ function WoeUnitWrapper(unit)
     end
     
     --Set spell haste rating
-    function unit:SetSpellHaste()
-        return self._woeKeys.spellHaste
+    function unit:SetSpellHaste(v)
+        self._woeKeys.spellHaste = v
     end
     
     function unit:GetCdrBonus()
@@ -65,9 +65,14 @@ function WoeUnitWrapper(unit)
     end
     
     if unit:IsHero() then
-        unit:AddNewModifier(nil, nil, "modifier_woe_attributes", {})
+        WoeHeroWrapper(unit)
     end
     
+end
+
+function WoeHeroWrapper(unit)
+    unit.isWoeHero = true
+    unit:AddNewModifier(unit, nil, "modifier_woe_attributes", {})
 end
         
     

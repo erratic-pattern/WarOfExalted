@@ -432,15 +432,38 @@ function WarOfExalts:OnEntityKilled( keys )
 	-- Put code here to handle when an entity gets killed
 end
 
+function WarOfExalts:OnWoeUnitRequest( keys )
+    print("[WAROFEXALTS] OnWoeUnitRequest called")
+    --PrintTable(keys)
+    local unit = EntIndexToHScript(keys.unitId)
+    if unit then
+        keys.isWoeUnit = unit.isWoeUnit
+        keys.isWoeHero = unit.isWoeHero
+        if unit.isWoeUnit then
+            keys.msBase = unit:GetBaseMoveSpeed()
+            keys.msTotal = unit:GetIdealSpeed()
+            keys.mrBase = unit:GetWoeMagicResistBase()
+            keys.mrTotal = unit:GetWoeMagicResist()
+            keys.armorBase = unit:GetPhysicalArmorBaseValue()
+            keys.armorTotal = unit:GetPhysicalArmorValue()
+            keys.spellHaste = unit:GetSpellHaste()
+        end
+    end
+    --PrintTable(keys)
+    CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
+    --CustomGameEventManager:Send_ServerToPlayer(EntIndexToHScript(keys.PlayerID), "woe_unit_response", keys)
+end
+
+
 
 -- This function initializes the game mode and is called before anyone loads into the game
 -- It can be used to pre-initialize any values/tables that will be needed later
 function WarOfExalts:InitWarOfExalts()
 	WarOfExalts = self
-	--print('[WAROFEXALTS] Starting to load WarOfExalts gamemode...')
+	print('[WAROFEXALTS] Starting to load WarOfExalts gamemode...')
     
     --Initialize custom Lua modifiers
-    LinkLuaModifier("modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
+    LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
 
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled( ENABLE_HERO_RESPAWN )
@@ -488,6 +511,7 @@ function WarOfExalts:InitWarOfExalts()
 	ListenToGameEvent('dota_player_pick_hero', Dynamic_Wrap(WarOfExalts, 'OnPlayerPickHero'), self)
 	ListenToGameEvent('dota_team_kill_credit', Dynamic_Wrap(WarOfExalts, 'OnTeamKillCredit'), self)
 	ListenToGameEvent("player_reconnected", Dynamic_Wrap(WarOfExalts, 'OnPlayerReconnect'), self)
+    --ListenToGameEvent("dota_player_update_selected_unit", Dynamic_Wrap(WarOfExalts, "OnPlayerUpdateSelectedUnit"), self)
 	--ListenToGameEvent('player_spawn', Dynamic_Wrap(WarOfExalts, 'OnPlayerSpawn'), self)
 	--ListenToGameEvent('dota_unit_event', Dynamic_Wrap(WarOfExalts, 'OnDotaUnitEvent'), self)
 	--ListenToGameEvent('nommed_tree', Dynamic_Wrap(WarOfExalts, 'OnPlayerAteTree'), self)
@@ -496,6 +520,9 @@ function WarOfExalts:InitWarOfExalts()
 	--ListenToGameEvent('dota_combatlog', Dynamic_Wrap(WarOfExalts, 'OnCombatLogEvent'), self)
 	--ListenToGameEvent('dota_player_killed', Dynamic_Wrap(WarOfExalts, 'OnPlayerKilled'), self)
 	--ListenToGameEvent('player_team', Dynamic_Wrap(WarOfExalts, 'OnPlayerTeam'), self)
+    
+    -- Custom Event Hooks
+    CustomGameEventManager:RegisterListener("woe_unit_request", Dynamic_Wrap(WarOfExalts, "OnWoeUnitRequest"));
 
 	-- Commands can be registered for debugging purposes or as functions that can be called by the custom Scaleform UI
 	Convars:RegisterCommand( "command_example", Dynamic_Wrap(WarOfExalts, 'ExampleConsoleCommand'), "A console command example", 0 )
