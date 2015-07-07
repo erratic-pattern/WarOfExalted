@@ -4,7 +4,7 @@ function modifier_woe_stamina_regenerator:IsHidden()
     return true
 end
 
-function modifier_woe_attributes:IsPurgable()
+function modifier_woe_stamina_regenerator:IsPurgable()
     return false
 end
 
