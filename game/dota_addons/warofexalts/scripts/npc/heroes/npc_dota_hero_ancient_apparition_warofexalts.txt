@@ -23,7 +23,7 @@
 	"ArmorPhysical"				"0"									// Physical protection.
 	"MagicalResistance"				"0"									// Magical protection (percentage).
 
-	"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED"
+	"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED_ATTACK"
 	"AttackDamageMin"			"40"										// Damage range min.
 	"AttackDamageMax"			"50"										// Damage range max.
 
