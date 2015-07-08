@@ -18,11 +18,11 @@
     function UpdateStatsContainer( keys ) {
         var panel = $.GetContextPanel();
         if(keys.isWoeUnit) {
-            $("#WoeStatsMSLabel").text = keys.msTotal;
-            $("#WoeStatsArmorLabel").text = Math.round(keys.armorTotal);
-            $("#WoeStatsMRLabel").text = Math.round(keys.magicResistTotal);
-            $("#WoeStatsHasteLabel").text = Math.round(keys.spellHaste);
-            $("#WoeStatsStaminaLabel").text = Math.round(keys.staminaCurrent.toString()) + "/" + Math.round(keys.staminaMax.toString());
+            $("#WoeStatsMSLabel").text = keys.MsTotal;
+            $("#WoeStatsArmorLabel").text = Math.round(keys.ArmorTotal);
+            $("#WoeStatsMRLabel").text = Math.round(keys.MagicResistTotal);
+            $("#WoeStatsHasteLabel").text = Math.round(keys.SpellHaste);
+            $("#WoeStatsStaminaLabel").text = Math.round(keys.StaminaCurrent.toString()) + "/" + Math.round(keys.StaminaMax.toString());
             panel.visible = true;
         }
         else {

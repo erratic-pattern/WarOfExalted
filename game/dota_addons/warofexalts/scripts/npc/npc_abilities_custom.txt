@@ -434,4 +434,9 @@
 		"BaseClass" 					"ability_datadriven"
 		"AbilityTextureName"            "rubick_empty1"
 	}
+	"woe_ability_base"
+	{
+	    "BaseClass"         "ability_lua"
+	    "ScriptFile"        "abilities/woe_ability_base"
+	}
 }

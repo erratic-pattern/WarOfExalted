@@ -3,9 +3,9 @@ requires = {
 	'timers',
 	'physics',
 	'lib.statcollection',
-	'abilities',
-    'woe_unit_wrapper',
 	'warofexalts',
+    'woe_unit_wrapper',
+    'woe_ability_wrapper'
 }
 
 function Precache( context )

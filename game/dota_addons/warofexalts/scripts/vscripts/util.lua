@@ -1,6 +1,6 @@
 -- GREAT UTILITY FUNCTIONS
 
-function string_split( str )
+function stringSplit( str )
 	local split = {}
 	for i in string.gmatch(str, "%S+") do
 		table.insert(split, i)
@@ -9,7 +9,7 @@ function string_split( str )
 end
 
 -- Returns a shallow copy of the passed table.
-function shallowcopy(orig)
+function shallowCopy(orig)
     local orig_type = type(orig)
     local copy
     if orig_type == 'table' then
@@ -21,6 +21,18 @@ function shallowcopy(orig)
         copy = orig
     end
     return copy
+end
+
+function updateKeys(destTab, srcTab)
+    if destTab == nil or srcTab == nil then 
+        return
+    end
+    for k in pairs(destTab) do
+        local val = srcTab[k]
+        if val ~= nil then
+            destTab[k] = srcTab[k]
+        end
+    end
 end
 
 function AbilityIterator(unit, callback)

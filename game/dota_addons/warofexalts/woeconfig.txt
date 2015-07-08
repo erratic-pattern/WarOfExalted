@@ -1,0 +1,7 @@
+"WoeConfig" 
+{
+	"UnitFile"	  "npc/woe_units.txt"
+	"HeroFile"	  "npc/woe_heroes.txt"
+	"AbilityFile" "npc/woe_abilities.txt"
+	"ItemFile"	  "npc/woe_items.txt"
+}

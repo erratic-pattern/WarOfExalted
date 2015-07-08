@@ -1,53 +1,70 @@
+
+if WarOfExalts == nil then
+	--print ( '[WAROFEXALTS] creating warofexalts game mode' )
+	WarOfExalts = class({})
+end
+
 --This function takes a dota NPC and adds custom WoE functionality to it
-function WoeUnitWrapper(unit)
-    keys = keys or {}
+function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
+    extraKeys = extraKeys or { }
+    
     --Special flag we can use to identify a WoE unit
     unit.isWoeUnit = true
     --Initialize WoE instance variables
     unit._woeKeys = {
-        spellHaste = 0,
-        magicResistBase = 0,
-        magicResistBonus = 0,
-        cdrBonus = 0,
-        staminaCurrent = 20,
-        staminaMax = 100,
-        staminaRegenBase = 0.01,
-        staminaRegenBonusFlat = 0,
-        staminaRegenBonusPercent = 0,
-        staminaRechargeDelayBase = 5,
-        staminaRechargeDelayReduction = 0,
-        staminaRechargeRateBase = 0.1,
-        staminaRechargeRateBonus = 0,
-        staminaTimer = 0,
-        forceStaminaRecharge = false,
+        SpellHasteBase = 0,
+        SpellHasteBonus = 0,
+        SpellHasteModifier = 0,
+        MagicResistBase = 0,
+        MagicResistBonus = 0,
+        MagicResistModifier = 0,
+        CdrPercent = 0,
+        StaminaCurrent = 20,
+        StaminaMax = 100,
+        StaminaRegenBase = 0.01,
+        StaminaRegenBonus = 0,
+        StaminaRegenBaseModifier = 0,
+        StaminaRechargeDelayBase = 5,
+        StaminaRechargeDelayReduction = 0,
+        StaminaRechargeRateBase = 0.1,
+        StaminaRechargeRateBonus = 0,
+        StaminaTimer = 0,
+        ForceStaminaRecharge = false,
     }
-    
-    --Add WoE-specific methods to the unit
     
     --Get the total WoE MR rating (analogous to armor rating)
     function unit:GetWoeMagicResist() 
-        return self._woeKeys.magicResistBase + self._woeKeys.magicResistBonus
+        return (1 + self:GetWoeMagicResistModifier()) * (self._woeKeys.MagicResistBase + self._woeKeys.MagicResistBonus)
     end
     
     --Get only the base MR rating
     function unit:GetWoeMagicResistBase()
-        return self._woeKeys.magicResistBase
+        return self._woeKeys.MagicResistBase
     end
     
     --Get only the bonus MR rating
     function unit:GetWoeMagicResistBonus()
-        return self._woeKeys.magicResistBonus
+        return self._woeKeys.MagicResistBonus
     end
     
     --Set the base MR rating of the unit
     function unit:SetWoeMagicResistBase(v)
-        self._woeKeys.magicResistBase = v
+        self._woeKeys.MagicResistBase = v
         self:_RecalculateMagicReduction()
     end
     
     --Set the bonus MR rating of the unit
     function unit:SetWoeMagicResistBonus(v)
-        self._woeKeys.magicResistBonus = v
+        self._woeKeys.MagicResistBonus = v
+        self:_RecalculateMagicReduction()
+    end
+    
+    function unit:GetWoeMagicResistModifier()
+        return self._woeKeys.MagicResistModifier
+    end
+    
+    function unit:SetWoeMagicResistModifier(v)
+        self._woeKeys.MagicResistModifier = v
         self:_RecalculateMagicReduction()
     end
     
@@ -58,42 +75,62 @@ function WoeUnitWrapper(unit)
     end
     
     --Get spell haste rating
-    function unit:GetSpellHaste()
-        return self._woeKeys.spellHaste
+    function unit:GetSpellHasteBase()
+        return self._woeKeys.SpellHasteBase
     end
     
     --Set spell haste rating
+    function unit:SetSpellHasteBase(v)
+        self._woeKeys.SpellHasteBase = v
+    end
+    
+    function unit:GetSpellHasteBonus()
+        return self._woeKeys.SpellHasteBonus
+    end
+    
+    function unit:SetSpellHasteBonus(v)
+        self._woeKeys.SpellHasteBonus = v
+    end
+    
+    function unit:GetSpellHasteModifier()
+        return self._woeKeys.SpellHasteModifier
+    end
+    
     function unit:SetSpellHaste(v)
-        self._woeKeys.spellHaste = v
+        self._woeKeys.SpellHasteModifier = v
     end
     
-    function unit:GetCdrBonus()
-        return self._woeKeys.cdrBonus
+    function unit:GetSpellHaste()
+        return (1 + self:GetSpellHasteModifier()) * (self:GetSpellHasteBase() + self:GetSpellHasteBonus())
     end
     
-    function unit:SetCdrBonus(v)
-        self._woeKeys.cdrBonus = v
+    function unit:GetCdrPercent()
+        return self._woeKeys.CdrPercent
+    end
+    
+    function unit:SetCdrPercent(v)
+        self._woeKeys.CdrPercent = v
     end
     
     function unit:GetStamina()
-        return self._woeKeys.staminaCurrent
+        return self._woeKeys.StaminaCurrent
     end
     
     --directly sets current stamina. will not trigger recharge cooldown
     function unit:SetStamina(v)
-        if v > self._woeKeys.staminaMax then
-            v = self._woeKeys.staminaMax
+        if v > self._woeKeys.StaminaMax then
+            v = self._woeKeys.StaminaMax
         elseif v < 0 then
             v = 0
         end
-        self._woeKeys.staminaCurrent = v
+        self._woeKeys.StaminaCurrent = v
     end
     
     function unit:GetStaminaPercent()
-        if self._woeKeys.staminaMax == 0 then
+        if self._woeKeys.StaminaMax == 0 then
             return 1
         end
-        return self._woeKeys.staminaCurrent / self._woeKeys.staminaMax
+        return self._woeKeys.StaminaCurrent / self._woeKeys.StaminaMax
     end
     
     function unit:SetStaminaPercent(v)
@@ -101,7 +138,7 @@ function WoeUnitWrapper(unit)
     end
     
     function unit:GetMaxStamina()
-        return self._woeKeys.staminaMax
+        return self._woeKeys.StaminaMax
     end
     
     --Sets maximum stamina, adjusting current stamina by percentage
@@ -110,8 +147,8 @@ function WoeUnitWrapper(unit)
             v = 0
         end
         local ratio = self:GetStaminaPercent()
-        self._woeKeys.staminaMax = v
-        self._woeKeys.staminaCurrent = ratio*v
+        self._woeKeys.StaminaMax = v
+        self._woeKeys.StaminaCurrent = ratio*v
         self:_InitializeStaminaRegenerator()
     end
     
@@ -121,8 +158,8 @@ function WoeUnitWrapper(unit)
             v = 0
         end
         self._woeKeys.staminaMax = v
-        if self._woeKeys.currentStamina > v then
-          self._woeKeys.currentStamina = v
+        if self._woeKeys.CurrentStamina > v then
+          self._woeKeys.CurrentStamina = v
         end
     end
     
@@ -134,7 +171,7 @@ function WoeUnitWrapper(unit)
     
     --forces stamina to begin recharging regardless of when it was last used
     function unit:ForceStaminaRecharge()
-        self.forceStaminaRecharge = true
+        self.ForceStaminaRecharge = true
     end
     
     --returns the number of seconds until stamina will enter recharge mode. 0 indicates that we are in recharge mode.
@@ -142,7 +179,7 @@ function WoeUnitWrapper(unit)
         if forceStaminaRecharge then
             return 0
         end
-        local t = self:GetStaminaRechargeDelay() - GameRules:GetDOTATime(false, false) - self._woeKeys.staminaTimer
+        local t = self:GetStaminaRechargeDelay() - GameRules:GetDOTATime(false, false) - self._woeKeys.StaminaTimer
         if t < 0 then
             t = 0
         end
@@ -156,6 +193,9 @@ function WoeUnitWrapper(unit)
          
     --attempts to spend the given amount of stamina. will not reduce stamina if there is not enough available. returns true and triggers stamina recharge cooldown if stamina was successfully spent.
     function unit:SpendStamina(v)
+        if v <= 0 then
+            return true
+        end
         local newStamina = self:GetStamina() - v
         if newStamina < 0 then
             return false
@@ -180,55 +220,50 @@ function WoeUnitWrapper(unit)
     end
     
     function unit:GetStaminaRegenBase()
-        return self._woeKeys.staminaRegenBase
+        return self._woeKeys.StaminaRegenBase
     end
     
     function unit:SetStaminaRegenBase(v)
-        self._woeKeys.staminaRegenBase = v
+        self._woeKeys.StaminaRegenBase = v
         self:_InitializeStaminaRegenerator()
     end
-    
-    function unit:GetStaminaRegenBonusFlat()
-        return self._woeKeys.staminaRegenBonusFlat
-    end
-    
-    function unit:SetStaminaRegenBonusFlat(v)
-        self._woeKeys.staminaRegenBonusFlat = v
-        self:_InitializeStaminaRegenerator()
-    end
-    
-    function unit:GetStaminaRegenBonusPercent()
-        return self._woeKeys.staminaRegenBonusPercent
-    end
-    
-    function unit:SetStaminaRegenBonusPercent(v)
-        self._woeKeys.staminaRegenBonusPercent = v
-        self:_InitializeStaminaRegenerator()
-    end
-    
     
     function unit:GetStaminaRegenBonus()
-        return self:GetStaminaRegenBase() * self:GetStaminaRegenBonusPercent() + self:GetStaminaRegenBonusFlat()
+        return self._woeKeys.StaminaRegenBonus
+    end
+    
+    function unit:SetStaminaRegenBonus(v)
+        self._woeKeys.StaminaRegenBonus = v
+        self:_InitializeStaminaRegenerator()
+    end
+    
+    function unit:GetStaminaRegenBaseModifier()
+        return self._woeKeys.StaminaRegenBaseModifier
+    end
+    
+    function unit:SetStaminaRegenBaseModifier(v)
+        self._woeKeys.StaminaRegenBaseModifier = v
+        self:_InitializeStaminaRegenerator()
     end
     
     function unit:GetStaminaRegen()
-        return self:GetStaminaRegenBase() + self:GetStaminaRegenBonus()
+        return self:GetStaminaRegenBase() * (1 + self:GetStaminaRegenBaseModifier()) + self:GetStaminaRegenBonus()
     end
     
     function unit:GetStaminaRechargeDelayBase()
-        return self._woeKeys.staminaRechargeDelayBase
+        return self._woeKeys.StaminaRechargeDelayBase
     end
     
     function unit:SetStaminaRechargeDelayBase(v)
-        self._woeKeys.staminaRechargeDelayBase = v
+        self._woeKeys.StaminaRechargeDelayBase = v
     end
     
     function unit:GetStaminaRechargeDelayReduction()
-        return self._woeKeys.staminaRechargeDelayReduction
+        return self._woeKeys.StaminaRechargeDelayReduction
     end
     
     function unit:SetStaminaRechargeDelayReduction(v)
-        self._woeKeys.staminaRechargeDelayReduction = v
+        self._woeKeys.StaminaRechargeDelayReduction = v
     end
     
     function unit:GetStaminaRechargeDelay()
@@ -236,20 +271,20 @@ function WoeUnitWrapper(unit)
     end
     
     function unit:GetStaminaRechargeRateBase()
-        return self._woeKeys.staminaRechargeRateBase
+        return self._woeKeys.StaminaRechargeRateBase
     end
     
     function unit:SetStaminaRechargeRateBase(v)
-        self._woeKeys.staminaRechargeRateBase = v
+        self._woeKeys.StaminaRechargeRateBase = v
         self:_InitializeStaminaRegenerator()
     end
     
     function unit:GetStaminaRechargeRateBonus()
-        return self._woeKeys.staminaRechargeRateBonus
+        return self._woeKeys.StaminaRechargeRateBonus
     end
     
     function unit:SetStaminaRechargeRateBonus(v)
-        self._woeKeys.staminaRechargeRateBonus = v
+        self._woeKeys.StaminaRechargeRateBonus = v
         self:_InitializeStaminaRegenerator()
     end
     
@@ -268,13 +303,17 @@ function WoeUnitWrapper(unit)
     end
     
     if unit:IsHero() then
-        WoeHeroWrapper(unit)
+        self:WoeHeroWrapper(unit)
+    else
+        updateKeys(unit._woeKeys, self.datadriven.units[unit:GetUnitName()])
     end
     
 end
 
-function WoeHeroWrapper(unit)
-    unit:AddNewModifier(unit, nil, "modifier_woe_attributes", {})  
-end
-        
+function WarOfExalts:WoeHeroWrapper(unit)
+    local keys = self.datadriven.heroes[unit:GetUnitName()]
+    updateKeys(unit._woeKeys, keys)
     
+    unit:AddNewModifier(unit, nil, "modifier_woe_attributes", {})
+end
+ 

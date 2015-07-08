@@ -49,7 +49,7 @@ function modifier_woe_attributes:OnIntervalThink()
           
         unit:SetPhysicalArmorBaseValue(unit:GetPhysicalArmorBaseValue() - diffAgi*MINUS_ARMOR_PER_AGI + diffStr*ARMOR_PER_STR)
         unit:SetWoeMagicResistBase(unit:GetWoeMagicResistBase() + MR_PER_INT * diffInt)
-        unit:SetSpellHaste(unit:GetSpellHaste() + HASTE_PER_AGI * diffAgi)
+        unit:SetSpellHasteBase(unit:GetSpellHaste() + HASTE_PER_AGI * diffAgi)
         unit:SetMaxStamina(unit:GetMaxStamina() + STAM_PER_AGI * diffAgi)
         
         self.lastStr = unit:GetStrength()

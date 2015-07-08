@@ -216,7 +216,7 @@ function WarOfExalts:OnNPCSpawned(keys)
 	--PrintTable(keys)
 	local npc = EntIndexToHScript(keys.entindex)
     
-    WoeUnitWrapper(npc)
+    self:WoeUnitWrapper(npc)
 
 	if npc:IsRealHero() and npc.bFirstSpawned == nil then
 		npc.bFirstSpawned = true
@@ -433,17 +433,18 @@ function WarOfExalts:OnEntityKilled( keys )
 end
 
 function WarOfExalts:OnWoeUnitRequest( keys )
-    print("[WAROFEXALTS] OnWoeUnitRequest called")
+    --print("[WAROFEXALTS] OnWoeUnitRequest called")
     --PrintTable(keys)
     local unit = EntIndexToHScript(keys.unitId)
     if unit then
         keys.isWoeUnit = unit.isWoeUnit
         if unit.isWoeUnit then
-            keys.msBase = unit:GetBaseMoveSpeed()
-            keys.msTotal = unit:GetIdealSpeed()
-            keys.magicResistTotal = unit:GetWoeMagicResist()
-            keys.armorBase = unit:GetPhysicalArmorBaseValue()
-            keys.armorTotal = unit:GetPhysicalArmorValue()
+            keys.MsBase = unit:GetBaseMoveSpeed()
+            keys.MsTotal = unit:GetIdealSpeed()
+            keys.MagicResistTotal = unit:GetWoeMagicResist()
+            keys.ArmorBase = unit:GetPhysicalArmorBaseValue()
+            keys.ArmorTotal = unit:GetPhysicalArmorValue()
+            keys.SpellHaste = unit:GetSpellHaste()
             for k,v in pairs(unit._woeKeys) do
                 keys[k] = v
             end
@@ -451,6 +452,7 @@ function WarOfExalts:OnWoeUnitRequest( keys )
     end
     --PrintTable(keys)
     CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
+    --Sending to PlayerID doesn't appear to be working correctly
     --CustomGameEventManager:Send_ServerToPlayer(EntIndexToHScript(keys.PlayerID), "woe_unit_response", keys)
 end
 
@@ -620,13 +622,48 @@ function WarOfExalts:InitWarOfExalts()
 	self.bSeenWaitForPlayers = false
     
     self.addonInfo = LoadKeyValues("addoninfo.txt")
-    PrintTable(addonInfo)
+    self.config = LoadKeyValues("woeconfig.txt")
+    self.datadriven = {}
+    self:LoadAllDatadrivenFiles()
 
 	if RECOMMENDED_BUILDS_DISABLED then
 		GameRules:GetGameModeEntity():SetHUDVisible( DOTA_HUD_VISIBILITY_SHOP_SUGGESTEDITEMS, false )
 	end
 
 	--print('[WAROFEXALTS] Done loading WarOfExalts gamemode!\n\n')
+end
+
+function WarOfExalts:LoadAllDatadrivenFiles()
+    self:LoadAbilityDatadrivenFiles()
+    self:LoadItemDatadrivenFiles()
+    self:LoadUnitDatadrivenFiles()
+    self:LoadHeroDatadrivenFiles()
+end
+
+function WarOfExalts:LoadAbilityDatadrivenFiles()
+    self:_LoadDatadrivenFilesHelper("abilities", self.config.AbilityFile)
+end
+
+function WarOfExalts:LoadItemDatadrivenFiles()
+    self:_LoadDatadrivenFilesHelper("items", self.config.ItemFile)
+end
+
+function WarOfExalts:LoadUnitDatadrivenFiles()
+    self:_LoadDatadrivenFilesHelper("units", self.config.UnitFile)
+
+end
+
+function WarOfExalts:LoadHeroDatadrivenFiles()
+    self:_LoadDatadrivenFilesHelper("heroes", self.config.HeroFile)
+end
+
+function WarOfExalts:_LoadDatadrivenFilesHelper(keyName, fileName)
+    local keys = LoadKeyValues(fileName)
+    if keys then
+        self.datadriven[keyName] = keys
+    elseif not self.datadriven[keyName] then
+        self.datadriven[keyName] = {}
+    end
 end
 
 mode = nil
