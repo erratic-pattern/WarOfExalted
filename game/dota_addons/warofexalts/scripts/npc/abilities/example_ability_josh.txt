@@ -1,4 +1,4 @@
-"example_ability"
+"example_ability_josh"
 {
 	"ID"							"1852"
 	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_CHANNELLED"
