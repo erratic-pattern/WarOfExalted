@@ -4,7 +4,7 @@
 	"override_hero"			"npc_dota_hero_ancient_apparition"
 	"SoundSet"				"0"	
 	"Ability1"				"example_ability" 
-	"Ability2"				"warofexalts_empty2" 
+	"Ability2"				"example_ability_josh" 
 	"Ability3"				"warofexalts_empty3" 
 	"Ability4"				"warofexalts_empty4"
 	"Ability5"				"warofexalts_empty5"
