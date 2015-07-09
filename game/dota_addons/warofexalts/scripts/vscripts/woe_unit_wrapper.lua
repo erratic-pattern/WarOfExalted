@@ -312,7 +312,8 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end    
     end
     
-    function unit:CallOnModifiers(fName, ...) 
+    function unit:CallOnModifiers(fName, ...)
+        print(unit:GetUnitName() .. ":CallOnModifiers: ", fName)
         for k, modifier in pairs(self:FindAllModifiers()) do
             local f = modifier[fName]
             if f then

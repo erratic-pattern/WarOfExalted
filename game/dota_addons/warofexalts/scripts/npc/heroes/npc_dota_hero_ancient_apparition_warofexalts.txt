@@ -5,7 +5,7 @@
 	"SoundSet"				"0"	
 	"Ability1"				"example_ability" 
 	"Ability2"				"example_ability_josh" 
-	"Ability3"				"warofexalts_empty3" 
+	"Ability3"				"test_woe_damage"
 	"Ability4"				"warofexalts_empty4"
 	"Ability5"				"warofexalts_empty5"
 	"Ability6"				"warofexalts_empty6"
@@ -32,8 +32,8 @@
 	"AttributeStrengthGain"		"3"										// Strength bonus per level.
 	"AttributeBaseIntelligence"	"20"										// Base intelligence
 	"AttributeIntelligenceGain"	"3"										// Intelligence bonus per level.
-	"AttributeBaseAgility"		"10"										// Base agility
-	"AttributeAgilityGain"		"1"										// Agility bonus per level.
+	"AttributeBaseAgility"		"50"								    // Base agility
+	"AttributeAgilityGain"		"2"										// Agility bonus per level.
 
 	"BountyXP"					"0"									// Experience earn.
 	"BountyGoldMin"				"0"										// Gold earned min.

@@ -471,8 +471,7 @@ function WarOfExalts:InitWarOfExalts()
 	print('[WAROFEXALTS] Starting to load WarOfExalts gamemode...')
     
     --Initialize custom Lua modifiers
-    LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
-    LinkLuaModifier("modifier_woe_stamina_regenerator", "modifiers/modifier_woe_stamina_regenerator", LUA_MODIFIER_MOTION_NONE)
+    self:LinkModifiers()
     
     --ability tuning filter
     --GameRules:GetGameModeEntity():SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)

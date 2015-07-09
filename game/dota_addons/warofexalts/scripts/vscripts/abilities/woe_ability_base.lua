@@ -1,1 +1,0 @@
-woe_ability_base = class({})

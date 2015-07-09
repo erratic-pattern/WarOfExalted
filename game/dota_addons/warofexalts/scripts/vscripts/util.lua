@@ -135,7 +135,7 @@ function util.normalizeBitFlags(bFlags)
     if bFlags == nil then
         return 0
     elseif type(bFlags) == 'table' then
-        return bit32.bor(unpack(bFlags))
+        return bit.bor(unpack(bFlags))
     elseif type(bFlags) == 'number' then
         return bFlags
     else
@@ -239,7 +239,7 @@ function util.dotProduct(v1,v2)
 end
 
 function util.printTable(t, indent, done)
-	--print ( string.format ('PrintTable type %s', type(keys)) )
+	--print ( string.format ('util.printTable type %s', type(keys)) )
 	if type(t) ~= "table" then return end
 
 	done = done or {}
@@ -260,11 +260,11 @@ function util.printTable(t, indent, done)
 			if type(value) == "table" and not done[value] then
 				done [value] = true
 				print(string.rep ("\t", indent)..tostring(v)..":")
-				PrintTable (value, indent + 2, done)
+				util.printTable (value, indent + 2, done)
 			elseif type(value) == "userdata" and not done[value] then
 				done [value] = true
 				print(string.rep ("\t", indent)..tostring(v)..": "..tostring(value))
-				PrintTable ((getmetatable(value) and getmetatable(value).__index) or getmetatable(value), indent + 2, done)
+				util.printTable ((getmetatable(value) and getmetatable(value).__index) or getmetatable(value), indent + 2, done)
 			else
 				if t.FDesc and t.FDesc[v] then
 					print(string.rep ("\t", indent)..tostring(t.FDesc[v]))

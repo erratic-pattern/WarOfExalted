@@ -1,4 +1,5 @@
-"DOTAUnits" {
+"DOTAUnits"
+{
 	"npc_dummy_blank"
 	{
 		// General

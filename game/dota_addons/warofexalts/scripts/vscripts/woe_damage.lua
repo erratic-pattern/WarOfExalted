@@ -28,6 +28,7 @@ end
 --Class used to represent instances of WoE damage. Initialization parameters are the same as ApplyWoeDamage
 WoeDamage = class({})
 function WoeDamage:constructor(keys)
+    print("WoeDamage:constructor")
     keys = keys or {}
     
     --information about the damage (passed directly to ApplyDamage)
@@ -60,7 +61,7 @@ function WoeDamage.Combine(...)
         outDmg.victim = outDmg.victim or inDmg.victim
         outDmg.attacker = outDmg.attacker or inDmg.attacker
         outDmg.ability = outDmg.ability or inDmg.ability
-        outDmg.dotaDamageFlags = bit32.bor(outDmg.dotaDamageFlags, inDmg.dotaDamageFlags)
+        outDmg.dotaDamageFlags = bit.bor(outDmg.dotaDamageFlags, inDmg.dotaDamageFlags)
         outDmg.physicalDamage = outDmg.physicalDamage + inDmg.physicalDamage
         outDmg.magicalDamage = outDmg.magicalDamage + inDmg.magicalDamage
         outDmg.pureDamage = outDmg.pureDamage + inDmg.pureDamage
@@ -177,13 +178,14 @@ function WoeDamage:Apply()
         victim = self.victim,
         attacker = self.attacker,
         ability = self.ability,
-        damage_flags = bit32.bor(DOTA_DAMAGE_FLAGS_IGNORE_PHYSICAL_ARMOR, DOTA_DAMAGE_FLAGS_IGNORE_MAGIC_ARMOR, self.dotaDamageFlags)
+        damage_flags = bit.bor(DOTA_DAMAGE_FLAG_IGNORES_PHYSICAL_ARMOR, DOTA_DAMAGE_FLAG_IGNORES_MAGIC_ARMOR, self.dotaDamageFlags)
     }
-    local dmgIter = { }
-    dmgIter[DAMAGE_TYPE_PHYSICAL] = self:GetPhysicalDamage()
-    dmgIter[DAMAGE_TYPE_MAGICAL] = self:GetMagicalDamage()
-    dmgIter[DAMAGE_TYPE_PURE] = self:GetPureDamage()
-    for dType, dmg in pairs(dmgIter) do
+    local dmgIter = {
+        [DAMAGE_TYPE_PHYSICAL] = self:GetPhysicalDamage(),
+        [DAMAGE_TYPE_MAGICAL] = self:GetMagicalDamage(),
+        [DAMAGE_TYPE_PURE] = self:GetPureDamage()
+    }
+    for dType, dmg in ipairs(dmgIter) do
         if dmg > 0 then
             dmgArgs.damage = dmg
             dmgArgs.damage_type = dType
@@ -193,12 +195,21 @@ function WoeDamage:Apply()
 end
 
 function WoeDamage:_ApplyMitigation()
+    print("WoeDamage:_ApplyMitigation")
     local armor = self.victim:GetPhysicalArmorValue()
-    local physReduction = 0.06 * armor / (1 + 0.06 * armor)
+    local physReduction = 1 - 0.06 * armor / (1 + 0.06 * armor)
+    print("armor: ", armor)
+    print("unmitigated phys: ", self:GetPhysicalDamage())
+    print("phys modifier: ", physReduction)
     self.physicalDamage = physReduction * self.physicalDamage
     self.critDamage.physicalDamage = physReduction * self.critDamage.physicalDamage
-    local magReduction = self.victim:GetMagicArmorValue()
+    print("mitigated phys: ", self:GetPhysicalDamage())
+    local magReduction = 1 - self.victim:GetMagicalArmorValue()
+    print("mr: ", self.victim:GetWoeMagicResist())
+    print("unmitigated magic: ", self:GetMagicalDamage())
+    print("magic modifier", magReduction)
     self.magicalDamage = magReduction * self.magicalDamage
     self.critDamage.magicalDamage = magReduction * self.critDamage.magicalDamage
+    print("mitigated magic: ", self:GetMagicalDamage())
     self.mitigated = true
 end

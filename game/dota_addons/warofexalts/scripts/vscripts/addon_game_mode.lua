@@ -4,6 +4,7 @@ requires = {
 	'physics',
 	'lib.statcollection',
 	'warofexalts',
+    'woe_link_modifiers',
     'woe_keywords',
     'woe_damage',
     'woe_unit_wrapper',
@@ -28,17 +29,17 @@ function Precache( context )
 	--PrecacheModel("models/heroes/viper/viper.vmdl", context)
 
 	-- Sounds can precached here like anything else
-	PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_gyrocopter.vsndevts", context)
+	--PrecacheResource("soundfile", "soundevents/game_sounds_heroes/game_sounds_gyrocopter.vsndevts", context)
 
 	-- Entire items can be precached by name
 	-- Abilities can also be precached in this way despite the name
-	PrecacheItemByNameSync("example_ability", context)
-	PrecacheItemByNameSync("item_example_item", context)
-    PrecacheItemByNameSync("item_ultimate_orb", context)
+	--PrecacheItemByNameSync("example_ability", context)
+	--PrecacheItemByNameSync("item_example_item", context)
+    --PrecacheItemByNameSync("item_ultimate_orb", context)
 
 	-- Entire heroes (sound effects/voice/models/particles) can be precached with PrecacheUnitByNameSync
 	-- Custom units from npc_units_custom.txt can also have all of their abilities and precache{} blocks precached in this way
-	PrecacheUnitByNameSync("npc_dota_hero_ancient_apparition", context)
+	--PrecacheUnitByNameSync("npc_dota_hero_ancient_apparition", context)
 end
 
 -- Create the game mode when we activate

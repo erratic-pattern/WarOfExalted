@@ -38,18 +38,23 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         self._woeKeys.SpellHasteRatio = v
     end
     
-    --capture base classes GetCooldown method before we override it
+    --capture base classes GetCooldown and GetCooldownTime method before we override
     abi.GetBaseCooldown = abi.GetCooldown
     --gets the total cooldown after all CDR has been calculated
-    function abi:GetCooldown()
-        print("GetCooldown called")
+    function abi:GetCooldown(lvl)
+        print(self:GetAbilityName() .. ":GetCooldown called")
         local caster = self:GetCaster()
         local haste = 0
         local cdr = 0
         if caster and caster.isWoeUnit then
-            return self:GetBaseCooldown() * (1 - caster:GetCdrPercent()) / ((100 + caster:GetSpellHaste() * self:GetSpellHasteRatio()) * 0.01)
+            print("base cooldown: ", self:GetBaseCooldown(lvl))
+            print("haste: ", caster:GetSpellHaste())
+            print("cdr: ", caster:GetCdrPercent())
+            local cdOut = self:GetBaseCooldown(lvl) * (1 - caster:GetCdrPercent()) / ((100 + caster:GetSpellHaste() * self:GetSpellHasteRatio()) * 0.01)
+            print("reduced cooldown: ", cdOut)
+            return cdOut
         else
-            return self:GetBaseCooldown()
+            return self:GetBaseCooldown(lvl)
         end
     end
     

@@ -135,7 +135,7 @@ end
 --Internal helper for Add/Remove
 function WoeKeywords:_SetArray(kWords, val)
     kWords = WoeKeywords.NormalizeKwList(kWords)
-    for _, kWord in kWords do
+    for _, kWord in ipairs(kWords) do
         self.kw[kWord] = val
     end
 end
