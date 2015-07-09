@@ -4,6 +4,7 @@ requires = {
 	'physics',
 	'lib.statcollection',
 	'warofexalts',
+    "woe_damage",
     'woe_unit_wrapper',
     'woe_ability_wrapper'
 }

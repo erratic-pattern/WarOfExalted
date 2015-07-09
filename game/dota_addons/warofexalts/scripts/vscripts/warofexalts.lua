@@ -215,8 +215,8 @@ function WarOfExalts:OnNPCSpawned(keys)
 	--print("[WAROFEXALTS] NPC Spawned")
 	--PrintTable(keys)
 	local npc = EntIndexToHScript(keys.entindex)
-    
     self:WoeUnitWrapper(npc)
+    npc:WithAbilities(function(a) self:WoeAbilityWrapper(a) end)
 
 	if npc:IsRealHero() and npc.bFirstSpawned == nil then
 		npc.bFirstSpawned = true

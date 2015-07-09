@@ -1,6 +1,6 @@
 -- GREAT UTILITY FUNCTIONS
 
-function stringSplit( str )
+function string.split( str )
 	local split = {}
 	for i in string.gmatch(str, "%S+") do
 		table.insert(split, i)
@@ -31,15 +31,6 @@ function updateKeys(destTab, srcTab)
         local val = srcTab[k]
         if val ~= nil then
             destTab[k] = srcTab[k]
-        end
-    end
-end
-
-function AbilityIterator(unit, callback)
-    for i=0, unit:GetAbilityCount()-1 do
-        local abil = unit:GetAbilityByIndex(i)
-        if abil ~= nil then
-            callback(abil)
         end
     end
 end
