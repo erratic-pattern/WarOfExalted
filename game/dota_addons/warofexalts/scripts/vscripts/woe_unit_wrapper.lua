@@ -324,16 +324,16 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     if unit:IsHero() then
         self:WoeHeroWrapper(unit)
     else
-        updateKeys(unit._woeKeys, self.datadriven.units[unit:GetUnitName()])
+        util.updateKeys(unit._woeKeys, self.datadriven.units[unit:GetUnitName()])
     end
     
-    updateKeys(unit._woeKeys, extraKeys)
+    util.updateKeys(unit._woeKeys, extraKeys)
     
 end
 
 function WarOfExalts:WoeHeroWrapper(unit)
     local keys = self.datadriven.heroes[unit:GetUnitName()]
-    updateKeys(unit._woeKeys, keys)
+    util.updateKeys(unit._woeKeys, keys)
     
     unit:AddNewModifier(unit, nil, "modifier_woe_attributes", {})
 end

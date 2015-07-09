@@ -102,8 +102,8 @@ function WarOfExalts:OnHeroInGame(hero)
 	if not self.greetPlayers then
 		-- At this point a player now has a hero spawned in your map.
 		
-	    local firstLine = ColorIt("Welcome to ", "green") .. ColorIt(self.addonInfo.addontitle, "magenta") .. ColorIt(self.addonInfo.addonversion, "blue");
-	    local secondLine = ColorIt("Developer: ", "green") .. ColorIt(self.addonInfo.addonauthor, "orange")
+	    local firstLine = util.color("Welcome to ", "green") .. util.color(self.addonInfo.addontitle, "magenta") .. util.color(self.addonInfo.addonversion, "blue");
+	    local secondLine = util.color("Developer: ", "green") .. util.color(self.addonInfo.addonauthor, "orange")
 		-- Send the first greeting in 4 secs.
 		Timers:CreateTimer(4, function()
 	        GameRules:SendCustomMessage(firstLine, 0, 0)
@@ -124,7 +124,7 @@ function WarOfExalts:OnHeroInGame(hero)
 		Say(nil, "Testing is on.", false)
 	end
 
-	InitAbilities(hero)
+	util.initAbilities(hero)
 
 	-- Show a popup with game instructions.
     --ShowGenericPopupToPlayer(hero.player, "#warofexalts_instructions_title", "#warofexalts_instructions_body", "", "", DOTA_SHOWGENERICPOPUP_TINT_SCREEN )
@@ -171,7 +171,7 @@ end
 -- Cleanup a player when they leave
 function WarOfExalts:OnDisconnect(keys)
 	--print('[WAROFEXALTS] Player Disconnected ' .. tostring(keys.userid))
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local name = keys.name
 	local networkid = keys.networkid
@@ -182,7 +182,7 @@ end
 -- The overall game state has changed
 function WarOfExalts:OnGameRulesStateChange(keys)
 	--print("[WAROFEXALTS] GameRules State Changed")
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local newState = GameRules:State_Get()
 	if newState == DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD then
@@ -213,7 +213,7 @@ end
 -- An NPC has spawned somewhere in game.  This includes heroes
 function WarOfExalts:OnNPCSpawned(keys)
 	--print("[WAROFEXALTS] NPC Spawned")
-	--PrintTable(keys)
+	--util.printTable(keys)
 	local npc = EntIndexToHScript(keys.entindex)
     self:WoeUnitWrapper(npc)
     npc:WithAbilities(function(a) self:WoeAbilityWrapper(a) end)
@@ -228,7 +228,7 @@ end
 -- operations here
 function WarOfExalts:OnEntityHurt(keys)
 	--print("[WAROFEXALTS] Entity Hurt")
-	--PrintTable(keys)
+	--util.printTable(keys)
 	local attacker = EntIndexToHScript(keys.entindex_attacker)
 	local victim = EntIndexToHScript(keys.entindex_killed)
 end
@@ -236,7 +236,7 @@ end
 -- An item was picked up off the ground
 function WarOfExalts:OnItemPickedUp(keys)
 	--print ( '[WAROFEXALTS] OnItemPurchased' )
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local heroEntity = EntIndexToHScript(keys.HeroEntityIndex)
 	local itemEntity = EntIndexToHScript(keys.ItemEntityIndex)
@@ -248,13 +248,13 @@ end
 -- state as necessary
 function WarOfExalts:OnPlayerReconnect(keys)
 	--print ( '[WAROFEXALTS] OnPlayerReconnect' )
-	--PrintTable(keys)
+	--util.printTable(keys)
 end
 
 -- An item was purchased by a player
 function WarOfExalts:OnItemPurchased( keys )
 	--print ( '[WAROFEXALTS] OnItemPurchased' )
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	-- The playerID of the hero who is buying something
 	local plyID = keys.PlayerID
@@ -271,7 +271,7 @@ end
 -- An ability was used by a player
 function WarOfExalts:OnAbilityUsed(keys)
 	--print('[WAROFEXALTS] AbilityUsed')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local player = EntIndexToHScript(keys.PlayerID)
 	local abilityname = keys.abilityname
@@ -280,7 +280,7 @@ end
 -- A non-player entity (necro-book, chen creep, etc) used an ability
 function WarOfExalts:OnNonPlayerUsedAbility(keys)
 	--print('[WAROFEXALTS] OnNonPlayerUsedAbility')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local abilityname=  keys.abilityname
 end
@@ -288,7 +288,7 @@ end
 -- A player changed their name
 function WarOfExalts:OnPlayerChangedName(keys)
 	--print('[WAROFEXALTS] OnPlayerChangedName')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local newName = keys.newname
 	local oldName = keys.oldName
@@ -297,7 +297,7 @@ end
 -- A player leveled up an ability
 function WarOfExalts:OnPlayerLearnedAbility( keys)
 	--print ('[WAROFEXALTS] OnPlayerLearnedAbility')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local player = EntIndexToHScript(keys.player)
 	local abilityname = keys.abilityname
@@ -306,7 +306,7 @@ end
 -- A channelled ability finished by either completing or being interrupted
 function WarOfExalts:OnAbilityChannelFinished(keys)
 	--print ('[WAROFEXALTS] OnAbilityChannelFinished')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local abilityname = keys.abilityname
 	local interrupted = keys.interrupted == 1
@@ -315,7 +315,7 @@ end
 -- A player leveled up
 function WarOfExalts:OnPlayerLevelUp(keys)
 	--print ('[WAROFEXALTS] OnPlayerLevelUp')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local player = EntIndexToHScript(keys.player)
 	local level = keys.level
@@ -324,7 +324,7 @@ end
 -- A player last hit a creep, a tower, or a hero
 function WarOfExalts:OnLastHit(keys)
 	--print ('[WAROFEXALTS] OnLastHit')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local isFirstBlood = keys.FirstBlood == 1
 	local isHeroKill = keys.HeroKill == 1
@@ -335,7 +335,7 @@ end
 -- A tree was cut down by tango, quelling blade, etc
 function WarOfExalts:OnTreeCut(keys)
 	--print ('[WAROFEXALTS] OnTreeCut')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local treeX = keys.tree_x
 	local treeY = keys.tree_y
@@ -344,7 +344,7 @@ end
 -- A rune was activated by a player
 function WarOfExalts:OnRuneActivated (keys)
 	--print ('[WAROFEXALTS] OnRuneActivated')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local player = PlayerResource:GetPlayer(keys.PlayerID)
 	local rune = keys.rune
@@ -366,7 +366,7 @@ end
 -- A player took damage from a tower
 function WarOfExalts:OnPlayerTakeTowerDamage(keys)
 	--print ('[WAROFEXALTS] OnPlayerTakeTowerDamage')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local player = PlayerResource:GetPlayer(keys.PlayerID)
 	local damage = keys.damage
@@ -375,7 +375,7 @@ end
 -- A player picked a hero
 function WarOfExalts:OnPlayerPickHero(keys)
 	--print ('[WAROFEXALTS] OnPlayerPickHero')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local heroClass = keys.hero
 	local heroEntity = EntIndexToHScript(keys.heroindex)
@@ -385,7 +385,7 @@ end
 -- A player killed another player in a multi-team context
 function WarOfExalts:OnTeamKillCredit(keys)
 	--print ('[WAROFEXALTS] OnTeamKillCredit')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	local killerPlayer = PlayerResource:GetPlayer(keys.killer_userid)
 	local victimPlayer = PlayerResource:GetPlayer(keys.victim_userid)
@@ -396,7 +396,7 @@ end
 -- An entity died
 function WarOfExalts:OnEntityKilled( keys )
 	--print( '[WAROFEXALTS] OnEntityKilled Called' )
-	--PrintTable( keys )
+	--util.printTable( keys )
 
 	-- The Unit that was Killed
 	local killedUnit = EntIndexToHScript( keys.entindex_killed )
@@ -434,7 +434,7 @@ end
 
 function WarOfExalts:OnWoeUnitRequest( keys )
     --print("[WAROFEXALTS] OnWoeUnitRequest called")
-    --PrintTable(keys)
+    --util.printTable(keys)
     local unit = EntIndexToHScript(keys.unitId)
     if unit then
         keys.isWoeUnit = unit.isWoeUnit
@@ -450,7 +450,7 @@ function WarOfExalts:OnWoeUnitRequest( keys )
             end
         end
     end
-    --PrintTable(keys)
+    --util.printTable(keys)
     CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
     --Sending to PlayerID doesn't appear to be working correctly
     --CustomGameEventManager:Send_ServerToPlayer(EntIndexToHScript(keys.PlayerID), "woe_unit_response", keys)
@@ -459,7 +459,7 @@ end
 --[[
 function WarOfExalts:AbilityTuningFilter( keys )
     print("[WAROFEXALTS] AbilityTuningFilter called")
-    PrintTable(keys)
+    util.printTable(keys)
 end
 ]]
 
@@ -699,7 +699,7 @@ end
 -- have completely connected
 function WarOfExalts:PlayerConnect(keys)
 	--print('[WAROFEXALTS] PlayerConnect')
-	--PrintTable(keys)
+	--util.printTable(keys)
 
 	if keys.bot == 1 then
 		-- This user is a Bot, so add it to the bots table
@@ -710,7 +710,7 @@ end
 -- This function is called once when the player fully connects and becomes "Ready" during Loading
 function WarOfExalts:OnConnectFull(keys)
 	--print ('[WAROFEXALTS] OnConnectFull')
-	--PrintTable(keys)
+	--util.printTable(keys)
 	WarOfExalts:CaptureWarOfExalts()
 
 	local entIndex = keys.index+1

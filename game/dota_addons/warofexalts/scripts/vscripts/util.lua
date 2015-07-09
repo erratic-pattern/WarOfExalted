@@ -1,5 +1,7 @@
 -- GREAT UTILITY FUNCTIONS
 
+util = {}
+
 function string.split( str )
 	local split = {}
 	for i in string.gmatch(str, "%S+") do
@@ -9,7 +11,7 @@ function string.split( str )
 end
 
 -- Returns a shallow copy of the passed table.
-function shallowCopy(orig)
+function util.shallowCopy(orig)
     local orig_type = type(orig)
     local copy
     if orig_type == 'table' then
@@ -23,7 +25,7 @@ function shallowCopy(orig)
     return copy
 end
 
-function updateKeys(destTab, srcTab)
+function util.updateKeys(destTab, srcTab)
     if destTab == nil or srcTab == nil then 
         return
     end
@@ -43,11 +45,11 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
-function VectorString(v)
+function util.vectorToString(v)
   return 'x: ' .. v.x .. ' y: ' .. v.y .. ' z: ' .. v.z
 end
 
-function TableLength( t )
+function table.length( t )
     if t == nil or t == {} then
         return 0
     end
@@ -59,7 +61,7 @@ function TableLength( t )
 end
 
 -- Remove all abilities on a unit.
-function ClearAbilities( unit )
+function util.clearAbilities( unit )
 	for i=0, unit:GetAbilityCount()-1 do
 		local abil = unit:GetAbilityByIndex(i)
 		if abil ~= nil then
@@ -81,7 +83,7 @@ end
 
 -- goes through a unit's abilities and sets the abil's level to 1,
 -- spending an ability point if possible.
-function InitAbilities( hero )
+function util.initAbilities( hero )
 	for i=0, hero:GetAbilityCount()-1 do
 		local abil = hero:GetAbilityByIndex(i)
 		if abil ~= nil then
@@ -95,7 +97,7 @@ function InitAbilities( hero )
 end
 
 -- adds ability to a unit, sets the level to 1, then returns ability handle.
-function AddAbilityToUnit(unit, abilName)
+function util.addAbilityToUnit(unit, abilName)
 	if not unit:HasAbility(abilName) then
 		unit:AddAbility(abilName)
 	end
@@ -104,7 +106,7 @@ function AddAbilityToUnit(unit, abilName)
 	return abil
 end
 
-function GetOppositeTeam( unit )
+function util.getOppositeTeam( unit )
 	if unit:GetTeam() == DOTA_TEAM_GOODGUYS then
 		return DOTA_TEAM_BADGUYS
 	else
@@ -113,23 +115,36 @@ function GetOppositeTeam( unit )
 end
 
 -- returns true 50% of the time.
-function CoinFlip(  )
+function util.coinFlip(  )
 	return RollPercentage(50)
 end
 
 -- theta is in radians.
-function RotateVector2D(v,theta)
+function util.rotateVector2D(v,theta)
 	local xp = v.x*math.cos(theta)-v.y*math.sin(theta)
 	local yp = v.x*math.sin(theta)+v.y*math.cos(theta)
 	return Vector(xp,yp,v.z):Normalized()
 end
 
-function PrintVector(v)
-	print('x: ' .. v.x .. ' y: ' .. v.y .. ' z: ' .. v.z)
+function util.printVector(v)
+	print(util.vectorToString(v))
+end
+
+--Allows input of bit flags as either x | y | z or an array {x, y, z}
+function util.normalizeBitFlags(bFlags) 
+    if bFlags == nil then
+        return 0
+    elseif type(bFlags) == 'table' then
+        return bit32.bor(unpack(bFlags))
+    elseif type(bFlags) == 'number' then
+        return bFlags
+    else
+        print("[WAROFEXALTS] Warning: Invalid input for bitfield ", bFlags)
+    end
 end
 
 -- Given element and list, returns true if element is in the list.
-function TableContains( list, element )
+function table.contains( list, element )
 	if list == nil then return false end
 	for k,v in pairs(list) do
 		if k == element then
@@ -139,20 +154,8 @@ function TableContains( list, element )
 	return false
 end
 
--- Given element and list, returns the position of the element in the list.
--- Returns -1 if element was not found, or if list is nil.
-function GetIndex(list, element)
-	if list == nil then return -1 end
-	for i=1,#list do
-		if list[i] == element then
-			return i
-		end
-	end
-	return -1
-end
-
 -- useful with GameRules:SendCustomMessage
-function ColorIt( sStr, sColor )
+function util.color( sStr, sColor )
 	if sStr == nil or sColor == nil then
 		return
 	end
@@ -191,7 +194,7 @@ end
 	center: center of the square. (Vector)
 	length: length of 1 side of square. (Float)
 ]]
-function IsPointWithinSquare(p, center, length)
+function util.isPointWithinSquare(p, center, length)
 	if (p.x > center.x-length and p.x < center.x+length) and 
 		(p.y > center.y-length and p.y < center.y+length) then
 		return true
@@ -211,7 +214,7 @@ end
 
   Returns the time-till-collision.
 ]]
-function TimeTillCollision(body1,body2)
+function util.timeTillCollision(body1,body2)
 	local W = body2.v-body1.v
 	local D = body2.c-body1.c
 	local A = DotProduct(W,W)
@@ -231,11 +234,11 @@ function TimeTillCollision(body1,body2)
 	return 2
 end
 
-function DotProduct(v1,v2)
+function util.dotProduct(v1,v2)
   return (v1.x*v2.x)+(v1.y*v2.y)
 end
 
-function PrintTable(t, indent, done)
+function util.printTable(t, indent, done)
 	--print ( string.format ('PrintTable type %s', type(keys)) )
 	if type(t) ~= "table" then return end
 
@@ -291,186 +294,3 @@ COLOR_PURPLE = '\x1A'
 COLOR_ORANGE = '\x1B'
 COLOR_LRED = '\x1C'
 COLOR_GOLD = '\x1D'
-
-
-
---============ Copyright (c) Valve Corporation, All rights reserved. ==========
---
---
---=============================================================================
-
---/////////////////////////////////////////////////////////////////////////////
--- Debug helpers
---
---  Things that are really for during development - you really should never call any of this
---  in final/real/workshop submitted code
---/////////////////////////////////////////////////////////////////////////////
-
--- if you want a table printed to console formatted like a table (dont we already have this somewhere?)
-scripthelp_LogDeepPrintTable = "Print out a table (and subtables) to the console"
-logFile = "log/log.txt"
-
-function LogDeepSetLogFile( file )
-	logFile = file
-end
-
-function LogEndLine ( line )
-	AppendToLogFile(logFile, line .. "\n")
-end
-
-function _LogDeepPrintMetaTable( debugMetaTable, prefix )
-	_LogDeepPrintTable( debugMetaTable, prefix, false, false )
-	if getmetatable( debugMetaTable ) ~= nil and getmetatable( debugMetaTable ).__index ~= nil then
-		_LogDeepPrintMetaTable( getmetatable( debugMetaTable ).__index, prefix )
-	end
-end
-
-function _LogDeepPrintTable(debugInstance, prefix, isOuterScope, chaseMetaTables )
-	prefix = prefix or ""
-	local string_accum = ""
-	if debugInstance == nil then
-		LogEndLine( prefix .. "<nil>" )
-		return
-	end
-	local terminatescope = false
-	local oldPrefix = ""
-	if isOuterScope then  -- special case for outer call - so we dont end up iterating strings, basically
-		if type(debugInstance) == "table" then
-			LogEndLine( prefix .. "{" )
-			oldPrefix = prefix
-			prefix = prefix .. "   "
-			terminatescope = true
-	else
-		LogEndLine( prefix .. " = " .. (type(debugInstance) == "string" and ("\"" .. debugInstance .. "\"") or debugInstance))
-	end
-	end
-	local debugOver = debugInstance
-
-	-- First deal with metatables
-	if chaseMetaTables == true then
-		if getmetatable( debugOver ) ~= nil and getmetatable( debugOver ).__index ~= nil then
-			local thisMetaTable = getmetatable( debugOver ).__index
-			if vlua.find(_LogDeepprint_alreadyseen, thisMetaTable ) ~= nil then
-				LogEndLine( string.format( "%s%-32s\t= %s (table, already seen)", prefix, "metatable", tostring( thisMetaTable ) ) )
-			else
-				LogEndLine(prefix .. "metatable = " .. tostring( thisMetaTable ) )
-				LogEndLine(prefix .. "{")
-				table.insert( _LogDeepprint_alreadyseen, thisMetaTable )
-				_LogDeepPrintMetaTable( thisMetaTable, prefix .. "   ", false )
-				LogEndLine(prefix .. "}")
-			end
-		end
-	end
-
-	-- Now deal with the elements themselves
-	-- debugOver sometimes a string??
-	for idx, data_value in pairs(debugOver) do
-		if type(data_value) == "table" then
-			if vlua.find(_LogDeepprint_alreadyseen, data_value) ~= nil then
-				LogEndLine( string.format( "%s%-32s\t= %s (table, already seen)", prefix, idx, tostring( data_value ) ) )
-			else
-				local is_array = #data_value > 0
-				local test = 1
-				for idx2, val2 in pairs(data_value) do
-					if type( idx2 ) ~= "number" or idx2 ~= test then
-						is_array = false
-						break
-					end
-					test = test + 1
-				end
-				local valtype = type(data_value)
-				if is_array == true then
-					valtype = "array table"
-				end
-				LogEndLine( string.format( "%s%-32s\t= %s (%s)", prefix, idx, tostring(data_value), valtype ) )
-				LogEndLine(prefix .. (is_array and "[" or "{"))
-				table.insert(_LogDeepprint_alreadyseen, data_value)
-				_LogDeepPrintTable(data_value, prefix .. "   ", false, true)
-				LogEndLine(prefix .. (is_array and "]" or "}"))
-			end
-		elseif type(data_value) == "string" then
-			LogEndLine( string.format( "%s%-32s\t= \"%s\" (%s)", prefix, idx, data_value, type(data_value) ) )
-		else
-			LogEndLine( string.format( "%s%-32s\t= %s (%s)", prefix, idx, tostring(data_value), type(data_value) ) )
-		end
-	end
-	if terminatescope == true then
-		LogEndLine( oldPrefix .. "}" )
-	end
-end
-
-
-function LogDeepPrintTable( debugInstance, prefix, isPublicScriptScope )
-	prefix = prefix or ""
-	_LogDeepprint_alreadyseen = {}
-	table.insert(_LogDeepprint_alreadyseen, debugInstance)
-	_LogDeepPrintTable(debugInstance, prefix, true, isPublicScriptScope )
-end
-
-
---/////////////////////////////////////////////////////////////////////////////
--- Fancy new LogDeepPrint - handles instances, and avoids cycles
---
---/////////////////////////////////////////////////////////////////////////////
-
--- @todo: this is hideous, there must be a "right way" to do this, im dumb!
--- outside the recursion table of seen recurses so we dont cycle into our components that refer back to ourselves
-_LogDeepprint_alreadyseen = {}
-
-
--- the inner recursion for the LogDeep print
-function _LogDeepToString(debugInstance, prefix)
-	local string_accum = ""
-	if debugInstance == nil then
-		return "LogDeep Print of NULL" .. "\n"
-	end
-	if prefix == "" then  -- special case for outer call - so we dont end up iterating strings, basically
-		if type(debugInstance) == "table" or type(debugInstance) == "table" or type(debugInstance) == "UNKNOWN" or type(debugInstance) == "table" then
-			string_accum = string_accum .. (type(debugInstance) == "table" and "[" or "{") .. "\n"
-			prefix = "   "
-	else
-		return " = " .. (type(debugInstance) == "string" and ("\"" .. debugInstance .. "\"") or debugInstance) .. "\n"
-	end
-	end
-	local debugOver = type(debugInstance) == "UNKNOWN" and getclass(debugInstance) or debugInstance
-	for idx, val in pairs(debugOver) do
-		local data_value = debugInstance[idx]
-		if type(data_value) == "table" or type(data_value) == "table" or type(data_value) == "UNKNOWN" or type(data_value) == "table" then
-			if vlua.find(_LogDeepprint_alreadyseen, data_value) ~= nil then
-				string_accum = string_accum .. prefix .. idx .. " ALREADY SEEN " .. "\n"
-			else
-				local is_array = type(data_value) == "table"
-				string_accum = string_accum .. prefix .. idx .. " = ( " .. type(data_value) .. " )" .. "\n"
-				string_accum = string_accum .. prefix .. (is_array and "[" or "{") .. "\n"
-				table.insert(_LogDeepprint_alreadyseen, data_value)
-				string_accum = string_accum .. _LogDeepToString(data_value, prefix .. "   ")
-				string_accum = string_accum .. prefix .. (is_array and "]" or "}") .. "\n"
-			end
-		else
-			--string_accum = string_accum .. prefix .. idx .. "\t= " .. (type(data_value) == "string" and ("\"" .. data_value .. "\"") or data_value) .. "\n"
-			string_accum = string_accum .. prefix .. idx .. "\t= " .. "\"" .. tostring(data_value) .. "\"" .. "\n"
-		end
-	end
-	if prefix == "   " then
-		string_accum = string_accum .. (type(debugInstance) == "table" and "]" or "}") .. "\n" -- hack for "proving" at end - this is DUMB!
-	end
-	return string_accum
-end
-
-
-scripthelp_LogDeepString = "Convert a class/array/instance/table to a string"
-
-function LogDeepToString(debugInstance, prefix)
-	prefix = prefix or ""
-	_LogDeepprint_alreadyseen = {}
-	table.insert(_LogDeepprint_alreadyseen, debugInstance)
-	return _LogDeepToString(debugInstance, prefix)
-end
-
-
-scripthelp_LogDeepPrint = "Print out a class/array/instance/table to the console"
-
-function LogDeepPrint(debugInstance, prefix)
-	prefix = prefix or ""
-	LogEndLine(LogDeepToString(debugInstance, prefix))
-end

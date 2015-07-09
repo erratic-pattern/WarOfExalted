@@ -53,6 +53,6 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         end
     end
     
-    updateKeys(abi._woeKeys, self.datadriven.abilities[abi:GetAbilityName()])
-    updateKeys(abi._woeKeys, extraKeys)
+    util.updateKeys(abi._woeKeys, self.datadriven.abilities[abi:GetAbilityName()])
+    util.updateKeys(abi._woeKeys, extraKeys)
 end
