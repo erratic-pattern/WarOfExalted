@@ -46,12 +46,15 @@
             
     });
     GameEvents.Subscribe("dota_player_update_query_unit", function( data ) {
-       var pId = data.splitscreenplayer,
-           unitId = Players.GetQueryUnit(pId);
-       //$.Msg("dota_player_update_query_unit: ", pId, " - ", Players.GetPlayerName(pId));
-       //$.Msg(unitId);
-       currentUnit = unitId;
-       RequestUnitInfo(unitId);
+        var pId = data.splitscreenplayer,
+            unitId = Players.GetQueryUnit(pId);
+        //$.Msg("dota_player_update_query_unit: ", pId, " - ", Players.GetPlayerName(pId));
+        //$.Msg(unitId);
+        if (unitId == -1)
+            currentUnit = Players.GetLocalPlayerPortraitUnit()
+        else
+            currentUnit = unitId;
+        RequestUnitInfo(currentUnit);
     });
     
     GameEvents.Subscribe("dota_portrait_unit_stats_changed", function( data ) {
