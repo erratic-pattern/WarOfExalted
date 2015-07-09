@@ -31,7 +31,7 @@ function test_woe_damage:OnProjectileHit( hTarget, vLocation )
 		}
 
 		ApplyWoeDamage( damage )
-		hTarget:AddNewModifier( self:GetCaster(), self, "modifier_vengefulspirit_magic_missile", { duration = self:GetSpecialValueFor( "stun_duration" ) } )
+		hTarget:AddNewModifier( self:GetCaster(), self, "modifier_stunned", { duration = self:GetSpecialValueFor( "stun_duration" ) } )
 	end
 
 	return true
