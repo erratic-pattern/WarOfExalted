@@ -82,6 +82,10 @@ function WoeDamage:IsMitigated()
     return self.mitigated
 end
 
+function WoeDamage:Keywords()
+    return self.keywords
+end
+
 function WoeDamage:GetTotalNonCritDamage()
     return self.physicalDamage + self.magicalDamage + self.pureDamage
 end

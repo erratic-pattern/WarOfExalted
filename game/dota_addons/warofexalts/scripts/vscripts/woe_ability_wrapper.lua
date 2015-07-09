@@ -11,8 +11,14 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     --WoE ability instance variables
     abi._woeKeys = {
         StaminaCost = 0,
-        SpellHasteRatio = 1, 
+        SpellHasteRatio = 1,
+        AttackSpeedRatio = 1,
+        keywords = "spell"
     }
+    
+    function abi:Keywords()
+        return self._woeKeys.keywords
+    end
     
     function abi:GetStaminaCost()
         return self._woeKeys.StaminaCost
@@ -38,19 +44,32 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         self._woeKeys.SpellHasteRatio = v
     end
     
+    function abi:GetAttackSpeedRatio()
+        return self._woeKeys.AttackSpeedRatio
+    end
+    
+    function abi:SetAttackSpeedRatio(v)
+        self._woeKeys.AttackSpeedRatio = v
+    end
+    
     --capture base classes GetCooldown and GetCooldownTime method before we override
     abi.GetBaseCooldown = abi.GetCooldown
     --gets the total cooldown after all CDR has been calculated
     function abi:GetCooldown(lvl)
         print(self:GetAbilityName() .. ":GetCooldown called")
         local caster = self:GetCaster()
-        local haste = 0
-        local cdr = 0
         if caster and caster.isWoeUnit then
+            local ics = 0
+            if self:Keywords():Has("attack") then
+                ics = caster:GetIncreasedAttackSpeed() * self:GetAttackSpeedRatio()
+                print("ias: ", ics)
+            elseif self:Keywords():Has("spell") then
+                ics = caster:GetSpellHaste() * self:GetSpellHasteRatio()
+                print("haste: ", ics)
+            end
+            local baseCd = self:GetBaseCooldown(lvl)
             print("base cooldown: ", self:GetBaseCooldown(lvl))
-            print("haste: ", caster:GetSpellHaste())
-            print("cdr: ", caster:GetCdrPercent())
-            local cdOut = self:GetBaseCooldown(lvl) * (1 - caster:GetCdrPercent()) / ((100 + caster:GetSpellHaste() * self:GetSpellHasteRatio()) * 0.01)
+            local cdOut =  baseCd * (1 - caster:GetCdrPercent()) / ((100 + ics) * 0.01)
             print("reduced cooldown: ", cdOut)
             return cdOut
         else
@@ -60,4 +79,5 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     
     util.updateKeys(abi._woeKeys, self.datadriven.abilities[abi:GetAbilityName()])
     util.updateKeys(abi._woeKeys, extraKeys)
+    abi._woeKeys.keywords = WoeKeywords(abi._woeKeys.keywords)
 end
