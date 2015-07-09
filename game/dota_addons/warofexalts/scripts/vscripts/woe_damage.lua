@@ -100,7 +100,9 @@ function WoeDamage:ResetCritDamage()
     }
 end
 
-function WoeDamage:ApplyNonCritModifier(modifier)
+--Applies percent damage modifier to the non-crit portion of the damage. Note that any crit applied
+--afterwards will affected.
+function WoeDamage:ApplyDamageModifier(modifier)
     self.physicalDamage = self.physicalDamage * modifier * self:GetNonCriticalPhysicalPercent()
     self.magicalDamage = self.magicalDamage * modifier * self:GetNonCriticalMagicalPercent()
     self.pureDamage = self.pureDamage * modifier * self:GetNonCriticalPurePercent()
