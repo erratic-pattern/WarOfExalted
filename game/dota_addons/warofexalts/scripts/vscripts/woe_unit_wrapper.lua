@@ -6,6 +6,7 @@ end
 
 --This function takes a dota NPC and adds custom WoE functionality to it
 function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
+    if unit.isWoeUnit then return end
     extraKeys = extraKeys or { }
     
     --Special flag we can use to identify a WoE unit
@@ -302,11 +303,31 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end
     end
     
+    function unit:WithAbilities(cb)
+        for i=0, self:GetAbilityCount()-1 do
+            local abil = self:GetAbilityByIndex(i)
+            if abil ~= nil then
+                cb(abil)
+            end
+        end    
+    end
+    
+    function unit:CallOnModifiers(fName, ...) 
+        for k, modifier in pairs(self:FindAllModifiers()) do
+            local f = modifier[fName]
+            if f then
+                f(modifier, unpack(args))
+            end
+        end
+    end
+    
     if unit:IsHero() then
         self:WoeHeroWrapper(unit)
     else
         updateKeys(unit._woeKeys, self.datadriven.units[unit:GetUnitName()])
     end
+    
+    updateKeys(unit._woeKeys, extraKeys)
     
 end
 

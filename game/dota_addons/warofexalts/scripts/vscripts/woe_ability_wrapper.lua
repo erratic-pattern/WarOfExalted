@@ -3,7 +3,8 @@ if WarOfExalts == nil then
 	WarOfExalts = class({})
 end
 
-function WarOfExalts:WoeAbilityWrapper(abi)
+function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
+    if abi.isWoeAbility then return end
     --flag we can use to easily test if ability is wrapped
     abi.isWoeAbility = true
     
@@ -41,6 +42,7 @@ function WarOfExalts:WoeAbilityWrapper(abi)
     abi.GetBaseCooldown = abi.GetCooldown
     --gets the total cooldown after all CDR has been calculated
     function abi:GetCooldown()
+        print("GetCooldown called")
         local caster = self:GetCaster()
         local haste = 0
         local cdr = 0
@@ -52,4 +54,5 @@ function WarOfExalts:WoeAbilityWrapper(abi)
     end
     
     updateKeys(abi._woeKeys, self.datadriven.abilities[abi:GetAbilityName()])
+    updateKeys(abi._woeKeys, extraKeys)
 end
