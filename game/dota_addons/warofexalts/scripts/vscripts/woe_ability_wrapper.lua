@@ -13,11 +13,12 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         StaminaCost = 0,
         SpellHasteRatio = 1,
         AttackSpeedRatio = 1,
-        keywords = "spell"
+        IsDragCast = false,
+        Keywords = "spell"
     }
     
     function abi:Keywords()
-        return self._woeKeys.keywords
+        return self._woeKeys.Keywords
     end
     
     function abi:GetStaminaCost()
@@ -80,5 +81,5 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     
     util.updateKeys(abi._woeKeys, self.datadriven.abilities[abi:GetAbilityName()])
     util.updateKeys(abi._woeKeys, extraKeys)
-    abi._woeKeys.keywords = WoeKeywords(abi._woeKeys.keywords)
+    abi._woeKeys.Keywords = WoeKeywords(abi._woeKeys.Keywords)
 end

@@ -435,7 +435,7 @@ end
 function WarOfExalts:OnWoeUnitRequest( keys )
     --print("[WAROFEXALTS] OnWoeUnitRequest called")
     --util.printTable(keys)
-    local unit = EntIndexToHScript(keys.unitId)
+    local unit = EntIndexToHScript(keys.id)
     if unit then
         keys.isWoeUnit = unit.isWoeUnit
         if unit.isWoeUnit then
@@ -454,6 +454,19 @@ function WarOfExalts:OnWoeUnitRequest( keys )
     CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
     --Sending to PlayerID doesn't appear to be working correctly
     --CustomGameEventManager:Send_ServerToPlayer(EntIndexToHScript(keys.PlayerID), "woe_unit_response", keys)
+end
+
+function WarOfExalts:OnWoeAbilityRequest(keys)
+    local abi = EntIndexToHScript(keys.id)
+    if abi then
+        keys.isWoeAbility = abi.isWoeAbility
+        if abi.isWoeAbility then
+            for k, v in pairs(abi._woeKeys) do
+                keys[k] = v
+            end
+        end
+    end
+    CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
 end
 
 --[[
@@ -533,6 +546,7 @@ function WarOfExalts:InitWarOfExalts()
     
     -- Custom Event Hooks
     CustomGameEventManager:RegisterListener("woe_unit_request", Dynamic_Wrap(WarOfExalts, "OnWoeUnitRequest"));
+    CustomGameEventManager:RegisterListener("woe_ability_request", Dynamic_Wrap(WarOfExalts, "OnWoeAbilityRequest"));
 
 	-- Commands can be registered for debugging purposes or as functions that can be called by the custom Scaleform UI
 	Convars:RegisterCommand( "command_example", Dynamic_Wrap(WarOfExalts, 'ExampleConsoleCommand'), "A console command example", 0 )

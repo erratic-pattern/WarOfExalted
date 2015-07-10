@@ -3,6 +3,7 @@
         <include src="file://{resources}/styles/custom_game/drag_cast_overlay.css" />
     </styles>
     <scripts>
+        <include src="file://{resources}/scripts/custom_game/woe.js" />
         <include src="file://{resources}/scripts/custom_game/drag_cast_overlay.js" />
     </scripts>
     <Panel class="WoeDragCastOverlay" hittest="false" />
