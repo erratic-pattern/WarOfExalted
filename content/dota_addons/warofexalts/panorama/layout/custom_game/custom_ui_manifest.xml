@@ -1,5 +1,6 @@
 <root>
     <Panel>
+        <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/drag_cast_overlay.xml" />
         <CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/stats_container.xml" />
     </Panel>
 </root>

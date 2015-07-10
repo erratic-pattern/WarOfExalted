@@ -1,12 +1,13 @@
+'use strict';
 (function() {
-    
-    var currentUnit;
+    var currentListener;
     
     function RequestUnitInfo( unitId ) {
-        var listener = GameEvents.Subscribe("woe_unit_response", function( data ) {
+        if(currentListener) GameEvents.Unsubscribe(currentListener)
+        currentListener = GameEvents.Subscribe("woe_unit_response", function( data ) {
            //$.Msg("woe_unit_response received: ", data); 
            if(data.unitId === unitId) {
-                GameEvents.Unsubscribe(listener);
+                GameEvents.Unsubscribe(currentListener);
                 UpdateStatsContainer(data)
            }               
         });
@@ -32,24 +33,24 @@
     
     GameEvents.Subscribe("dota_player_update_selected_unit", function( data ) {
         var panel = $.GetContextPanel(),
-            pId = data.splitscreenplayer,
-            selection = Players.GetSelectedEntities(pId);
-        //$.Msg("dota_player_update_selected_unit: ", pId, " - ", Players.GetPlayerName(pId));
-        //$.Msg(selection);
+            //pId = data.splitscreenplayer,
+            selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
+        $.Msg("dota_player_update_selected_unit: ", data);
+        $.Msg(selection);
         if(selection.length > 1) {
             panel.visible = false;
+            if (currentListener) GameEvents.Unsubscribe(currentListener)
         }
         else {
-            currentUnit = selection[0]
-            RequestUnitInfo(currentUnit);
+            RequestUnitInfo(selection[0]);
         }
             
     });
     GameEvents.Subscribe("dota_player_update_query_unit", function( data ) {
-        var pId = data.splitscreenplayer,
-            unitId = Players.GetQueryUnit(pId);
-        //$.Msg("dota_player_update_query_unit: ", pId, " - ", Players.GetPlayerName(pId));
-        //$.Msg(unitId);
+        var //pId = data.splitscreenplayer,
+            unitId = Players.GetQueryUnit(Game.GetLocalPlayerID());
+        $.Msg("dota_player_update_query_unit");
+        $.Msg(unitId);
         if (unitId == -1)
             currentUnit = Players.GetLocalPlayerPortraitUnit()
         else

@@ -57,6 +57,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     --gets the total cooldown after all CDR has been calculated
     function abi:GetCooldown(lvl)
         print(self:GetAbilityName() .. ":GetCooldown called")
+        print("IsServer: ", IsServer())
         local caster = self:GetCaster()
         if caster and caster.isWoeUnit then
             local ics = 0

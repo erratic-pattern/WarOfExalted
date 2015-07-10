@@ -13,7 +13,6 @@ function test_woe_damage:OnSpellStart()
 			Target = self:GetCursorTarget(),
 			iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_ATTACK_2
 		}
-
 	ProjectileManager:CreateTrackingProjectile( info )
 	EmitSoundOn( "Hero_VengefulSpirit.MagicMissile", self:GetCaster() )
 end
@@ -29,7 +28,6 @@ function test_woe_damage:OnProjectileHit( hTarget, vLocation )
             physicalDamage = dmg,
 			ability = self
 		}
-
 		ApplyWoeDamage( damage )
 		hTarget:AddNewModifier( self:GetCaster(), self, "modifier_stunned", { duration = self:GetSpecialValueFor( "stun_duration" ) } )
 	end
