@@ -45,6 +45,7 @@ woe.request = function(reqName, reqData, cb, idKey) {
 };
 
 woe.addRequestType("woe_unit_request", "woe_unit_response")
+woe.addRequestType("woe_ability_request", "woe_ability_response")
 
 woe.requestUnitInfo = function( unitId, cb ) {
     return woe.request("woe_unit_request", {id: unitId}, cb);
