@@ -1,5 +1,4 @@
-"DOTAHeroes"
-{
+"DOTAHeroes" {
 	"npc_dota_hero_ancient_apparition_warofexalts"
 	{
 		"AbilityLayout" 		"6"

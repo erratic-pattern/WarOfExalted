@@ -10,16 +10,22 @@
         }
     }
     
+    function SetTextOfClass(panel, cls, txt) {
+        panel.FindChildrenWithClassTraverse(cls).forEach(function(e) {
+            e.text = txt;
+        });
+    }
+    
     function UpdateStatsContainer(unitId) {
         unlistenCurrent()
         currentListener = woe.requestUnitInfo(unitId, function(keys) {
             var panel = $.GetContextPanel();
             if(keys.isWoeUnit) {
-                $("#WoeStatsMSLabel").text = keys.MsTotal;
-                $("#WoeStatsArmorLabel").text = Math.round(keys.ArmorTotal);
-                $("#WoeStatsMRLabel").text = Math.round(keys.MagicResistTotal);
-                $("#WoeStatsHasteLabel").text = Math.round(keys.SpellHaste);
-                $("#WoeStatsStaminaLabel").text = Math.round(keys.StaminaCurrent.toString()) + "/" + Math.round(keys.StaminaMax.toString());
+                SetTextOfClass(panel, "WoeStatsMSLabel", keys.MsTotal);
+                SetTextOfClass(panel, "WoeStatsArmorLabel",  Math.round(keys.ArmorTotal));
+                SetTextOfClass(panel, "WoeStatsMRLabel", Math.round(keys.MagicResistTotal));
+                SetTextOfClass(panel, "WoeStatsHasteLabel", Math.round(keys.SpellHaste));
+                SetTextOfClass(panel, "WoeStatsStaminaLabel", Math.round(keys.StaminaCurrent.toString()) + "/" + Math.round(keys.StaminaMax.toString()));
                 panel.visible = true;
             }
             else {

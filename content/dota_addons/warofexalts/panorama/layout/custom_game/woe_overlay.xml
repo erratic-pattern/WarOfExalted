@@ -1,0 +1,41 @@
+<root>    
+    <styles>
+        <include src="file://{resources}/styles/custom_game/stats_container.css" />
+        <include src="file://{resources}/styles/custom_game/woe_overlay.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/woe.js" />
+        <include src="file://{resources}/scripts/custom_game/stats_container.js" />
+        <include src="file://{resources}/scripts/custom_game/drag_cast.js" />
+    </scripts>
+    <Panel class="WoeOverlay" hittest="false">
+        <Panel class="WoeStatsContainer">
+            <Panel class="WoeStatsRow">
+                <Panel class="WoeStatsCol">
+                    <Label class="WoeStatsIcon" text="Sta" />
+                    <Label class="WoeStatsNumber WoeStatsStaminaLabel" />
+                </Panel>
+            </Panel>
+            <Panel class="WoeStatsRow">
+                <Panel class="WoeStatsCol">
+                    <Label class="WoeStatsIcon" text="MS"/>
+                    <Label class="WoeStatsNumber WoeStatsMSLabel" />
+                </Panel>
+                <Panel class="WoeStatsCol">
+                    <Label class="WoeStatsIcon" text="Haste" />
+                    <Label class="WoeStatsNumber WoeStatsHasteLabel" />
+                </Panel>
+            </Panel>
+            <Panel class="WoeStatsRow">
+                <Panel class="WoeStatsCol">
+                    <Label class="WoeStatsIcon" text="Armor" />
+                    <Label class="WoeStatsNumber WoeStatsArmorLabel" />
+                </Panel>
+                <Panel class="WoeStatsCol">
+                    <Label class="WoeStatsIcon" text="MR" />
+                    <Label class="WoeStatsNumber WoeStatsMRLabel" />
+                </Panel>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

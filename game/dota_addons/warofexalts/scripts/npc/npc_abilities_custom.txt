@@ -1,5 +1,4 @@
-"DOTAAbilities"
-{
+"DOTAAbilities" {
 	"example_ability"
 	{
 		"ID"							"1852"
