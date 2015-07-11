@@ -5,7 +5,8 @@ combine_kv () {
     local inDir=$2
     local outFile=$3
     if [ -d $inDir ]; then
-        echo \"$rootName\"' {' > $outFile
+        echo \"$rootName\" > $outFile
+        echo '{' >> $outFile
         sed -e 's/^/\t/g' $inDir/*.txt >> $outFile
         echo '}' >> $outFile
     else
