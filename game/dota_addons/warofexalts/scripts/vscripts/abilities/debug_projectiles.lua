@@ -73,7 +73,7 @@ function debug_projectiles:OnSpellStart()
                                                                          --todo: run tests OnProjectileHit
     print("Creating linear projectile...")
     local pId2 = ProjectileManager:CreateLinearProjectile(infoLinear)
-	EmitSoundOn("Hero_VengefulSpirit.MagicMissile", self:GetCaster())
+    EmitSoundOn("Hero_VengefulSpirit.MagicMissile", self:GetCaster())
     CheckDebugTable(infoTracking)
     CheckDebugTable(infoLinear)
     CheckDebugTable(extra)
@@ -90,9 +90,9 @@ end
 
 function debug_projectiles:OnProjectileHit_ExtraData( hTarget, vLocation, extraData )
     print("OnProjectileHit; extraData.nThinkCalls = ", extraData.nThinkCalls)
-	EmitSoundOn("Hero_VengefulSpirit.MagicMissileImpact", hTarget)
+    EmitSoundOn("Hero_VengefulSpirit.MagicMissileImpact", hTarget)
     CheckDebugTable(infoTracking)
     CheckDebugTable(infoLinear)
     CheckDebugTable(extra)
-	return true
+    return true
 end
