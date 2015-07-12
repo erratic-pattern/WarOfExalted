@@ -6,7 +6,7 @@
 	"Ability1"				"example_ability" 
 	"Ability2"				"example_ability_josh" 
 	"Ability3"				"test_woe_damage"
-	"Ability4"				"warofexalts_empty4"
+	"Ability4"				"debug_projectiles"
 	"Ability5"				"warofexalts_empty5"
 	"Ability6"				"warofexalts_empty6"
 
