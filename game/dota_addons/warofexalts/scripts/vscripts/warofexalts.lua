@@ -46,6 +46,8 @@ USE_CUSTOM_HERO_LEVELS = false          -- Should we allow heroes to have custom
 MAX_LEVEL = 50                          -- What level should we let heroes get to?
 USE_CUSTOM_XP_VALUES = false            -- Should we use custom XP values to level up heroes, or the default Dota numbers?
 
+FAKE_CLIENT_HERO = "woe_test_hero_generic"
+
 Testing = true
 OutOfWorldVector = Vector(11000, 11000, -200)
 
@@ -445,9 +447,7 @@ function WarOfExalts:OnWoeUnitRequest( keys )
             keys.ArmorBase = unit:GetPhysicalArmorBaseValue()
             keys.ArmorTotal = unit:GetPhysicalArmorValue()
             keys.SpellHaste = unit:GetSpellHaste()
-            for k,v in pairs(unit._woeKeys) do
-                keys[k] = v
-            end
+            util.mergeTable(keys, unit._woeKeys)
         end
     end
     --util.printTable(keys)
@@ -461,12 +461,10 @@ function WarOfExalts:OnWoeAbilityRequest(keys)
     if abi then
         keys.isWoeAbility = abi.isWoeAbility
         if abi.isWoeAbility then
-            for k, v in pairs(abi._woeKeys) do
-                keys[k] = v
-            end
+            util.mergeTable(keys, abi._woeKeys)
         end
     end
-    CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
+    CustomGameEventManager:Send_ServerToAllClients("woe_ability_response", keys)
 end
 
 --[[
@@ -548,8 +546,6 @@ function WarOfExalts:InitWarOfExalts()
     CustomGameEventManager:RegisterListener("woe_unit_request", Dynamic_Wrap(WarOfExalts, "OnWoeUnitRequest"));
     CustomGameEventManager:RegisterListener("woe_ability_request", Dynamic_Wrap(WarOfExalts, "OnWoeAbilityRequest"));
 
-	-- Commands can be registered for debugging purposes or as functions that can be called by the custom Scaleform UI
-	Convars:RegisterCommand( "command_example", Dynamic_Wrap(WarOfExalts, 'ExampleConsoleCommand'), "A console command example", 0 )
 
 	Convars:RegisterCommand('player_say', function(...)
 		local arg = {...}
@@ -600,7 +596,7 @@ function WarOfExalts:InitWarOfExalts()
 							local ply = PlayerResource:GetPlayer(i)
 							-- Make sure we actually found a player instance
 							if ply then
-								CreateHeroForPlayer('npc_dota_hero_axe', ply)
+								CreateHeroForPlayer(FAKE_CLIENT_HERO, ply)
 								self:OnConnectFull({
 									userid = userID,
 									index = ply:entindex()-1

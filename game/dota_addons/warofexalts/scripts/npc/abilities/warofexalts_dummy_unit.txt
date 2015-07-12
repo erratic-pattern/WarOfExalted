@@ -5,7 +5,7 @@
 "warofexalts_dummy_unit"
 {
 	"AbilityBehavior" 		"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-	"BaseClass" 					"ability_datadriven"
+	"BaseClass" 			"ability_datadriven"
 	"AbilityTextureName"            "rubick_empty1"
 	"MaxLevel"                      "1"
 

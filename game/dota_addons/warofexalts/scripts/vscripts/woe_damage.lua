@@ -48,7 +48,7 @@ function WoeDamage:constructor(keys)
         magicalDamage = 0,
         pureDamage = 0
     }
-    util.updateKeys(self.critDamage, keys.critDamage)
+    util.updateTable(self.critDamage, keys.critDamage)
       
     --ability keywords
     self.keywords = WoeKeywords(keys.keywords)

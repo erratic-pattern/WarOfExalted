@@ -25,8 +25,10 @@ function util.shallowCopy(orig)
     return copy
 end
 
-function util.updateKeys(destTab, srcTab)
-    if destTab == nil or srcTab == nil then 
+--update the first table argument's keys with values from the second table argument.
+--Note that only keys that are exist in the first table are updated.
+function util.updateTable(destTab, srcTab)
+    if srcTab == nil or util.isTableEmpty(srcTab) then 
         return
     end
     for k in pairs(destTab) do
@@ -34,6 +36,16 @@ function util.updateKeys(destTab, srcTab)
         if val ~= nil then
             destTab[k] = srcTab[k]
         end
+    end
+end
+
+--Merge all (key,value) pairs from the second table argument into the first.
+function util.mergeTable(destTab, srcTab)
+    if srcTab == nil then
+        return
+    end
+    for k,v in pairs(srcTab) do
+        destTab[k] = v
     end
 end
 
@@ -49,7 +61,7 @@ function util.vectorToString(v)
   return 'x: ' .. v.x .. ' y: ' .. v.y .. ' z: ' .. v.z
 end
 
-function table.length( t )
+function util.tableLength( t )
     if t == nil or t == {} then
         return 0
     end
@@ -58,6 +70,10 @@ function table.length( t )
         len = len + 1
     end
     return len
+end
+
+function util.isTableEmpty(t)
+    return not next(t)
 end
 
 -- Remove all abilities on a unit.

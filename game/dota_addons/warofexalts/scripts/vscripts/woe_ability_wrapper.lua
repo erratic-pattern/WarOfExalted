@@ -4,6 +4,7 @@ if WarOfExalts == nil then
 end
 
 function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
+    print(abi:GetClassname())
     if abi.isWoeAbility then return end
     --flag we can use to easily test if ability is wrapped
     abi.isWoeAbility = true
@@ -14,8 +15,12 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         SpellHasteRatio = 1,
         AttackSpeedRatio = 1,
         IsDragCast = false,
-        Keywords = "spell"
     }
+    abi._woeDatadriven = self.datadriven.abilities[abi:GetAbilityName()] or { }
+    
+    util.updateTable(abi._woeKeys, abi._woeDatadriven)
+    util.updateTable(abi._woeKeys, extraKeys)
+    abi._woeKeys.Keywords = WoeKeywords(abi._woeKeys.Keywords)
     
     function abi:Keywords()
         return self._woeKeys.Keywords
@@ -78,8 +83,4 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
             return self:GetBaseCooldown(lvl)
         end
     end
-    
-    util.updateKeys(abi._woeKeys, self.datadriven.abilities[abi:GetAbilityName()])
-    util.updateKeys(abi._woeKeys, extraKeys)
-    abi._woeKeys.Keywords = WoeKeywords(abi._woeKeys.Keywords)
 end
