@@ -609,6 +609,11 @@ function WarOfExalts:InitWarOfExalts()
 				end})
 		end
 	end, 'Connects and assigns fake Players.', 0)
+    
+    Convars:RegisterCommand("run_lua", function(...)
+        ex = select(2, ...)
+        loadstring(ex)() 
+    end, "Execute lua", 0 )
 
 	-- Change random seed
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')
