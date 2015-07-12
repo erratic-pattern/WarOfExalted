@@ -1,0 +1,65 @@
+"fill_modifier_ui"
+{
+    "AbilityType"           "DOTA_ABILITY_TYPE_HIDDEN"
+    "AbilityBehavior" 		"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+    "BaseClass"             "ability_datadriven"
+    "MaxLevel"              "1"
+    
+    "Modifiers"
+    {
+        "modifier_dummy_fill_ui"
+        {
+            "Attributes"    "MODIFIER_ATTRIBUTE_MULTIPLE | MODIFIER_ATTRIBUTE_PERMANENT | MODIFIER_ATTRIBUTE_IGNORE_INVULNERABLE"      
+        }
+    
+    }
+    
+    "OnCreated"
+    {
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_dummy_fill_ui"
+            "Target"        "CASTER"
+        }
+    }
+}
