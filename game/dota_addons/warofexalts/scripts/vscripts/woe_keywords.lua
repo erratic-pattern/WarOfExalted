@@ -20,6 +20,7 @@ function WoeKeywords:Remove(kWords)
     self:_SetArray(kWords, nil)
 end
 
+
 function WoeKeywords:RemoveAll()
     for kWords, _ in pairs(self.kw) do
         self.kw[kWords] = nil
@@ -104,12 +105,12 @@ end
 --Union of multiple keyword collections
 function WoeKeywords.Union(...)
     local out = WoeKeywords()
-    return out:UnionInPlace(unpack(args))
+    return out:UnionInPlace(...)
 end
 
 --In-place union of keyword collections. First collection in arguments list is updated in-place with keywords from subsequent collections.
 function WoeKeywords:UnionInPlace(...)
-    for _, kWords in ipairs(args) do
+    for _, kWords in ipairs(arg) do
         for kWord, val in pairs(kWords.kw) do
             if val then
                 self.kw[kWord] = true

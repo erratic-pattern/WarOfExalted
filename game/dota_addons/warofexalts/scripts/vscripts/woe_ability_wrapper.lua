@@ -3,11 +3,27 @@ if WarOfExalts == nil then
 	WarOfExalts = class({})
 end
 
-function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
-    print(abi:GetClassname())
-    if abi.isWoeAbility then return end
-    --flag we can use to easily test if ability is wrapped
-    abi.isWoeAbility = true
+--all behavior flags that specify a targeting behavior
+ABILITY_TARGETING_BEHAVIOR = bit.bor(
+    DOTA_ABILITY_BEHAVIOR_PASSIVE,
+    DOTA_ABILITY_BEHAVIOR_AOE,
+    DOTA_ABILITY_BEHAVIOR_NO_TARGET,
+    DOTA_ABILITY_BEHAVIOR_POINT
+)
+
+function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)  
+    if abi.isWoeAbility then return end -- exit if we've already wrapped
+    if not extraKeys then
+        extraKeys = { }
+    end
+    local WarOfExalts = self
+    
+    local abiName = abi:GetAbilityName()
+    local isLuaAbility = "ability_lua" == abi:GetClassname()
+    if not isLuaAbility then
+        print("[WAROFEXALTS] warning: " .. abiName .. " is not a Lua ability. Can't implement all WoE functionality.")
+    end
+    abi.isWoeAbility = true --flag we can use to easily test if ability is wrapped
     
     --WoE ability instance variables
     abi._woeKeys = {
@@ -15,15 +31,126 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         SpellHasteRatio = 1,
         AttackSpeedRatio = 1,
         IsDragCast = false,
+        AutoDeriveKeywords = true -- whether or not we derive keywords from dota ability behaviors
     }
-    abi._woeDatadriven = self.datadriven.abilities[abi:GetAbilityName()] or { }
     
+    --the table of custom data parsed from KV files
+    abi._woeDatadriven = WarOfExalts.datadriven.abilities[abiName] or { }
+    
+    --update our instance variables from KV files and any extra keys that were given
     util.updateTable(abi._woeKeys, abi._woeDatadriven)
     util.updateTable(abi._woeKeys, extraKeys)
-    abi._woeKeys.Keywords = WoeKeywords(abi._woeKeys.Keywords)
+    
+    abi._woeKeys.Keywords = WoeKeywords(extraKeys.Keywords or abi._woeDatadriven.Keywords) --parse keyword string
     
     function abi:Keywords()
-        return self._woeKeys.Keywords
+        local keys = self._woeKeys.Keywords
+        if not self._woeKeys.AutoDeriveKeywords then
+            return keys
+        end
+        local b = self:GetBehavior()
+        if self._cachedBehavior == b then --check our cached behaviors. if new behaviors match, return early
+            return keys
+        end
+        self._cachedBehavior = b
+        local inFlags = function(...) --bitfield helper function
+            return bit.band(b, ...) ~= 0
+        end
+        --auto-derive keywords from ability behavior flags
+        if inFlags(DOTA_ABILITY_BEHAVIOR_AOE) then
+            keys:Add("area")
+        end
+        if inFlags(DOTA_ABILITY_BEHAVIOR_PASSIVE) then
+            keys:Add("passive")
+        end
+        if inFlags(DOTA_ABILITY_BEHAVIOR_ATTACK) and not keys:Has("spell") then
+            keys:Add("attack")
+        end
+        --[[if inFlags(DOTA_ABILITY_BEHAVIOR_AURA) then
+            keys.Add("aura")
+        end]]
+        --[[if inFlags(DOTA_ABILITY_BEHAVIOR_CHANNELLED) then
+            keys.Add("channel")
+        end]]
+        
+        return keys
+    end
+    
+    abi._GetBehavior = abi.GetBehavior --old GetBehavior
+    function abi:GetBehavior() 
+        local b = self:_GetBehavior()
+        local keys = self._woeKeys.Keywords --note: calling self:Keywords() will recurse infinitely
+        local addFlags = function(...) --bitfield helper function
+            b = bit.bor(b, ...)
+        end
+        if keys:Has("movement") then
+            addFlags(DOTA_BEHAVIOR_ROOT_DISABLES)
+        end
+        if keys:Has("passive") then
+            addFlags(DOTA_ABILITY_BEHAVIOR_PASSIVE)
+        end
+        return b
+    end
+    
+    --check dota behavior flags
+    function abi:HasBehavior(...)
+        return bit.band(self:GetBehavior(), ...) ~= 0
+    end
+    
+    --override CastFilterResult
+    abi._CastFilterResult = abi.CastFilterResult
+    function abi:CastFilterResult()
+        return self:CastFilterSpendStamina(self._CastFilterResult) 
+    end
+    
+    --override CastFilterResultLocation
+    abi._CastFilterResultLocation = abi.CastFilterResultLocation
+    function abi:CastFilterResultLocation(loc)
+        return self:CastFilterSpendStamina(self._CastFilterResultLocation, loc)
+    end
+    
+    --override CastFilterResultTarget
+    abi._CastFilterResultTarget = abi.CastFilterResultTarget
+    function abi:CastFilterResultTarget(target)
+        return self:CastFilterSpendStamina(self._CastFilterResultTarget, target)
+    end
+    
+    --helper function for CastFilters
+    function abi:CastFilterSpendStamina(cb, ...)
+        if not self:SpendStaminaCost() then --insufficient stamina
+            return UF_FAIL_CUSTOM
+        elseif cb then
+            return cb(self, ...)
+        end
+        return UF_SUCCESS
+    end
+     
+    --override GetCustomCastError
+    abi._GetCustomCastError = abi.GetCustomCastError
+    function abi:GetCustomCastError()
+        return self:GetCustomCastErrorBase(self._GetCustomCastError) 
+    end
+    
+    --override GetCustomCastErrorLocation
+    abi._GetCustomCastErrorLocation = abi.GetCustomCastErrorLocation
+    function abi:GetCustomCastErrorLocation(loc)
+        return self:GetCustomCastErrorBase(self._GetCustomCastErrorLocation, loc)
+    end
+    
+    --override GetCustomCastErrorTarget
+    abi._GetCustomCastErrorTarget = abi.GetCustomCastErrorTarget
+    function abi:GetCustomCastErrorTarget(target)
+        return self:GetCustomCastErrorBase(self._GetCustomCastErrorTarget, target)
+    end
+    
+    --helper function for GetCustomCastError
+    function abi:GetCustomCastErrorBase(cb, ...)
+        if not self:CanSpendStaminaCost() then
+            return "#woe_cast_error_insufficient_stamina"
+        elseif cb then
+            return cb(self, ...)
+        end
+        return ""
     end
     
     function abi:GetStaminaCost()
@@ -35,9 +162,17 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     end
     
     function abi:SpendStaminaCost()
-        local caster = self:GetCaster()
+        caster = caster or self:GetCaster()
         if caster and caster.isWoeUnit then
             return caster:SpendStamina(self:GetStaminaCost())
+        end
+        return true
+    end
+    
+    function abi:CanSpendStaminaCost()
+        caster = self:getCaster()
+        if caster and caster.isWoeUnit then
+            return caster:CanSpendStamina(self:GetStaminaCost())
         end
         return true
     end
@@ -58,24 +193,28 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         self._woeKeys.AttackSpeedRatio = v
     end
     
-    --capture base classes GetCooldown and GetCooldownTime method before we override
+    --GetCooldown that existed before wrapper was applied
     abi.GetBaseCooldown = abi.GetCooldown
+    
     --gets the total cooldown after all CDR has been calculated
     function abi:GetCooldown(lvl)
         print(self:GetAbilityName() .. ":GetCooldown called")
-        print("IsServer: ", IsServer())
+        if not isLuaAbility then -- remove this if overriding on ability_datadriven suddenly works
+            return self:GetBaseCooldown(lvl)
+        end
         local caster = self:GetCaster()
         if caster and caster.isWoeUnit then
             local ics = 0
-            if self:Keywords():Has("attack") then
+            local keys = self:Keywords()
+            if keys:Has("attack") then
                 ics = caster:GetIncreasedAttackSpeed() * self:GetAttackSpeedRatio()
                 print("ias: ", ics)
-            elseif self:Keywords():Has("spell") then
+            elseif keys:Has("spell") then
                 ics = caster:GetSpellHaste() * self:GetSpellHasteRatio()
                 print("haste: ", ics)
             end
             local baseCd = self:GetBaseCooldown(lvl)
-            print("base cooldown: ", self:GetBaseCooldown(lvl))
+            print("base cooldown: ", baseCd)
             local cdOut =  baseCd * (1 - caster:GetCdrPercent()) / ((100 + ics) * 0.01)
             print("reduced cooldown: ", cdOut)
             return cdOut
@@ -84,3 +223,4 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         end
     end
 end
+

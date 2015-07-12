@@ -220,6 +220,16 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         return amountDrained
     end
     
+    function unit:CanSpendStamina(v)
+        if v <= 0 then
+            return true
+        elseif self:GetStamina() - v < 0 then
+            return false
+        else
+            return true
+        end  
+    end
+    
     function unit:GetStaminaRegenBase()
         return self._woeKeys.StaminaRegenBase
     end
@@ -317,7 +327,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         for k, modifier in pairs(self:FindAllModifiers()) do
             local f = modifier[fName]
             if f then
-                f(modifier, unpack(args))
+                f(modifier, ...)
             end
         end
     end

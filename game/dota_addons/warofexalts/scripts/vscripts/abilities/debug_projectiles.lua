@@ -85,7 +85,9 @@ function debug_projectiles:OnProjectileThink_ExtraData(vLocation, extraData)
     CheckDebugTable(infoLinear)
     CheckDebugTable(extra)
     CheckDebugTable(extraData)
-    extraData.nThinkCalls = extraData.nThinkCalls + 1
+    if extraData.nThinkCalls then
+        extraData.nThinkCalls = extraData.nThinkCalls + 1
+    end
 end
 
 function debug_projectiles:OnProjectileHit_ExtraData( hTarget, vLocation, extraData )

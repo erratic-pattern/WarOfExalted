@@ -57,7 +57,7 @@ end
 --Combine multiple damage instances into a new one.
 function WoeDamage.Combine(...)
     local outDmg = WoeDamage()
-    for _, inDmg in pairs(args) do
+    for _, inDmg in pairs(arg) do
         outDmg.victim = outDmg.victim or inDmg.victim
         outDmg.attacker = outDmg.attacker or inDmg.attacker
         outDmg.ability = outDmg.ability or inDmg.ability
