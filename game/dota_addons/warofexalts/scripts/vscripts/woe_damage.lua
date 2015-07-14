@@ -15,10 +15,14 @@
 --      critDamage - a table containing optional physicalDamage, magicalDamage, and pureDamage keys
 --                   representing damage from critical strikes.
 --  Optional parameters:
---      keywords - A list of keywords associated with this damage. Can be specified as either
---                 an array of strings or a string of words delimited by spaces
---      ability - ability source of the damage (optional)
---      dotaDamageFlags - passed directly to damage_flags parameter of ApplyDamage (optional)   
+--      keywords     - A list of keywords associated with this damage. Can be specified as either
+--                     an array of strings or a string of words delimited by spaces
+--      ability      - ability source of the damage (optional)
+--      damage_flags - passed directly to damage_flags parameter of ApplyDamage
+--
+--  WoeApplyDamage also supports the damage and damage_flags for compatibility with code that uses ApplyDamage, however only
+--  physical, magical, and pure damage types are supported. This may change in the future. For new code that doesn't need to be
+--  compatible with ApplyDamage, using damage and damage_types is discouraged.
 function ApplyWoeDamage(dmgArgs)
     local dmg = WoeDamage(dmgArgs)
     dmg:Apply()
@@ -46,7 +50,7 @@ function WoeDamage:constructor(keys)
     if keys.damage then
         if keys.damage_type == DAMAGE_TYPE_PHYSICAL then
             self.physicalDamage = self.physicalDamage + keys.damage
-        elseif self.damage_type = DAMAGE_TYPE_MAGICAL then
+        elseif self.damage_type == DAMAGE_TYPE_MAGICAL then
             self.magicalDamage = self.magicalDamage + keys.damage
         elseif self.damage_type == DAMAGE_TYPE_PURE then
             self.pureDamage = self.pureDamage + keys.damage
