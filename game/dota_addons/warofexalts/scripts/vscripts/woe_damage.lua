@@ -20,7 +20,7 @@
 --      ability      - ability source of the damage (optional)
 --      damage_flags - passed directly to damage_flags parameter of ApplyDamage
 --
---  WoeApplyDamage also supports the damage and damage_flags for compatibility with code that uses ApplyDamage, however only
+--  ApplyWoeDamage also supports the damage and damage_flags for compatibility with code that uses ApplyDamage, however only
 --  physical, magical, and pure damage types are supported. This may change in the future. For new code that doesn't need to be
 --  compatible with ApplyDamage, using damage and damage_types is discouraged.
 function ApplyWoeDamage(dmgArgs)
