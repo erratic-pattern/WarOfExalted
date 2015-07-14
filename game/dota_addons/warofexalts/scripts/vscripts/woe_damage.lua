@@ -54,6 +54,7 @@ function WoeDamage:constructor(keys)
             print("Warning: damage key used but no damage_type given. Key was ignored")
         else
             print("WoeDamage doesn't support damage_type " .. keys.damage_type)
+        end
     end
     
     --critical damage
