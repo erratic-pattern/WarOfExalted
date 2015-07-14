@@ -35,12 +35,26 @@ function WoeDamage:constructor(keys)
     self.victim = keys.victim
     self.attacker = keys.attacker
     self.ability = keys.ability
-    self.dotaDamageFlags = util.normalizeBitFlags(keys.dotaDamageFlags)
+    self.dotaDamageFlags = util.normalizeBitFlags(keys.damage_flags)
     
     --damage types and their values
     self.physicalDamage = keys.physicalDamage or 0
     self.magicalDamage = keys.magicalDamage or 0
     self.pureDamage = keys.pureDamage or 0
+    
+    --Compatability with ApplyDamage
+    if keys.damage then
+        if keys.damage_type == DAMAGE_TYPE_PHYSICAL then
+            self.physicalDamage = self.physicalDamage + keys.damage
+        elseif self.damage_type = DAMAGE_TYPE_MAGICAL then
+            self.magicalDamage = self.magicalDamage + keys.damage
+        elseif self.damage_type == DAMAGE_TYPE_PURE then
+            self.pureDamage = self.pureDamage + keys.damage
+        elseif not keys.damage_type then
+            print("Warning: damage key used but no damage_type given. Key was ignored")
+        else
+            print("WoeDamage doesn't support damage_type " .. keys.damage_type)
+    end
     
     --critical damage
     self.critDamage = {
