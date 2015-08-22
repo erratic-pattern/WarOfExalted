@@ -13,9 +13,9 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     unit.isWoeUnit = true
     --Initialize WoE instance variables
     unit._woeKeys = {
-        SpellHasteBase = 0,
-        SpellHasteBonus = 0,
-        SpellHasteModifier = 0,
+        SpellSpeedBase = 0,
+        SpellSpeedBonus = 0,
+        SpellSpeedModifier = 0,
         MagicResistBase = 0,
         MagicResistBonus = 0,
         MagicResistModifier = 0,
@@ -75,34 +75,34 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         self:SetBaseMagicalResistanceValue(0.06 * mr / (1 + 0.06 * mr))
     end
     
-    --Get spell haste rating
-    function unit:GetSpellHasteBase()
-        return self._woeKeys.SpellHasteBase
+    --Get spell SpellSpeed rating
+    function unit:GetSpellSpeedBase()
+        return self._woeKeys.SpellSpeedBase
     end
     
-    --Set spell haste rating
-    function unit:SetSpellHasteBase(v)
-        self._woeKeys.SpellHasteBase = v
+    --Set spell SpellSpeed rating
+    function unit:SetSpellSpeedBase(v)
+        self._woeKeys.SpellSpeedBase = v
     end
     
-    function unit:GetSpellHasteBonus()
-        return self._woeKeys.SpellHasteBonus
+    function unit:GetSpellSpeedBonus()
+        return self._woeKeys.SpellSpeedBonus
     end
     
-    function unit:SetSpellHasteBonus(v)
-        self._woeKeys.SpellHasteBonus = v
+    function unit:SetSpellSpeedBonus(v)
+        self._woeKeys.SpellSpeedBonus = v
     end
     
-    function unit:GetSpellHasteModifier()
-        return self._woeKeys.SpellHasteModifier
+    function unit:GetSpellSpeedModifier()
+        return self._woeKeys.SpellSpeedModifier
     end
     
-    function unit:SetSpellHaste(v)
-        self._woeKeys.SpellHasteModifier = v
+    function unit:SetSpellSpeed(v)
+        self._woeKeys.SpellSpeedModifier = v
     end
     
-    function unit:GetSpellHaste()
-        return (1 + self:GetSpellHasteModifier()) * (self:GetSpellHasteBase() + self:GetSpellHasteBonus())
+    function unit:GetSpellSpeed()
+        return (1 + self:GetSpellSpeedModifier()) * (self:GetSpellSpeedBase() + self:GetSpellSpeedBonus())
     end
     
     function unit:GetCdrPercent()

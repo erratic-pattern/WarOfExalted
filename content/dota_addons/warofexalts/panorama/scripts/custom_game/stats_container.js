@@ -21,10 +21,10 @@
         currentListener = woe.requestUnitInfo(unitId, function(keys) {
             var panel = $.GetContextPanel();
             if(keys.isWoeUnit) {
-                SetTextOfClass(panel, "WoeStatsMSLabel", keys.MsTotal);
+                SetTextOfClass(panel, "WoeStatsMoveSpeedLabel", keys.MsTotal);
                 SetTextOfClass(panel, "WoeStatsArmorLabel",  Math.round(keys.ArmorTotal));
-                SetTextOfClass(panel, "WoeStatsMRLabel", Math.round(keys.MagicResistTotal));
-                SetTextOfClass(panel, "WoeStatsHasteLabel", Math.round(keys.SpellHaste));
+                SetTextOfClass(panel, "WoeStatsMagicResistLabel", Math.round(keys.MagicResistTotal));
+                SetTextOfClass(panel, "WoeStatsSpellSpeedLabel", Math.round(keys.SpellSpeed));
                 SetTextOfClass(panel, "WoeStatsStaminaLabel", Math.round(keys.StaminaCurrent.toString()) + "/" + Math.round(keys.StaminaMax.toString()));
                 panel.visible = true;
             }

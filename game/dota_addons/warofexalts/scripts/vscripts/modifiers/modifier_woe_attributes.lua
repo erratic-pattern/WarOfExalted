@@ -1,11 +1,11 @@
 --Modifier used to implement stat bonuses from attributes
 modifier_woe_attributes = class({})
 
-MINUS_ARMOR_PER_AGI = 0.14 -- amount of base armor reduced per point of agility
-HASTE_PER_AGI = 0.3        -- amount of spell haste increased per point of agility
+MINUS_ARMOR_PER_AGI = 0.14 -- amount of base armor reduced per point of agilit
+SS_PER_AGI = 0.3           -- amount of spell speed increased per point of agility
 ARMOR_PER_STR = 0.07       -- amount of base armor increased per point of strength
 MR_PER_INT = 0.07          -- amount of base magic resist increased per point of intelligence
-STAM_PER_AGI = 5          -- amount of max stamina increased per point of agi
+STAM_PER_AGI = 5           -- amount of max stamina increased per point of agi
 
 
 function modifier_woe_attributes:IsHidden(kv)
@@ -50,7 +50,7 @@ function modifier_woe_attributes:OnIntervalThink()
           
         unit:SetPhysicalArmorBaseValue(unit:GetPhysicalArmorBaseValue() - diffAgi*MINUS_ARMOR_PER_AGI + diffStr*ARMOR_PER_STR)
         unit:SetWoeMagicResistBase(unit:GetWoeMagicResistBase() + MR_PER_INT * diffInt)
-        unit:SetSpellHasteBase(unit:GetSpellHaste() + HASTE_PER_AGI * diffAgi)
+        unit:SetSpellSpeedBase(unit:GetSpellSpeed() + SS_PER_AGI * diffAgi)
         unit:SetMaxStamina(unit:GetMaxStamina() + STAM_PER_AGI * diffAgi)
         
         self.lastStr = unit:GetStrength()

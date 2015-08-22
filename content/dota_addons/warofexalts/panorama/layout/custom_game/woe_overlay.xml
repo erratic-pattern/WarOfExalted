@@ -12,28 +12,27 @@
         <Panel class="WoeStatsContainer">
             <Panel class="WoeStatsRow">
                 <Panel class="WoeStatsCol">
-                    <Label class="WoeStatsIcon" text="Sta" />
-                    <Label class="WoeStatsNumber WoeStatsStaminaLabel" />
-                </Panel>
-            </Panel>
-            <Panel class="WoeStatsRow">
+                    <Image src="file://{resources}/images/boots.png" class="WoeStatsIcon" />
+                    <Label class="WoeStatsNumber WoeStatsMoveSpeedLabel" />
                 <Panel class="WoeStatsCol">
-                    <Label class="WoeStatsIcon" text="MS"/>
-                    <Label class="WoeStatsNumber WoeStatsMSLabel" />
-                </Panel>
-                <Panel class="WoeStatsCol">
-                    <Label class="WoeStatsIcon" text="Haste" />
-                    <Label class="WoeStatsNumber WoeStatsHasteLabel" />
-                </Panel>
-            </Panel>
-            <Panel class="WoeStatsRow">
-                <Panel class="WoeStatsCol">
-                    <Label class="WoeStatsIcon" text="Armor" />
+                    <Image src="file://{resources}/images/armor.png" class="WoeStatsIcon" />
                     <Label class="WoeStatsNumber WoeStatsArmorLabel" />
                 </Panel>
                 <Panel class="WoeStatsCol">
-                    <Label class="WoeStatsIcon" text="MR" />
-                    <Label class="WoeStatsNumber WoeStatsMRLabel" />
+                    <Image src="file://{resources}/images/MR.png" class="WoeStatsIcon" />
+                    <Label class="WoeStatsNumber WoeStatsMagicResistLabel" />
+                    
+                </Panel>
+                </Panel>
+            </Panel>
+            <Panel class="WoeStatsRow">
+                <Panel class="WoeStatsCol">
+                    <Image src="file://{resources}/images/AS2.png" class="WoeStatsIcon" />
+                    <Label class="WoeStatsNumber WoeStatsAttackSpeedLabel" />
+                </Panel>
+                <Panel class="WoeStatsCol">
+                    <Image src="file://{resources}/images/SS2.png" class="WoeStatsIcon" />
+                    <Label class="WoeStatsNumber WoeStatsSpellSpeedLabel" />
                 </Panel>
             </Panel>
         </Panel>

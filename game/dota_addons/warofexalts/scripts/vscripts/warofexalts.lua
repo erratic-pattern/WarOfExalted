@@ -446,7 +446,7 @@ function WarOfExalts:OnWoeUnitRequest( keys )
             keys.MagicResistTotal = unit:GetWoeMagicResist()
             keys.ArmorBase = unit:GetPhysicalArmorBaseValue()
             keys.ArmorTotal = unit:GetPhysicalArmorValue()
-            keys.SpellHaste = unit:GetSpellHaste()
+            keys.SpellSpeed = unit:GetSpellSpeed()
             util.mergeTable(keys, unit._woeKeys)
         end
     end

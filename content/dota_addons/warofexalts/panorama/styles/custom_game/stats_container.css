@@ -2,10 +2,10 @@
 {
     horizontal-align: left;
     vertical-align: bottom;
-    width: 111px;
+    width: 106px;
     //height: 115px; //this height will cover armor/MS/damage display
     height: 80px; //this height will cover armor/MS but not damage
-    margin-left: 671px;
+    margin-left: 672px;
     margin-bottom: 5px;
     
     flow-children: down;
@@ -21,14 +21,16 @@
 
 .WoeStatsRow
 {
-    height: 25px;
+    //height: 25px;
+    width: fill-parent-flow(1.0);
     padding-top: 5px;
     flow-children: right;
+    
 }
 
 .WoeStatsCol
 {
-    width: 55px;
-    padding-left: 3px;
+    //width: 55px;
     flow-children: right;
+    width: fill-parent-flow(1.0);
 }

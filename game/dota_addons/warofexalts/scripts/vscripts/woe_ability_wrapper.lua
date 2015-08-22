@@ -28,7 +28,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     --WoE ability instance variables
     abi._woeKeys = {
         StaminaCost = 0,
-        SpellHasteRatio = 1,
+        SpellSpeedRatio = 1,
         AttackSpeedRatio = 1,
         IsDragCast = false,
         AutoDeriveKeywords = true -- whether or not we derive keywords from dota ability behaviors
@@ -177,12 +177,12 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         return true
     end
     
-    function abi:GetSpellHasteRatio()
-        return self._woeKeys.SpellHasteRatio
+    function abi:GetSpellSpeedRatio()
+        return self._woeKeys.SpellSpeedRatio
     end
     
-    function abi:SetSpellHasteRatio(v)
-        self._woeKeys.SpellHasteRatio = v
+    function abi:SetSpellSpeedRatio(v)
+        self._woeKeys.SpellSpeedRatio = v
     end
     
     function abi:GetAttackSpeedRatio()
@@ -210,8 +210,8 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
                 ics = caster:GetIncreasedAttackSpeed() * self:GetAttackSpeedRatio()
                 print("ias: ", ics)
             elseif keys:Has("spell") then
-                ics = caster:GetSpellHaste() * self:GetSpellHasteRatio()
-                print("haste: ", ics)
+                ics = caster:GetSpellSpeed() * self:GetSpellSpeedRatio()
+                print("SpellSpeed: ", ics)
             end
             local baseCd = self:GetBaseCooldown(lvl)
             print("base cooldown: ", baseCd)
