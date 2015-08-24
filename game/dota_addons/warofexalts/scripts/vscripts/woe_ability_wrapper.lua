@@ -30,7 +30,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         StaminaCost = 0,
         SpellSpeedRatio = 1,
         AttackSpeedRatio = 1,
-        IsDragCast = false,
+        IsVectorTarget = false,
         AutoDeriveKeywords = true -- whether or not we derive keywords from dota ability behaviors
     }
     

@@ -3,8 +3,8 @@
     
     var currentUnit;
     
-    function UpdateDragCastBinds(unit) {
-        $.Msg("UpdateDragCastBinds: ", Entities.GetUnitName(unit))
+    function UpdateVectorTargetBinds(unit) {
+        $.Msg("UpdateVectorTargetBinds: ", Entities.GetUnitName(unit))
         currentUnit = unit
         if(Entities.HasCastableAbilities(unit)) {
             var nAbilities = Entities.GetAbilityCount(unit);
@@ -23,11 +23,12 @@
     GameEvents.Subscribe("dota_player_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
         if (selection.length > 0) {
-            UpdateDragCastBinds(selection[0])
+            UpdateVectorTargetBinds(selection[0])
         }
     });
     
     GameEvents.Subscribe("keybind_changed", function(keys) {
-        UpdateDragCastBinds(currentUnit);
+        UpdateVectorTargetBinds(currentUnit);
+        //this probably recurses
     });
 })()

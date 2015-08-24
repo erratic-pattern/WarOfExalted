@@ -6,7 +6,7 @@
     <scripts>
         <include src="file://{resources}/scripts/custom_game/woe.js" />
         <include src="file://{resources}/scripts/custom_game/stats_container.js" />
-        <include src="file://{resources}/scripts/custom_game/drag_cast.js" />
+        <include src="file://{resources}/scripts/custom_game/vector_target.js" />
     </scripts>
     <Panel class="WoeOverlay" hittest="false">
         <Panel class="WoeStatsContainer">
