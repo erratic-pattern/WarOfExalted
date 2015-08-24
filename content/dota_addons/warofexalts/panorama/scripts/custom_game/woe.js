@@ -51,6 +51,10 @@ woe.requestUnitInfo = function( unitId, cb ) {
     return woe.request("woe_unit_request", {id: unitId}, cb);
 };
 
+woe.requestAbilityInfo = function( abiId, cb) {
+    return woe.request("woe_ability_request", {id: abiId}, cb);
+};
+
 woe.uuid = function() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
