@@ -12,3 +12,4 @@ content/dota_addons/*
 game/dota_addons/*
 !content/dota_addons/warofexalts/
 !game/dota_addons/warofexalts/
+game/dota_addons/warofexalts/tools_asset_info.bin
