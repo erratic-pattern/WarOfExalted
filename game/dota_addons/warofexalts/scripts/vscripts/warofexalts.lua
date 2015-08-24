@@ -671,10 +671,12 @@ function WarOfExalts:LoadHeroDatadrivenFiles()
 end
 
 function WarOfExalts:_LoadDatadrivenFilesHelper(keyName, fileName)
+    print("[WAROFEXALTS] Loading WoE KV file:", fileName)
     local keys = LoadKeyValues(fileName)
     if keys then
         self.datadriven[keyName] = keys
     elseif not self.datadriven[keyName] then
+        print("[WAROFEXALTS] " .. fileName .. " not found")
         self.datadriven[keyName] = {}
     end
 end

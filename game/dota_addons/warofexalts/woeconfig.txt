@@ -1,7 +1,10 @@
 "WoeConfig" 
 {
-	"UnitFile"	  "npc/woe_units.txt"
-	"HeroFile"	  "npc/woe_heroes.txt"
-	"AbilityFile" "npc/woe_abilities.txt"
-	"ItemFile"	  "npc/woe_items.txt"
+    //these fields are used to find WoE-specific KV files.
+    //for convenience we use the npc_*_custom.txt files used by Valve.
+    //if you want standalone WoE KV files, point these fields to new files
+	"UnitFile"	  "scripts/npc/npc_units_custom.txt"
+	"HeroFile"	  "scripts/npc/npc_heroes_custom.txt"
+	"AbilityFile" "scripts/npc/npc_abilities_custom.txt"
+	"ItemFile"	  "scripts/npc/npc_items_custom.txt"
 }
