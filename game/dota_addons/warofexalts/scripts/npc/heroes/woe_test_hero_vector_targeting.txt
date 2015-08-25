@@ -1,14 +1,9 @@
-"woe_test_hero_generic"
+"woe_test_hero_vector_targeting"
 {
 	"AbilityLayout" 		"6"
-	"override_hero"			"npc_dota_hero_ancient_apparition"
+	"override_hero"			"npc_dota_hero_rubick"
 	"SoundSet"				"0"	
-	"Ability1"				"example_ability" 
-	"Ability2"				"example_ability_josh" 
-	"Ability3"				"test_woe_damage"
-	"Ability4"				"debug_projectiles"
-	"Ability5"				"warofexalts_empty5"
-	"Ability6"				"warofexalts_empty6"
+	"Ability1"				"test_vector_targeting"
 
 	"ArmorPhysical"				"0"									// Physical protection.
 	"MagicalResistance"		    "0"									// Magical protection (percentage).

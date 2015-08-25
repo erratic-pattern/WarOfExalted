@@ -3,32 +3,48 @@
     
     var currentUnit;
     
-    function UpdateVectorTargetBinds(unit) {
-        $.Msg("UpdateVectorTargetBinds: ", Entities.GetUnitName(unit))
-        currentUnit = unit
-        if(Entities.HasCastableAbilities(unit)) {
-            var nAbilities = Entities.GetAbilityCount(unit);
-            for(var i = 0; i < nAbilities; i++) {
-                var abi = Entities.GetAbility(unit, i);
-                var name = Abilities.GetAbilityName(abi);
-                var key = Abilities.GetKeybind(abi);
-                $.Msg(name, ": ", key);
-                woe.requestAbilityInfo(abi, function(info) {
-                    if(info.IsVectorTarget) {
-                        BindVectorTargeting(info, key);
-                    }
-                });
-            }
-        }
-        else {
-            //unbind keys
+    //iterate over abilities of given unit
+    function EachAbility(unit, cb)  {
+        var nAbilities = Entities.GetAbilityCount(unit);
+        for(var i = 0; i < nAbilities; i++) {
+            cb(Entities.GetAbility(unit, i));
         }
     }
     
-    function BindVectorTargeting(info, key) {
-        $.RegisterKeyBind(key, function() {
+    //Checks a unit's abilities for vector targeting and updates client keybinds with
+    //vector targeting handlers
+    function UpdateVectorTargetBinds(unit) {
+        $.Msg("UpdateVectorTargetBinds: ", Entities.GetUnitName(unit))     
+        if(currentUnit) CancelAllAbilityRequests(currentUnit) //cancel any unfinished ability requests from previous calls
+        currentUnit = unit 
+        if(Entities.HasCastableAbilities(unit)) {
+            EachAbility(unit, function(abi) {
+                if (abi == -1) return;
+                woe.requestAbilityInfo(abi, function(info) {
+                    if(info.IsVectorTarget) {
+                        BindVectorTargeting(Abilities.GetKeybind(abi), info);
+                    }
+                });
+            })
+        }
+        else { //not castable abilities, unbind all keys
+        }
+    }
+    
+    //Bind a vector targeting handler to the given key for the given ability (represented as a woe_ability_response object).
+    function BindVectorTargeting(key, info) {
+        $.Msg("Binding vector targeting handler for ", Abilities.GetAbilityName(info.id), " at ", key);
+        //TODO: figure out correct input context parameter for RegisterKeyBind
+        $.RegisterKeyBind("", key, function() {
             $.Msg("Vector target keybind called: ", key)
             $.Msg(arguments);
+        });
+    }
+    
+    //cancel all incomplete ability info requests for given unit
+    function CancelAllAbilityRequests(unit) {
+        EachAbility(unit, function(abi) {
+            woe.cancelRequestsById("woe_ability_request", abi);
         });
     }
     

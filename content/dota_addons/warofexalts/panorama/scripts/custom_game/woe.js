@@ -19,13 +19,13 @@ woe.request = function(reqName, reqData, cb, idKey) {
     var reqType = woe.listenTable[reqName]
     var resName = reqType.responseName
     var listeners = reqType.listeners[reqId]
-    if (!listeners) {
+    if (listeners === undefined) {
         listeners = reqType.listeners[reqId] = []
     }
     if (listeners.length == 0) {
         var hListener = GameEvents.Subscribe(resName, function(resData) {
-            $.Msg(resName, " received: ", resData)
             if(resData[idKey] == reqId) {
+                $.Msg(resName, " received: ", resData)
                 GameEvents.Unsubscribe(hListener)
                 reqType.listeners[reqId] = []
                 for(var i in listeners) {
@@ -39,10 +39,15 @@ woe.request = function(reqName, reqData, cb, idKey) {
     listeners.push(cb)
     return {
         unlisten: function() {
-            listeners.splice(listeners.indexOf(cb), 1)
+            var i = listeners.indexOf(cb);
+            if (i > -1) listeners.splice(i, 1);
         }
     };
 };
+
+woe.cancelRequestsById = function(reqName, reqId) {
+    woe.listenTable[reqName].listeners[reqId] = [];
+}
 
 woe.addRequestType("woe_unit_request", "woe_unit_response")
 woe.addRequestType("woe_ability_request", "woe_ability_response")
