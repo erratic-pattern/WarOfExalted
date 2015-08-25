@@ -11,26 +11,25 @@
     <Panel class="WoeOverlay" hittest="false">
         <Panel class="WoeStatsContainer">
             <Panel class="WoeStatsRow">
-                <Panel class="WoeStatsCol">
+                <Panel class="WoeStatsCol WoeStatsMoveSpeedCol">
                     <Image src="file://{resources}/images/boots.png" class="WoeStatsIcon" />
                     <Label class="WoeStatsNumber WoeStatsMoveSpeedLabel" />
-                <Panel class="WoeStatsCol">
+                </Panel>
+                <Panel class="WoeStatsCol WoeStatsArmorCol">
                     <Image src="file://{resources}/images/armor.png" class="WoeStatsIcon" />
                     <Label class="WoeStatsNumber WoeStatsArmorLabel" />
                 </Panel>
-                <Panel class="WoeStatsCol">
+                <Panel class="WoeStatsCol WoeStatsMagicResistCol">
                     <Image src="file://{resources}/images/MR.png" class="WoeStatsIcon" />
-                    <Label class="WoeStatsNumber WoeStatsMagicResistLabel" />
-                    
-                </Panel>
+                    <Label class="WoeStatsNumber WoeStatsMagicResistLabel" />                    
                 </Panel>
             </Panel>
             <Panel class="WoeStatsRow">
-                <Panel class="WoeStatsCol">
+                <Panel class="WoeStatsCol WoeStatsAttackSpeedCol">
                     <Image src="file://{resources}/images/AS2.png" class="WoeStatsIcon" />
                     <Label class="WoeStatsNumber WoeStatsAttackSpeedLabel" />
                 </Panel>
-                <Panel class="WoeStatsCol">
+                <Panel class="WoeStatsCol WoeStatsSpellSpeedCol">
                     <Image src="file://{resources}/images/SS2.png" class="WoeStatsIcon" />
                     <Label class="WoeStatsNumber WoeStatsSpellSpeedLabel" />
                 </Panel>

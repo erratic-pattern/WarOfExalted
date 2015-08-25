@@ -31,7 +31,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         SpellSpeedRatio = 1,
         AttackSpeedRatio = 1,
         IsVectorTarget = false,
-        AutoDeriveKeywords = true -- whether or not we derive keywords from dota ability behaviors
+        AutoDeriveKeywords = true, -- whether or not we derive keywords from dota ability behaviors
         AutoDeriveBehaviors = true -- whether or not we derive behaviors from WoE keywords
     }
     

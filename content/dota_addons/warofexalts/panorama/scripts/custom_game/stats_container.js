@@ -24,8 +24,9 @@
                 SetTextOfClass(panel, "WoeStatsMoveSpeedLabel", keys.MsTotal);
                 SetTextOfClass(panel, "WoeStatsArmorLabel",  Math.round(keys.ArmorTotal));
                 SetTextOfClass(panel, "WoeStatsMagicResistLabel", Math.round(keys.MagicResistTotal));
+                SetTextOfClass(panel, "WoeStatsAttackSpeedLabel", Math.round(Entities.GetIncreasedAttackSpeed(unitId) * 100));
                 SetTextOfClass(panel, "WoeStatsSpellSpeedLabel", Math.round(keys.SpellSpeed));
-                SetTextOfClass(panel, "WoeStatsStaminaLabel", Math.round(keys.StaminaCurrent.toString()) + "/" + Math.round(keys.StaminaMax.toString()));
+                //SetTextOfClass(panel, "WoeStatsStaminaLabel", Math.round(keys.StaminaCurrent.toString()) + "/" + Math.round(keys.StaminaMax.toString()));
                 panel.visible = true;
             }
             else {
