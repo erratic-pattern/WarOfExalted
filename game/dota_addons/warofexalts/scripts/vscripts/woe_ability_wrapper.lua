@@ -32,6 +32,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         AttackSpeedRatio = 1,
         IsVectorTarget = false,
         AutoDeriveKeywords = true -- whether or not we derive keywords from dota ability behaviors
+        AutoDeriveBehaviors = true -- whether or not we derive behaviors from WoE keywords
     }
     
     --the table of custom data parsed from KV files
@@ -79,15 +80,22 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     abi._GetBehavior = abi.GetBehavior --old GetBehavior
     function abi:GetBehavior() 
         local b = self:_GetBehavior()
+        if not self._woeKeys.AutoDeriveBehaviors then
+            return b
+        end
         local keys = self._woeKeys.Keywords --note: calling self:Keywords() will recurse infinitely
         local addFlags = function(...) --bitfield helper function
             b = bit.bor(b, ...)
         end
+        --begin behavior auto-deriving
         if keys:Has("movement") then
             addFlags(DOTA_BEHAVIOR_ROOT_DISABLES)
         end
         if keys:Has("passive") then
             addFlags(DOTA_ABILITY_BEHAVIOR_PASSIVE)
+        end
+        if self._woeKeys.IsVectorTarget then
+            addFlags(DOTA_ABILITY_BEHAVIOR_POINT_TARGET)
         end
         return b
     end
