@@ -77,9 +77,9 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         return keys
     end
     
-    abi._GetBehavior = abi.GetBehavior --old GetBehavior
+    local _GetBehavior = abi.GetBehavior --old GetBehavior
     function abi:GetBehavior() 
-        local b = self:_GetBehavior()
+        local b = _GetBehavior(self)
         if not self._woeKeys.AutoDeriveBehaviors then
             return b
         end
@@ -94,9 +94,6 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         if keys:Has("passive") then
             addFlags(DOTA_ABILITY_BEHAVIOR_PASSIVE)
         end
-        if self._woeKeys.IsVectorTarget then
-            addFlags(DOTA_ABILITY_BEHAVIOR_POINT_TARGET)
-        end
         return b
     end
     
@@ -106,21 +103,21 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     end
     
     --override CastFilterResult
-    abi._CastFilterResult = abi.CastFilterResult
+    local _CastFilterResult = abi.CastFilterResult
     function abi:CastFilterResult()
-        return self:CastFilterSpendStamina(self._CastFilterResult) 
+        return self:CastFilterSpendStamina(_CastFilterResult) 
     end
     
     --override CastFilterResultLocation
-    abi._CastFilterResultLocation = abi.CastFilterResultLocation
+    local _CastFilterResultLocation = abi.CastFilterResultLocation
     function abi:CastFilterResultLocation(loc)
-        return self:CastFilterSpendStamina(self._CastFilterResultLocation, loc)
+        return self:CastFilterSpendStamina(_CastFilterResultLocation, loc)
     end
     
     --override CastFilterResultTarget
-    abi._CastFilterResultTarget = abi.CastFilterResultTarget
+    local _CastFilterResultTarget = abi.CastFilterResultTarget
     function abi:CastFilterResultTarget(target)
-        return self:CastFilterSpendStamina(self._CastFilterResultTarget, target)
+        return self:CastFilterSpendStamina(_CastFilterResultTarget, target)
     end
     
     --helper function for CastFilters
@@ -134,21 +131,21 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     end
      
     --override GetCustomCastError
-    abi._GetCustomCastError = abi.GetCustomCastError
+    local _GetCustomCastError = abi.GetCustomCastError
     function abi:GetCustomCastError()
-        return self:GetCustomCastErrorBase(self._GetCustomCastError) 
+        return self:GetCustomCastErrorBase(_GetCustomCastError) 
     end
     
     --override GetCustomCastErrorLocation
-    abi._GetCustomCastErrorLocation = abi.GetCustomCastErrorLocation
+    local _GetCustomCastErrorLocation = abi.GetCustomCastErrorLocation
     function abi:GetCustomCastErrorLocation(loc)
-        return self:GetCustomCastErrorBase(self._GetCustomCastErrorLocation, loc)
+        return self:GetCustomCastErrorBase(_GetCustomCastErrorLocation, loc)
     end
     
     --override GetCustomCastErrorTarget
-    abi._GetCustomCastErrorTarget = abi.GetCustomCastErrorTarget
+    local _GetCustomCastErrorTarget = abi.GetCustomCastErrorTarget
     function abi:GetCustomCastErrorTarget(target)
-        return self:GetCustomCastErrorBase(self._GetCustomCastErrorTarget, target)
+        return self:GetCustomCastErrorBase(_GetCustomCastErrorTarget, target)
     end
     
     --helper function for GetCustomCastError
@@ -229,6 +226,10 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         else
             return self:GetBaseCooldown(lvl)
         end
+    end
+    
+    if abi._woeKeys.IsVectorTarget then
+        VectorTargetWrapper(abi)
     end
 end
 

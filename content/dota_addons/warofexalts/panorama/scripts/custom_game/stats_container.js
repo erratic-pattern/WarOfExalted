@@ -39,8 +39,8 @@
         var panel = $.GetContextPanel(),
             //pId = data.splitscreenplayer,
             selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
-        $.Msg("dota_player_update_selected_unit: ", data);
-        $.Msg(selection);
+        //$.Msg("dota_player_update_selected_unit: ", data);
+        //$.Msg(selection);
         if(selection.length > 1) {
             panel.visible = false;
             unlistenCurrent()
@@ -55,7 +55,7 @@
             unitId = Players.GetQueryUnit(Game.GetLocalPlayerID());
         if (unitId == -1)
             unitId = Players.GetLocalPlayerPortraitUnit()
-        $.Msg("dota_player_update_query_unit: ", unitId);
+        //$.Msg("dota_player_update_query_unit: ", unitId);
         UpdateStatsContainer(unitId);
     });
     

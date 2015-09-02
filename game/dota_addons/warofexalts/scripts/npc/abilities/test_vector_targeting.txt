@@ -1,7 +1,7 @@
 "test_vector_targeting"
 {
 	"ID"							"1854"
-	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT_TARGET"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
     "AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
     "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
     "FightRecapLevel"				"1"

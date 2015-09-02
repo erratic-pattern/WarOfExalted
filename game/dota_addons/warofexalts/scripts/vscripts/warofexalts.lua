@@ -474,18 +474,26 @@ function WarOfExalts:AbilityTuningFilter( keys )
 end
 ]]
 
+function WarOfExalts:ExecuteOrderFilter(data)
+    --print("[WAROFEXALTS] ExecuteOrderFilter called")
+    return VectorTargetOrderFilter(data)
+end
+
 
 -- This function initializes the game mode and is called before anyone loads into the game
 -- It can be used to pre-initialize any values/tables that will be needed later
 function WarOfExalts:InitWarOfExalts()
 	WarOfExalts = self
+    local gameMode = GameRules:GetGameModeEntity()
 	print('[WAROFEXALTS] Starting to load WarOfExalts gamemode...')
-    
     --Initialize custom Lua modifiers
     self:LinkModifiers()
     
-    --ability tuning filter
-    --GameRules:GetGameModeEntity():SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)
+    InitVectorTargetEventListeners()
+    
+    --set script filters
+    gameMode:SetExecuteOrderFilter(Dynamic_Wrap(WarOfExalts, "ExecuteOrderFilter"), self)
+    --gameMode:SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)
 
 	-- Setup rules
 	GameRules:SetHeroRespawnEnabled( ENABLE_HERO_RESPAWN )
@@ -640,7 +648,7 @@ function WarOfExalts:InitWarOfExalts()
     self:LoadAllDatadrivenFiles()
 
 	if RECOMMENDED_BUILDS_DISABLED then
-		GameRules:GetGameModeEntity():SetHUDVisible( DOTA_HUD_VISIBILITY_SHOP_SUGGESTEDITEMS, false )
+		gameMode:SetHUDVisible( DOTA_HUD_VISIBILITY_SHOP_SUGGESTEDITEMS, false )
 	end
 
 	--print('[WAROFEXALTS] Done loading WarOfExalts gamemode!\n\n')
