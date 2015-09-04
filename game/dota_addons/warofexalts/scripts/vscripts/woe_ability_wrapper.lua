@@ -228,8 +228,8 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         end
     end
     
-    if abi._woeKeys.IsVectorTarget then
+    --[[if abi._woeKeys.IsVectorTarget then
         VectorTargetWrapper(abi)
-    end
+    end]]
 end
 

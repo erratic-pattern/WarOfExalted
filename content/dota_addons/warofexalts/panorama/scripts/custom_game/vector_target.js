@@ -1,30 +1,38 @@
 'use strict';
 (function() {
+    //constants
     var UPDATE_RANGE_INDICATOR_RATE = 1/60;
+    var DEFAULT_PARTICLE = "particles/vector_target_range_finder_line.vpcf"
+    var DEFAULT_CONTROL_POINTS = {
+        0 : "initial",
+        1 : "initial",
+        2 : "terminal"
+    }
+    //state variables
     var rangeFinderParticle;
-    var initialPosition;
-    var currentAbil;
-    var currentUnit;
+    var eventKeys = { };
     
     GameEvents.Subscribe("vector_target_order_start", function(keys) {
-        $.Msg("vector_target_order_start event");
-        $.Msg(keys);
+        //$.Msg("vector_target_order_start event");
+        //$.Msg(keys);
         if(Game.GetLocalPlayerID() != keys.playerId)
             return;
-        var unit = keys.unitId;
-        var pos = keys.initialPosition;
-        initialPosition = [pos.x, pos.y, pos.z];
-        currentAbil = keys.abilId;
-        currentUnit = unit;
+        //initialize local state
+        eventKeys = keys;
+        var p = keys.initialPosition;
+        keys.initialPosition = [p.x, p.y, p.z];
+        //set defaults
+        keys.particleName = keys.particleName || DEFAULT_PARTICLE;
+        keys.cpMap = keys.cpMap || DEFAULT_CONTROL_POINTS;
+        
         showRangeFinder();
-        Abilities.ExecuteAbility(currentAbil, currentUnit, false) //make ability our active ability so that a left-click will complete cast
+        Abilities.ExecuteAbility(keys.abilId, keys.unitId, false); //make ability our active ability so that a left-click will complete cast
     });
     
     function showRangeFinder() {
         if(!rangeFinderParticle) {
-            rangeFinderParticle = Particles.CreateParticle("particles/vector_target_range_finder_line.vpcf", ParticleAttachment_t.PATTACH_WORLDORIGIN, currentUnit);
-            Particles.SetParticleControl(rangeFinderParticle, 1, initialPosition)
-            Particles.SetParticleControl(rangeFinderParticle, 0, initialPosition)
+            rangeFinderParticle = Particles.CreateParticle(eventKeys.particleName, ParticleAttachment_t.PATTACH_WORLDORIGIN, eventKeys.unitId);
+            mapToControlPoints({"initial": eventKeys.initialPosition});
         }
     }
     
@@ -38,22 +46,21 @@
     
     function updateRangeFinder() {
         var activeAbil = Abilities.GetLocalPlayerActiveAbility();
-        if(currentAbil == activeAbil) {
+        //$.Msg("active ability: ", Abilities.GetLocalPlayerActiveAbility());
+        if(eventKeys.abilId === activeAbil) {
             showRangeFinder();
         }
         if(rangeFinderParticle) {
-
-            var pos = Game.ScreenXYToWorld.apply(Game, GameUI.GetCursorPosition());
-            //$.Msg("initial: ", initialPosition, "terminal: ", pos);
-            //$.Msg("active ability: ", activeAbil, "current vector ability: ", currentAbil);
-            if(currentAbil != activeAbil) {
+            if(eventKeys.abilId !== activeAbil) {
                 hideRangeFinder();
             }
             else {
-                Particles.SetParticleControl(rangeFinderParticle, 2, pos)
+                var pos = GameUI.GetScreenWorldPosition(GameUI.GetCursorPosition());
+                if(pos != null)
+                    mapToControlPoints({"terminal" : pos}, true);
             }
         }
-        if(activeAbil == -1) {
+        if(activeAbil === -1) {
             cancelVectorTargetOrder()
         }
         $.Schedule(UPDATE_RANGE_INDICATOR_RATE, updateRangeFinder);
@@ -61,46 +68,61 @@
     updateRangeFinder();
     
     function cancelVectorTargetOrder() {
-        if(currentAbil === undefined) return;
-        GameEvents.SendCustomGameEventToServer("vector_target_order_cancel", {
-            "abilId": currentAbil,
-            "unitId": currentUnit,
-            "playerId": Game.GetLocalPlayerID(),
-        });
+        if(eventKeys.abilId === undefined) return;
+        GameEvents.SendCustomGameEventToServer("vector_target_order_cancel", eventKeys);
         finalize();
     }
     
     
+    function mapToControlPoints(keyMap, ignoreConst) {
+        var cpMap = eventKeys.cpMap;
+        for(var cp in cpMap) {
+            var vector = cpMap[cp].split(" ");
+            if(vector.length == 1) {
+                vector = [vector[0], vector[0], vector[0]]
+            }
+            else if(vector.length != 3) {
+                throw new Error("Vector for CP " + cp + " has " + vector.length + " components");
+            }
+            var shouldSet = !ignoreConst;
+            for(var i in vector) {
+                var val = vector[i];
+                var out;
+                if((out = keyMap[val]) !== undefined) { //check for string variables
+                    vector[i] = out[i];
+                    if(ignoreConst) shouldSet = true;
+                }
+                else if(!isNaN(out = parseInt(val))) { //is a number
+                    vector[i] = out;
+                }
+                else {
+                    shouldSet = false;
+                }
+            }
+            if(shouldSet) {
+                Particles.SetParticleControl(rangeFinderParticle, parseInt(cp), vector);
+            }
+        }
+    }
+    
     function finalize() {
         //$.Msg("finalizer called");
         hideRangeFinder();
-        initialPosition = undefined;
-        currentAbil = undefined;
-        currentUnit = undefined;
+        eventKeys = { };
     }
     
     GameUI.SetMouseCallback(function(event, arg) {
         //TODO: click-and-drag option for vector targeting
-        //$.Msg("mouse event: ", event);
-        //$.Msg(arg);
-        /*
-        if(currentUnit == Player.GetLocalPlayerPortraitUnit()) {
-            if(arg == 0) { //left click
-                if(event == "pressed" || event == "double pressed") {
-                    
-                }
-            }
-        }*/
     });
     
     GameEvents.Subscribe("vector_target_order_finish", finalize);
     GameEvents.Subscribe("vector_target_order_cancel", finalize);
     GameEvents.Subscribe("dota_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
-        if(selected[0] != currentUnit) {
+        if(selected[0] !== eventKeys.unitId) {
             cancelVectorTargetOrder();
         }
-    })
+    });
     
     $.Msg("vector_target.js loaded");
 })()

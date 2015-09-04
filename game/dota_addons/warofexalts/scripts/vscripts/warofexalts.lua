@@ -217,6 +217,7 @@ function WarOfExalts:OnNPCSpawned(keys)
 	--print("[WAROFEXALTS] NPC Spawned")
 	--util.printTable(keys)
 	local npc = EntIndexToHScript(keys.entindex)
+    AddVectorTargetingToUnit(npc)
     self:WoeUnitWrapper(npc)
     npc:WithAbilities(function(a) self:WoeAbilityWrapper(a) end)
 
@@ -474,11 +475,6 @@ function WarOfExalts:AbilityTuningFilter( keys )
 end
 ]]
 
-function WarOfExalts:ExecuteOrderFilter(data)
-    --print("[WAROFEXALTS] ExecuteOrderFilter called")
-    return VectorTargetOrderFilter(data)
-end
-
 
 -- This function initializes the game mode and is called before anyone loads into the game
 -- It can be used to pre-initialize any values/tables that will be needed later
@@ -489,10 +485,8 @@ function WarOfExalts:InitWarOfExalts()
     --Initialize custom Lua modifiers
     self:LinkModifiers()
     
-    InitVectorTargetEventListeners()
+    InitVectorTarget()
     
-    --set script filters
-    gameMode:SetExecuteOrderFilter(Dynamic_Wrap(WarOfExalts, "ExecuteOrderFilter"), self)
     --gameMode:SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)
 
 	-- Setup rules
