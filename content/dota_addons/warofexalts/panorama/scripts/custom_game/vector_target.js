@@ -70,9 +70,6 @@
     function cancelVectorTargetOrder() {
         var abilId = eventKeys.abilId
         if(abilId === undefined) return;
-        if(abilId === Abilities.GetLocalPlayerActiveAbility()) {
-            Abilities.ExecuteAbility(abilId, eventKeys.unitId, false)
-        }
         GameEvents.SendCustomGameEventToServer("vector_target_order_cancel", eventKeys);
         finalize();
     }
