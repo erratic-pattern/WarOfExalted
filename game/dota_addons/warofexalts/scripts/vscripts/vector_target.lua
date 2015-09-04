@@ -1,6 +1,6 @@
 local MAX_ORDER_QUEUE = 34 -- Make sure this value matches dota's internal order queue limit.
 
-local queue = { } -- a basic queue implementation (see bottom of file)
+local queue = class({}) -- a basic queue implementation (see bottom of file)
 
 local inProgressOrders = { } -- a table of vector orders currently in-progress, indexed by player ID
 
@@ -94,7 +94,7 @@ function castQueues:get(unitId, abilId)
     end
     local q = unitTable[abilId]
     if not q then
-        q = queue.new()
+        q = queue()
         self[unitId][abilId] = q
     end
     return q
@@ -103,12 +103,22 @@ end
 -- given an array of unit ids, clear all cast queues associated with those units.
 function castQueues:clearQueuesForUnits(units)
     for _, unitId in pairs(units) do
-        for _, q in pairs(queueList or {}) do
+        for _, q in pairs(castQueues[unitId] or { }) do
             if q then
-                queue.clear(q)
+                q:clear()
             end
         end
     end
+end
+
+function castQueues:getMaxSequenceNumber(unitId)
+    local out = 0
+    for _, q in pairs(castQueues[unitId] or { }) do
+        if q and q.last > out then
+            out = q.last
+        end
+    end
+    return out
 end
 
 -- This is the order filter we use to handle vector targeting.
@@ -117,16 +127,25 @@ end
 function VectorTargetOrderFilter(ctx, data)
     --print("--order data--")
     --util.printTable(data)
-    if data.queue == 0 then -- if shift was not pressed, clear our cast queues for the unit(s) in question
-        castQueues:clearQueuesForUnits(data.units)
-    end
     local playerId = data.issuer_player_id_const
     local abilId = data.entindex_ability
     local inProgress = inProgressOrders[playerId] -- retrieve any in-progress orders for this player
-    if inProgress and inProgress.abilId ~= abilId then --check if this order cancels an in-progress order
-        CustomGameEventManager:Send_ServerToAllClients("vector_target_order_cancel", inProgress)
-        inProgress = nil
-        inProgressOrders[playerId] = nil
+    local seqNum = data.sequence_number_const
+    local units = { }
+    local nUnits = 0
+    for i, unitId in pairs(data.units) do
+        if seqNum > castQueues:getMaxSequenceNumber(unitId) then
+            units[i] = unitId
+            nUnits = nUnits + 1
+        end
+    end
+    if nUnits == 0 then
+        print("skipped")
+        return true
+    end
+    print("seq num: ", seqNum, "order type: ", data.order_type, "queue: ", data.queue)
+    if inProgress and inProgress.shiftPressed == 1 then
+        data.queue = 1
     end
     if abilId ~= nil and abilId > 0 then
         local abil = EntIndexToHScript(abilId)
@@ -150,12 +169,11 @@ function VectorTargetOrderFilter(ctx, data)
                 CustomGameEventManager:Send_ServerToAllClients("vector_target_order_start", orderData)
                 inProgressOrders[playerId] = orderData --set this order as our player's current in-progress order
                 return false
-            elseif data.queue == 1 then --not sure why I need to do this but it seems to fix stuff...
-                return true
             else --in-progress order (initial point has been selected)
                 inProgress.terminalPosition = targetPos
+                inProgress.sequenceNumber = seqNum
                 CustomGameEventManager:Send_ServerToAllClients("vector_target_order_finish", inProgress)
-                queue.push(castQueues:get(unitId, abilId), inProgress)
+                castQueues:get(unitId, abilId):push(inProgress, seqNum)
                 abil:SetInitialPosition(inProgress.initialPosition)
                 abil:SetTerminalPosition(inProgress.terminalPosition)
                 local p = abil:GetPointOfCast()
@@ -165,6 +183,10 @@ function VectorTargetOrderFilter(ctx, data)
                 inProgressOrders[playerId] = nil
             end
         end
+    end
+    if data.queue == 0 then -- if shift was not pressed, clear our cast queues for the unit(s) in question
+        print("queue cleared")
+        castQueues:clearQueuesForUnits(units)
     end
     return true
 end
@@ -214,6 +236,12 @@ function VectorTargetWrapper(abil, keys)
         self._vectorTargetKeys.terminalPosition = v
     end
     
+    function abil:GetMidpointPosition()
+        local i = self:GetInitialPosition()
+        local t = self:GetTerminalPosition()
+        return Vector((i.x + t.x)/2, (i.y + t.y)/2, (i.z + t.z)/2)
+    end
+    
     function abil:GetTargetVector()
         local i = self:GetInitialPosition()
         local j = self:GetTerminalPosition()
@@ -245,9 +273,7 @@ function VectorTargetWrapper(abil, keys)
             elseif mode == "terminal" then
                 return self:GetTerminalPosition()
             elseif mode == "midpoint" then
-                local i = self:GetInitialPosition()
-                local t = self:GetTerminalPosition()
-                return Vector((i.x + t.x)/2, (i.y + t.y)/2, (i.z + t.z)/2)
+                return self:GetMidpointPosition()
             else
                 error("[VECTORTARGET] invalid point-of-cast mode: " .. string(mode))
             end
@@ -266,26 +292,39 @@ function VectorTargetWrapper(abil, keys)
         local abilId = self:GetEntityIndex()
         local unitId = self:GetCaster():GetEntityIndex()
         --pop unit queue
-        local data = queue.popFirst(castQueues:get(unitId, abilId))
+        local data = castQueues:get(unitId, abilId):popFirst()
         self:SetInitialPosition(data.initialPosition)
         self:SetTerminalPosition(data.terminalPosition)
         return _OnAbilityPhaseStart(self)
     end
 end
 
---queue implementation
-function queue.new()
-    return {first = 0, last = -1}
+-- a sparse queue implementation
+function queue.constructor(q)
+    q.first = 0
+    q.last = -1
+    q.len = 0
 end
 
-function queue.push(q, value)
-    if queue.length(q) >= MAX_ORDER_QUEUE then
+function queue.push(q, value, seqN)
+    print("push", q.first, q.last, q.len)
+    if q:length() >= MAX_ORDER_QUEUE then
         print("[VECTORTARGET] warning: order queue has reached limit of " .. MAX_ORDER_QUEUE)
         return
     end
-    local last = q.last + 1
-    q.last = last
-    q[last] = value
+    if seqN == nil then
+        seqN = q.last + 1
+    end
+    q[seqN] = value
+    q.len = q.len + 1
+    if q.len == 1 then
+        q.first = seqN
+        q.last = seqN
+    elseif seqN > q.last then
+        q.last = seqN
+    elseif seqN < q.first then
+        q.first = seqN
+    end
 end
 
 function queue.popLast(q)
@@ -293,18 +332,33 @@ function queue.popLast(q)
     if q.first > last then error("queue is empty") end
     local value = q[last]
     q[last] = nil
-    q.last = last - 1
+    q.len = q.len - 1
+    for i = last, q.first, -1 do --find new last index
+        if q[i] ~= nil then
+            q.last = i
+            return value
+        end
+    end
+    q.last = q.first - 1 --empty
     return value
 end
 
 
 function queue.popFirst(q)
-  local first = q.first
-  if first > q.last then error("queue is empty") end
-  local value = q[first]
-  q[first] = nil
-  q.first = first + 1
-  return value
+    print("pop", q.first, q.last, q.len)
+    local first = q.first
+    if first > q.last then error("queue is empty") end
+    local value = q[first]
+    q[first] = nil
+    q.len = q.len - 1
+    for i = first, q.last do --find new first index
+        if q[i] ~= nil then
+            q.first = i
+            return value
+        end
+    end
+    q.first = q.last + 1 --empty
+    return value
 end
 
 function queue.clear(q)
@@ -313,6 +367,7 @@ function queue.clear(q)
     end
     q.first = 0
     q.last = -1
+    q.len = 0
 end
 
 function queue.peekLast(q)
@@ -324,5 +379,5 @@ function queue.peekFirst(q)
 end
 
 function queue.length(q)
-    return math.abs(q.last - q.first)
+    return q.len
 end

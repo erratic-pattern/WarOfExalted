@@ -68,7 +68,11 @@
     updateRangeFinder();
     
     function cancelVectorTargetOrder() {
-        if(eventKeys.abilId === undefined) return;
+        var abilId = eventKeys.abilId
+        if(abilId === undefined) return;
+        if(abilId === Abilities.GetLocalPlayerActiveAbility()) {
+            Abilities.ExecuteAbility(abilId, eventKeys.unitId, false)
+        }
         GameEvents.SendCustomGameEventToServer("vector_target_order_cancel", eventKeys);
         finalize();
     }
@@ -115,7 +119,7 @@
         //TODO: click-and-drag option for vector targeting
     });
     
-    GameEvents.Subscribe("vector_target_order_finish", finalize);
+    //GameEvents.Subscribe("vector_target_order_finish", finalize);
     GameEvents.Subscribe("vector_target_order_cancel", finalize);
     GameEvents.Subscribe("dota_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
