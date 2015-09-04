@@ -112,7 +112,7 @@ function castQueues:clearQueuesForUnits(units)
 end
 
 function castQueues:getMaxSequenceNumber(unitId)
-    local out = 0
+    local out = -1
     for _, q in pairs(castQueues[unitId] or { }) do
         if q and q.last > out then
             out = q.last
@@ -142,10 +142,7 @@ function VectorTargetOrderFilter(ctx, data)
     if nUnits == 0 then
         return true
     end
-    --print("seq num: ", seqNum, "order type: ", data.order_type, "queue: ", data.queue)
-    if inProgress and inProgress.shiftPressed == 1 and inProgress.abilId == abilId then
-        data.queue = 1
-    end
+    print("seq num: ", seqNum, "order type: ", data.order_type, "queue: ", data.queue)
     if abilId ~= nil and abilId > 0 then
         local abil = EntIndexToHScript(abilId)
         if abil.isVectorTarget and data.order_type == DOTA_UNIT_ORDER_CAST_POSITION then
@@ -167,7 +164,14 @@ function VectorTargetOrderFilter(ctx, data)
                 CustomGameEventManager:Send_ServerToAllClients("vector_target_order_start", orderData)
                 inProgressOrders[playerId] = orderData --set this order as our player's current in-progress order
                 return false
-            else --in-progress order (initial point has been selected)
+            elseif inProgress.unitId == unitId then --in-progress order (initial point has been selected)
+                if inProgress.shiftPressed == 1 then --make this order shift-queued if previous order was
+                    data.queue = 1
+                end
+                if data.queue == 0 then -- if not shift queued, clear cast queue before we add to it
+                    castQueues:clearQueuesForUnits(units)
+                end
+                inProgress.abilId = abilId
                 inProgress.terminalPosition = targetPos
                 CustomGameEventManager:Send_ServerToAllClients("vector_target_order_finish", inProgress)
                 castQueues:get(unitId, abilId):push(inProgress, seqNum)
@@ -178,6 +182,7 @@ function VectorTargetOrderFilter(ctx, data)
                 data.position_y = p.y
                 data.position_z = p.z
                 inProgressOrders[playerId] = nil
+                return true -- end early to avoid clearing queue below
             end
         end
     end
@@ -303,7 +308,7 @@ function queue.constructor(q)
 end
 
 function queue.push(q, value, seqN)
-    --print("push", q.first, q.last, q.len)
+    print("push", q.first, q.last, q.len)
     if q:length() >= MAX_ORDER_QUEUE then
         print("[VECTORTARGET] warning: order queue has reached limit of " .. MAX_ORDER_QUEUE)
         return
@@ -341,7 +346,7 @@ end
 
 
 function queue.popFirst(q)
-    --print("pop", q.first, q.last, q.len)
+    print("pop", q.first, q.last, q.len)
     local first = q.first
     if first > q.last then error("queue is empty") end
     local value = q[first]

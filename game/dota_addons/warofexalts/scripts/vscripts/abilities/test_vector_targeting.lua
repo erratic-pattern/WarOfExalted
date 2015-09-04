@@ -28,7 +28,7 @@ function test_vector_targeting:OnSpellStart()
 		local projectilePos = startPos + self:GetDirectionVector() * (i-1) * stepLength
 
 		ProjectileManager:CreateLinearProjectile( {
-			Ability				= ability,
+			Ability				= self,
 		--	EffectName			= "",
 			vSpawnOrigin		= projectilePos,
 			fDistance			= 64,
