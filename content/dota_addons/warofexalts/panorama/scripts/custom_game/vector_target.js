@@ -68,8 +68,7 @@
     updateRangeFinder();
     
     function cancelVectorTargetOrder() {
-        var abilId = eventKeys.abilId
-        if(abilId === undefined) return;
+        if(eventKeys.abilId === undefined) return;
         GameEvents.SendCustomGameEventToServer("vector_target_order_cancel", eventKeys);
         finalize();
     }
@@ -117,7 +116,22 @@
     });
     
     //GameEvents.Subscribe("vector_target_order_finish", finalize);
-    GameEvents.Subscribe("vector_target_order_cancel", finalize);
+    GameEvents.Subscribe("vector_target_order_cancel", function(keys) {
+        if(Game.GetLocalPlayerID() != keys.playerId)
+            return;
+        if(keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
+            finalize();
+        }
+    });
+    /*
+    GameEvents.Subscribe("vector_target_order_finish", function(keys) {
+        if(Game.GetLocalPlayerID() != keys.playerId)
+            return;
+        if(keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
+            finalize();
+        }
+    });
+    */
     GameEvents.Subscribe("dota_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
         if(selected[0] !== eventKeys.unitId) {

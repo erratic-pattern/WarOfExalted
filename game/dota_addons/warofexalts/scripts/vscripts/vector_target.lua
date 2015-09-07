@@ -142,13 +142,16 @@ function VectorTargetOrderFilter(ctx, data)
     if nUnits == 0 then
         return true
     end
-    print("seq num: ", seqNum, "order type: ", data.order_type, "queue: ", data.queue)
+    --print("seq num: ", seqNum, "order type: ", data.order_type, "queue: ", data.queue)
     if abilId ~= nil and abilId > 0 then
         local abil = EntIndexToHScript(abilId)
         if abil.isVectorTarget and data.order_type == DOTA_UNIT_ORDER_CAST_POSITION then
             local unitId = data.units["0"]
             local targetPos = {x = data.position_x, y = data.position_y, z = data.position_z}
-            if inProgress == nil then -- if no in-progress order, this order selects the initial point of a vector cast
+            if inProgress == nil or inProgress.abilId ~= abilId or inProgress.unitId ~= unitId then -- if no in-progress order, this order selects the initial point of a vector cast
+                if inProgress ~= nil then
+                    CustomGameEventManager:Send_ServerToAllClients("vector_target_order_cancel", inProgress)
+                end
                 local orderData = {
                     abilId = abilId,
                     orderType = data.order_type,
@@ -164,7 +167,7 @@ function VectorTargetOrderFilter(ctx, data)
                 CustomGameEventManager:Send_ServerToAllClients("vector_target_order_start", orderData)
                 inProgressOrders[playerId] = orderData --set this order as our player's current in-progress order
                 return false
-            elseif inProgress.unitId == unitId then --in-progress order (initial point has been selected)
+            else --in-progress order (initial point has been selected)
                 if inProgress.shiftPressed == 1 then --make this order shift-queued if previous order was
                     data.queue = 1
                 end
@@ -308,7 +311,7 @@ function queue.constructor(q)
 end
 
 function queue.push(q, value, seqN)
-    print("push", q.first, q.last, q.len)
+    --print("push", q.first, q.last, q.len)
     if q:length() >= MAX_ORDER_QUEUE then
         print("[VECTORTARGET] warning: order queue has reached limit of " .. MAX_ORDER_QUEUE)
         return
@@ -346,7 +349,7 @@ end
 
 
 function queue.popFirst(q)
-    print("pop", q.first, q.last, q.len)
+    --print("pop", q.first, q.last, q.len)
     local first = q.first
     if first > q.last then error("queue is empty") end
     local value = q[first]

@@ -22,11 +22,11 @@ function test_woe_damage:OnProjectileHit( hTarget, vLocation )
         EmitSoundOn( "Hero_VengefulSpirit.MagicMissileImpact", hTarget )
         local dmg = self:GetAbilityDamage()
 		local damage = {
-			victim = hTarget,
-			attacker = self:GetCaster(),
-			magicalDamage = dmg,
-            physicalDamage = dmg,
-			ability = self
+			Victim = hTarget,
+			Attacker = self:GetCaster(),
+			MagicalDamage = dmg,
+            PhysicalDamage = dmg,
+			Ability = self
 		}
 		ApplyWoeDamage( damage )
 		hTarget:AddNewModifier( self:GetCaster(), self, "modifier_stunned", { duration = self:GetSpecialValueFor( "stun_duration" ) } )

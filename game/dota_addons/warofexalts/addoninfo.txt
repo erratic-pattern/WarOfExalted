@@ -2,7 +2,7 @@
 {
 	"addonSteamAppID"				"816"
 	"addontitle"					"War of Exalts"
-	"addonversion"					"0.1"
+	"addonversion"					"v0.1"
 	"addontagline"					"5v5 PvP ARTS/MOBA"
 	"addonauthor"					"kallisti"
 	"addonSteamGroupName"			""

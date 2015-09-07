@@ -44,7 +44,25 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     
     abi._woeKeys.Keywords = WoeKeywords(extraKeys.Keywords or abi._woeDatadriven.Keywords) --parse keyword string
     
-    function abi:Keywords()
+    -- convenience function that collects all of the ability special fields for the given level (or the casters current level if none)
+    function abi:GetSpecials(i)
+        local out = { }
+        for _, field in pairs(self._woeDatadriven.AbilitySpecial or { }) do
+            for k, _ in pairs(field) do
+                if k ~= "var_type" then
+                    if i == nil then
+                        out[k] = self:GetSpecialValueFor(k)
+                    else
+                        out[k] = self:GetLevelSpecialValueFor(k, i)
+                    end
+                    break
+                end
+            end
+        end
+        return out
+    end
+    
+    function abi:GetKeywords()
         local keys = self._woeKeys.Keywords
         if not self._woeKeys.AutoDeriveKeywords then
             return keys
@@ -83,7 +101,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         if not self._woeKeys.AutoDeriveBehaviors then
             return b
         end
-        local keys = self._woeKeys.Keywords --note: calling self:Keywords() will recurse infinitely
+        local keys = self._woeKeys.Keywords --note: calling self:GetKeywords() will recurse infinitely
         local addFlags = function(...) --bitfield helper function
             b = bit.bor(b, ...)
         end
@@ -210,7 +228,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         local caster = self:GetCaster()
         if caster and caster.isWoeUnit then
             local ics = 0
-            local keys = self:Keywords()
+            local keys = self:GetKeywords()
             if keys:Has("attack") then
                 ics = caster:GetIncreasedAttackSpeed() * self:GetAttackSpeedRatio()
                 print("ias: ", ics)

@@ -1,7 +1,7 @@
-test_vector_targeting = class({})
+pyromancer_lava_path = class({})
 
 -- Code adapted from https://github.com/Pizzalol/SpellLibrary
-function test_vector_targeting:OnSpellStart()
+function pyromancer_lava_path:OnSpellStart()
     local caster = self:GetCaster()
     local pathLength = self:GetMaxDistance()
     local pathRadius = self:GetSpecialValueFor("path_radius")

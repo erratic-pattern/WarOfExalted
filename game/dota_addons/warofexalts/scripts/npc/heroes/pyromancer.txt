@@ -1,0 +1,39 @@
+"pyromancer"
+{
+	"override_hero"			"npc_dota_hero_lina"
+    
+	"Ability1"				"pyromancer_fireball" 
+	"Ability2"				"pyromancer_lava_path" 
+	//"Ability3"				""
+	//"Ability4"				""
+
+	"ArmorPhysical"				"0"									// Physical protection.
+	"MagicalResistance"		    "1"									// Magical protection (percentage).
+
+	"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED_ATTACK"
+    "ProjectileModel"           "particles/units/heroes/hero_lina/lina_base_attack.vpcf"
+    "ProjectileSpeed"           "1000"
+    
+    "AttackRange"               "550"
+    "AttackAcquisitionRange"    "550"
+	"AttackDamageMin"			"12"										// Damage range min.
+	"AttackDamageMax"			"32"										// Damage range max.
+    "AttackRangeBuffer"         "250"
+    
+    
+	"AttributePrimary"			"DOTA_ATTRIBUTE_INTELLECT"
+	"AttributeBaseStrength"		"16"									// Base strength
+	"AttributeStrengthGain"		"1.5"	    							// Strength bonus per level.
+	"AttributeBaseIntelligence"	"25"									// Base intelligence
+	"AttributeIntelligenceGain"	"3.1"   								// Intelligence bonus per level.
+	"AttributeBaseAgility"		"14"								    // Base agility
+	"AttributeAgilityGain"		"2.3"									// Agility bonus per level.
+    
+	"MovementSpeed"				"310"									// Speed.
+	"MovementTurnRate"			"0.5"									// Turning rate.
+    "FollowRange"               "100"
+    
+    "AttackAnimationPoint"      "0.55"
+    "AttackRate"                "1.7"
+    
+}

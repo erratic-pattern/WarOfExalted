@@ -110,7 +110,8 @@ end
 
 --In-place union of keyword collections. First collection in arguments list is updated in-place with keywords from subsequent collections.
 function WoeKeywords:UnionInPlace(...)
-    for _, kWords in ipairs(arg) do
+    for n=1,select("#", ...) do
+        local kWords = select(n, ...)
         for kWord, val in pairs(kWords.kw) do
             if val then
                 self.kw[kWord] = true
@@ -120,11 +121,12 @@ function WoeKeywords:UnionInPlace(...)
     return self
 end
 
-
 --Static helper function: Converts "list of keywords" to {"list", "of", "keywords"}
 function WoeKeywords.NormalizeKwList(kWords)
     if kWords == nil then
         kWords = { }
+    elseif instanceof(kWords, WoeKeywords) then
+        kWords = kWords:AsArray()
     elseif type(kWords) == 'string' then
         kWords = string.split(kWords)
     elseif type(kWords) ~= 'table' then

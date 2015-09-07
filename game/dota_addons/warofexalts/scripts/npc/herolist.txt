@@ -3,6 +3,7 @@
 
 "CustomHeroList"
 {
+    "npc_dota_hero_lina" "1" //Pyromancer
 	"npc_dota_hero_ancient_apparition" "1"
 	//"npc_dota_hero_antimage" "1"
 	//"npc_dota_hero_axe" "1"

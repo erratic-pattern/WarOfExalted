@@ -103,13 +103,16 @@ function WarOfExalts:OnHeroInGame(hero)
 
 	if not self.greetPlayers then
 		-- At this point a player now has a hero spawned in your map.
-		
-	    local firstLine = util.color("Welcome to ", "green") .. util.color(self.addonInfo.addontitle, "magenta") .. util.color(self.addonInfo.addonversion, "blue");
-	    local secondLine = util.color("Developer: ", "green") .. util.color(self.addonInfo.addonauthor, "orange")
+	    local greetLines = {
+            util.color("Welcome to ", "blue") .. util.color(self.addonInfo.addontitle, "red") .. " " .. util.color(self.addonInfo.addonversion, "white"),
+            util.color("Lead Developer / Designer: ", "blue") .. util.color(self.addonInfo.addonauthor, "orange"),
+            util.color("Artist: ", "blue") .. util.color("Venastoned (Tina Grillo)", "green"),
+        }
 		-- Send the first greeting in 4 secs.
 		Timers:CreateTimer(4, function()
-	        GameRules:SendCustomMessage(firstLine, 0, 0)
-	        GameRules:SendCustomMessage(secondLine, 0, 0)
+            for _,line in ipairs(greetLines) do
+                GameRules:SendCustomMessage(line, 0, 0)
+	        end
 		end)
 
 		self.greetPlayers = true
@@ -616,6 +619,11 @@ function WarOfExalts:InitWarOfExalts()
         ex = select(2, ...)
         loadstring(ex)() 
     end, "Execute lua", 0 )
+    
+    Convars:RegisterCommand("reload_modifiers", function(...)
+        self:LinkModifiers()
+        print("[WAROFEXALTS] Lua modifiers reloaded")
+    end, "Reload Lua modifiers", 0)
 
 	-- Change random seed
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')

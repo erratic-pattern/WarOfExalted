@@ -35,8 +35,6 @@ function modifier_woe_attributes:OnCreated(kv)
             self.lastInt = unit:GetIntellect()
         end
         self:StartIntervalThink(self.updateInterval) -- start update loop
-        print("modifier_woe_attributes:OnCreated")
-        print("Parent: ", unit:GetUnitName())
     end
 end
 
