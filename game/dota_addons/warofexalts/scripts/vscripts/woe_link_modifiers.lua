@@ -7,7 +7,7 @@ end
 function WarOfExalts:LinkModifiers()
 
     --Core game modifiers
-    LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
+    --LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
     LinkLuaModifier("modifier_woe_stamina_regenerator", "modifiers/modifier_woe_stamina_regenerator", LUA_MODIFIER_MOTION_NONE)
     LinkLuaModifier("modifier_woe_dot", "modifiers/modifier_woe_dot", LUA_MODIFIER_MOTION_NONE)
 end

@@ -1,10 +1,11 @@
 requires = {
 	'util',
-	'timers',
-	'physics',
+	'lib.timers',
+	'lib.physics',
 	--'lib.statcollection',
     "lib.projectiles",
     "lib.affectors",
+    "lib.storage",
 	'warofexalts',
     'woe_link_modifiers',
     'woe_keywords',

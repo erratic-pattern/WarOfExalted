@@ -51,11 +51,13 @@ FAKE_CLIENT_HERO = "woe_test_hero_generic"
 Testing = true
 OutOfWorldVector = Vector(11000, 11000, -200)
 
+--[[
 if not Testing then
   statcollection.addStats({
     modID = 'XXXXXXXXXXXXXXXXXXX'
   })
 end
+]]
 
 -- Fill this table up with the required XP per level if you want to change it
 XP_PER_LEVEL_TABLE = {}
@@ -89,6 +91,20 @@ end
 ]]
 function WarOfExalts:OnAllPlayersLoaded()
 	--print("[WAROFEXALTS] All Players have loaded into the game")
+    for steamID, player in pairs(self.vSteamIds) do
+        local playerID = player:GetPlayerID()
+        Storage:Get(steamID, function(config, success)
+            print("setting net table for player ID: ", playerID)
+            print(config)
+            if not success or config == nil then
+                config = { }
+            end
+            if config.VectorTargetClickDrag == nil then
+                config.VectorTargetClickDrag = false
+            end
+            CustomNetTables:SetTableValue("PlayerConfig", tostring(playerID), config)
+        end)
+    end
 end
 
 --[[
@@ -129,7 +145,7 @@ function WarOfExalts:OnHeroInGame(hero)
 		Say(nil, "Testing is on.", false)
 	end
 
-	util.initAbilities(hero)
+	--util.initAbilities(hero)
 
 	-- Show a popup with game instructions.
     --ShowGenericPopupToPlayer(hero.player, "#warofexalts_instructions_title", "#warofexalts_instructions_body", "", "", DOTA_SHOWGENERICPOPUP_TINT_SCREEN )
@@ -471,6 +487,19 @@ function WarOfExalts:OnWoeAbilityRequest(keys)
     CustomGameEventManager:Send_ServerToAllClients("woe_ability_response", keys)
 end
 
+function WarOfExalts:OnWoeSaveConfig(keys)
+    local steamId = PlayerResource:GetSteamAccountID(keys.playerId)
+    local config = CustomNetTables:SetTableValue("PlayerConfig", tostring(keys.playerId), keys.config)
+    print("saving config for", keys.playerId)
+    util.printTable(config)
+    if config ~= nil then
+        Storage:Put(steamId, keys.config, function(resultTable, success)
+            print("success: ", success)
+            util.printTable(resultTable)
+        end)
+    end
+end
+
 --[[
 function WarOfExalts:AbilityTuningFilter( keys )
     print("[WAROFEXALTS] AbilityTuningFilter called")
@@ -485,10 +514,13 @@ function WarOfExalts:InitWarOfExalts()
 	WarOfExalts = self
     local gameMode = GameRules:GetGameModeEntity()
 	print('[WAROFEXALTS] Starting to load WarOfExalts gamemode...')
-    --Initialize custom Lua modifiers
-    self:LinkModifiers()
     
-    InitVectorTarget()
+    
+    CustomNetTables:SetTableValue("GameConfig", "Testing", Testing)
+    
+    self:LinkModifiers() --Initialize custom Lua modifiers
+    
+    InitVectorTarget() --Initialize vector targeting system
     
     --gameMode:SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)
 
@@ -548,8 +580,9 @@ function WarOfExalts:InitWarOfExalts()
 	--ListenToGameEvent('player_team', Dynamic_Wrap(WarOfExalts, 'OnPlayerTeam'), self)
     
     -- Custom Event Hooks
-    CustomGameEventManager:RegisterListener("woe_unit_request", Dynamic_Wrap(WarOfExalts, "OnWoeUnitRequest"));
-    CustomGameEventManager:RegisterListener("woe_ability_request", Dynamic_Wrap(WarOfExalts, "OnWoeAbilityRequest"));
+    CustomGameEventManager:RegisterListener("woe_unit_request", Dynamic_Wrap(WarOfExalts, "OnWoeUnitRequest"))
+    CustomGameEventManager:RegisterListener("woe_ability_request", Dynamic_Wrap(WarOfExalts, "OnWoeAbilityRequest"))
+    CustomGameEventManager:RegisterListener("woe_save_config", Dynamic_Wrap(WarOfExalts, "OnWoeSaveConfig"))
 
 
 	Convars:RegisterCommand('player_say', function(...)
@@ -648,6 +681,8 @@ function WarOfExalts:InitWarOfExalts()
     self.config = LoadKeyValues("woeconfig.txt")
     self.datadriven = {}
     self:LoadAllDatadrivenFiles()
+    
+    Storage:SetApiKey(self.addonInfo.storage_api_key)
 
 	if RECOMMENDED_BUILDS_DISABLED then
 		gameMode:SetHUDVisible( DOTA_HUD_VISIBILITY_SHOP_SUGGESTEDITEMS, false )
@@ -745,17 +780,19 @@ function WarOfExalts:OnConnectFull(keys)
 	-- The Player ID of the joining player
 	local playerID = ply:GetPlayerID()
 
+    local steamID = PlayerResource:GetSteamAccountID(playerID)
+    
 	-- Update the user ID table with this user
 	self.vUserIds[keys.userid] = ply
 
 	-- Update the Steam ID table
-	self.vSteamIds[PlayerResource:GetSteamAccountID(playerID)] = ply
+	self.vSteamIds[steamID] = ply
 
 	-- If the player is a broadcaster flag it in the Broadcasters table
 	if PlayerResource:IsBroadcaster(playerID) then
 		self.vBroadcasters[keys.userid] = 1
 		return
-	end
+    end
 end
 
 -- This is an example console command

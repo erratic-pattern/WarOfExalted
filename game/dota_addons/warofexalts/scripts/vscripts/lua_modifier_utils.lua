@@ -1,4 +1,5 @@
 function InitLuaModifier(modifier, keys)
+    util.printTable(keys)
     modifier._AllowIllusionDuplicate = keys.AllowIllusionDuplicate
     modifier._DestroyOnExpire = keys.DestroyOnExpire
     modifier._Attributes = keys.Attributes

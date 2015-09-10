@@ -2,7 +2,7 @@
 --
 -- Simple JSON encoding and decoding in pure Lua.
 --
--- Copyright 2010-2013 Jeffrey Friedl
+-- Copyright 2010-2014 Jeffrey Friedl
 -- http://regex.info/blog/
 --
 -- Latest version: http://regex.info/blog/lua/json
@@ -10,177 +10,26 @@
 -- This code is released under a Creative Commons CC-BY "Attribution" License:
 -- http://creativecommons.org/licenses/by/3.0/deed.en_US
 --
--- It can be used for any purpose so long as the copyright notice and
--- web-page links above are maintained. Enjoy.
+-- It can be used for any purpose so long as the copyright notice above,
+-- the web-page links above, and the 'AUTHOR_NOTE' string below are
+-- maintained. Enjoy.
 --
-local VERSION = 20131118.9  -- version history at end of file
-local OBJDEF = { VERSION = VERSION }
+local VERSION = 20141223.14 -- version history at end of file
+local AUTHOR_NOTE = "-[ JSON.lua package by Jeffrey Friedl (http://regex.info/blog/lua/json) version 20141223.14 ]-"
 
+if JSON == nil then
+	_G.JSON = class({})
+end
 
---
--- Simple JSON encoding and decoding in pure Lua.
--- http://www.json.org/
---
---
---   JSON = (loadfile "JSON.lua")() -- one-time load of the routines
---
---   local lua_value = JSON:decode(raw_json_text)
---
---   local raw_json_text    = JSON:encode(lua_table_or_value)
---   local pretty_json_text = JSON:encode_pretty(lua_table_or_value) -- "pretty printed" version for human readability
---
---
--- DECODING
---
---   JSON = (loadfile "JSON.lua")() -- one-time load of the routines
---
---   local lua_value = JSON:decode(raw_json_text)
---
---   If the JSON text is for an object or an array, e.g.
---     { "what": "books", "count": 3 }
---   or
---     [ "Larry", "Curly", "Moe" ]
---
---   the result is a Lua table, e.g.
---     { what = "books", count = 3 }
---   or
---     { "Larry", "Curly", "Moe" }
---
---
---   The encode and decode routines accept an optional second argument, "etc", which is not used
---   during encoding or decoding, but upon error is passed along to error handlers. It can be of any
---   type (including nil).
---
---   With most errors during decoding, this code calls
---
---      JSON:onDecodeError(message, text, location, etc)
---
---   with a message about the error, and if known, the JSON text being parsed and the byte count
---   where the problem was discovered. You can replace the default JSON:onDecodeError() with your
---   own function.
---
---   The default onDecodeError() merely augments the message with data about the text and the
---   location if known (and if a second 'etc' argument had been provided to decode(), its value is
---   tacked onto the message as well), and then calls JSON.assert(), which itself defaults to Lua's
---   built-in assert(), and can also be overridden.
---
---   For example, in an Adobe Lightroom plugin, you might use something like
---
---          function JSON:onDecodeError(message, text, location, etc)
---             LrErrors.throwUserError("Internal Error: invalid JSON data")
---          end
---
---   or even just
---
---          function JSON.assert(message)
---             LrErrors.throwUserError("Internal Error: " .. message)
---          end
---
---   If JSON:decode() is passed a nil, this is called instead:
---
---      JSON:onDecodeOfNilError(message, nil, nil, etc)
---
---   and if JSON:decode() is passed HTML instead of JSON, this is called:
---
---      JSON:onDecodeOfHTMLError(message, text, nil, etc)
---
---   The use of the fourth 'etc' argument allows stronger coordination between decoding and error
---   reporting, especially when you provide your own error-handling routines. Continuing with the
---   the Adobe Lightroom plugin example:
---
---          function JSON:onDecodeError(message, text, location, etc)
---             local note = "Internal Error: invalid JSON data"
---             if type(etc) = 'table' and etc.photo then
---                note = note .. " while processing for " .. etc.photo:getFormattedMetadata('fileName')
---             end
---             LrErrors.throwUserError(note)
---          end
---
---            :
---            :
---
---          for i, photo in ipairs(photosToProcess) do
---               :
---               :
---               local data = JSON:decode(someJsonText, { photo = photo })
---               :
---               :
---          end
---
---
---
---
-
--- DECODING AND STRICT TYPES
---
---   Because both JSON objects and JSON arrays are converted to Lua tables, it's not normally
---   possible to tell which a JSON type a particular Lua table was derived from, or guarantee
---   decode-encode round-trip equivalency.
---
---   However, if you enable strictTypes, e.g.
---
---      JSON = (loadfile "JSON.lua")() --load the routines
---      JSON.strictTypes = true
---
---   then the Lua table resulting from the decoding of a JSON object or JSON array is marked via Lua
---   metatable, so that when re-encoded with JSON:encode() it ends up as the appropriate JSON type.
---
---   (This is not the default because other routines may not work well with tables that have a
---   metatable set, for example, Lightroom API calls.)
---
---
--- ENCODING
---
---   JSON = (loadfile "JSON.lua")() -- one-time load of the routines
---
---   local raw_json_text    = JSON:encode(lua_table_or_value)
---   local pretty_json_text = JSON:encode_pretty(lua_table_or_value) -- "pretty printed" version for human readability
-
---   On error during encoding, this code calls:
---
---    JSON:onEncodeError(message, etc)
---
---   which you can override in your local JSON object.
---
---   If the Lua table contains both string and numeric keys, it fits neither JSON's
---   idea of an object, nor its idea of an array. To get around this, when any string
---   key exists (or when non-positive numeric keys exist), numeric keys are converted
---   to strings.
---
---   For example,
---     JSON:encode({ "one", "two", "three", SOMESTRING = "some string" }))
---   produces the JSON object
---     {"1":"one","2":"two","3":"three","SOMESTRING":"some string"}
---
---   To prohibit this conversion and instead make it an error condition, set
---      JSON.noKeyConversion = true
-
-
---
--- SUMMARY OF METHODS YOU CAN OVERRIDE IN YOUR LOCAL LUA JSON OBJECT
---
---    assert
---    onDecodeError
---    onDecodeOfNilError
---    onDecodeOfHTMLError
---    onEncodeError
---
---  If you want to create a separate Lua JSON object with its own error handlers,
---  you can reload JSON.lua or use the :new() method.
---
----------------------------------------------------------------------------
-
-
-local author = "-[ JSON.lua package by Jeffrey Friedl (http://regex.info/blog/lua/json), version " .. tostring(VERSION) .. " ]-"
 local isArray  = { __tostring = function() return "JSON array"  end }    isArray.__index  = isArray
 local isObject = { __tostring = function() return "JSON object" end }    isObject.__index = isObject
 
 
-function OBJDEF:newArray(tbl)
+function JSON:newArray(tbl)
    return setmetatable(tbl or {}, isArray)
 end
 
-function OBJDEF:newObject(tbl)
+function JSON:newObject(tbl)
    return setmetatable(tbl or {}, isObject)
 end
 
@@ -247,7 +96,7 @@ local function unicode_codepoint_as_utf8(codepoint)
    end
 end
 
-function OBJDEF:onDecodeError(message, text, location, etc)
+function JSON:onDecodeError(message, text, location, etc)
    if text then
       if location then
          message = string.format("%s at char %d of: %s", message, location, text)
@@ -255,8 +104,9 @@ function OBJDEF:onDecodeError(message, text, location, etc)
          message = string.format("%s: %s", message, text)
       end
    end
+
    if etc ~= nil then
-      message = message .. " (" .. OBJDEF:encode(etc) .. ")"
+      message = message .. " (" .. JSON:encode(etc) .. ")"
    end
 
    if self.assert then
@@ -266,12 +116,12 @@ function OBJDEF:onDecodeError(message, text, location, etc)
    end
 end
 
-OBJDEF.onDecodeOfNilError  = OBJDEF.onDecodeError
-OBJDEF.onDecodeOfHTMLError = OBJDEF.onDecodeError
+JSON.onDecodeOfNilError  = JSON.onDecodeError
+JSON.onDecodeOfHTMLError = JSON.onDecodeError
 
-function OBJDEF:onEncodeError(message, etc)
+function JSON:onEncodeError(message, etc)
    if etc ~= nil then
-      message = message .. " (" .. OBJDEF:encode(etc) .. ")"
+      message = message .. " (" .. JSON:encode(etc) .. ")"
    end
 
    if self.assert then
@@ -385,7 +235,7 @@ end
 
 local function skip_whitespace(text, start)
 
-   local match_start, match_end = text:find("^[ \n\r\t]+", start) -- [http://www.ietf.org/rfc/rfc4627.txt] Section 2
+   local _, match_end = text:find("^[ \n\r\t]+", start) -- [http://www.ietf.org/rfc/rfc4627.txt] Section 2
    if match_end then
       return match_end + 1
    else
@@ -396,7 +246,7 @@ end
 local grok_one -- assigned later
 
 local function grok_object(self, text, start, etc)
-   if not text:sub(start,start) == '{' then
+   if text:sub(start,start) ~= '{' then
       self:onDecodeError("expected '{'", text, start, etc)
    end
 
@@ -419,9 +269,9 @@ local function grok_object(self, text, start, etc)
 
       i = skip_whitespace(text, i + 1)
 
-      local val, new_i = grok_one(self, text, i)
+      local new_val, new_i = grok_one(self, text, i)
 
-      VALUE[key] = val
+      VALUE[key] = new_val
 
       --
       -- Expect now either '}' to end things, or a ',' to allow us to continue.
@@ -445,7 +295,7 @@ local function grok_object(self, text, start, etc)
 end
 
 local function grok_array(self, text, start, etc)
-   if not text:sub(start,start) == '[' then
+   if text:sub(start,start) ~= '[' then
       self:onDecodeError("expected '['", text, start, etc)
    end
 
@@ -455,11 +305,15 @@ local function grok_array(self, text, start, etc)
       return VALUE, i + 1
    end
 
+   local VALUE_INDEX = 1
+
    local text_len = text:len()
    while i <= text_len do
       local val, new_i = grok_one(self, text, i)
 
-      table.insert(VALUE, val)
+      -- can't table.insert(VALUE, val) here because it's a no-op if val is nil
+      VALUE[VALUE_INDEX] = val
+      VALUE_INDEX = VALUE_INDEX + 1
 
       i = skip_whitespace(text, new_i)
 
@@ -513,9 +367,9 @@ grok_one = function(self, text, start, etc)
    end
 end
 
-function OBJDEF:decode(text, etc)
-   if type(self) ~= 'table' or self.__index ~= OBJDEF then
-      OBJDEF:onDecodeError("JSON:decode must be called in method format", nil, nil, etc)
+function JSON:decode(text, etc)
+   if type(self) ~= 'table' or self.__index ~= JSON then
+      JSON:onDecodeError("JSON:decode must be called in method format", nil, nil, etc)
    end
 
    if text == nil then
@@ -543,12 +397,18 @@ function OBJDEF:decode(text, etc)
    end
 
    local success, value = pcall(grok_one, self, text, 1, etc)
+
    if success then
       return value
    else
-      -- should never get here... JSON parse errors should have been caught earlier
-      assert(false, value)
-      return nil
+      -- if JSON:onDecodeError() didn't abort out of the pcall, we'll have received the error message here as "value", so pass it along as an assert.
+      if self.assert then
+         self.assert(false, value)
+      else
+         assert(false, value)
+      end
+      -- and if we're still here, return a nil and throw the error message on as a second arg
+      return nil, value
    end
 end
 
@@ -638,7 +498,7 @@ local function object_or_array(self, T, etc)
       -- It's not ideal, but we'll turn the numbers into strings so that we can at least create a JSON object.
       --
 
-      if JSON.noKeyConversion then
+      if self.noKeyConversion then
          self:onEncodeError("a table with both numeric and string keys could be an object or array; aborting", etc)
       end
 
@@ -672,8 +532,13 @@ end
 --
 -- Encode
 --
+-- 'options' is nil, or a table with possible keys:
+--    pretty            -- if true, return a pretty-printed version
+--    indent            -- a string (usually of spaces) used to indent each nested level
+--    align_keys        -- if true, align all the keys when formatting a table
+--
 local encode_value -- must predeclare because it calls itself
-function encode_value(self, value, parents, etc, indent) -- non-nil indent means pretty-printing
+function encode_value(self, value, parents, etc, options, indent)
 
    if value == nil then
       return 'null'
@@ -719,6 +584,13 @@ function encode_value(self, value, parents, etc, indent) -- non-nil indent means
       --
       local T = value
 
+      if type(options) ~= 'table' then
+         options = {}
+      end
+      if type(indent) ~= 'string' then
+         indent = ""
+      end
+
       if parents[T] then
          self:onEncodeError("table " .. tostring(T) .. " is a child of itself", etc)
       else
@@ -734,13 +606,13 @@ function encode_value(self, value, parents, etc, indent) -- non-nil indent means
          --
          local ITEMS = { }
          for i = 1, maximum_number_key do
-            table.insert(ITEMS, encode_value(self, T[i], parents, etc, indent))
+            table.insert(ITEMS, encode_value(self, T[i], parents, etc, options, indent))
          end
 
-         if indent then
+         if options.pretty then
             result_value = "[ " .. table.concat(ITEMS, ", ") .. " ]"
          else
-            result_value = "[" .. table.concat(ITEMS, ",") .. "]"
+            result_value = "["  .. table.concat(ITEMS, ",")  .. "]"
          end
 
       elseif object_keys then
@@ -749,22 +621,24 @@ function encode_value(self, value, parents, etc, indent) -- non-nil indent means
          --
          local TT = map or T
 
-         if indent then
+         if options.pretty then
 
             local KEYS = { }
             local max_key_length = 0
             for _, key in ipairs(object_keys) do
-               local encoded = encode_value(self, tostring(key), parents, etc, "")
-               max_key_length = math.max(max_key_length, #encoded)
+               local encoded = encode_value(self, tostring(key), parents, etc, options, indent)
+               if options.align_keys then
+                  max_key_length = math.max(max_key_length, #encoded)
+               end
                table.insert(KEYS, encoded)
             end
-            local key_indent = indent .. "    "
-            local subtable_indent = indent .. string.rep(" ", max_key_length + 2 + 4)
+            local key_indent = indent .. tostring(options.indent or "")
+            local subtable_indent = key_indent .. string.rep(" ", max_key_length) .. (options.align_keys and "  " or "")
             local FORMAT = "%s%" .. string.format("%d", max_key_length) .. "s: %s"
 
             local COMBINED_PARTS = { }
             for i, key in ipairs(object_keys) do
-               local encoded_val = encode_value(self, TT[key], parents, etc, subtable_indent)
+               local encoded_val = encode_value(self, TT[key], parents, etc, options, subtable_indent)
                table.insert(COMBINED_PARTS, string.format(FORMAT, key_indent, KEYS[i], encoded_val))
             end
             result_value = "{\n" .. table.concat(COMBINED_PARTS, ",\n") .. "\n" .. indent .. "}"
@@ -773,8 +647,8 @@ function encode_value(self, value, parents, etc, indent) -- non-nil indent means
 
             local PARTS = { }
             for _, key in ipairs(object_keys) do
-               local encoded_val = encode_value(self, TT[key],       parents, etc, indent)
-               local encoded_key = encode_value(self, tostring(key), parents, etc, indent)
+               local encoded_val = encode_value(self, TT[key],       parents, etc, options, indent)
+               local encoded_key = encode_value(self, tostring(key), parents, etc, options, indent)
                table.insert(PARTS, string.format("%s:%s", encoded_key, encoded_val))
             end
             result_value = "{" .. table.concat(PARTS, ",") .. "}"
@@ -793,27 +667,20 @@ function encode_value(self, value, parents, etc, indent) -- non-nil indent means
 end
 
 
-function OBJDEF:encode(value, etc)
-   if type(self) ~= 'table' or self.__index ~= OBJDEF then
-      OBJDEF:onEncodeError("JSON:encode must be called in method format", etc)
+function JSON:encode(value, etc, options)
+   if type(self) ~= 'table' or self.__index ~= JSON then
+      JSON:onEncodeError("JSON:encode must be called in method format", etc)
    end
-   return encode_value(self, value, {}, etc, nil)
+   return encode_value(self, value, {}, etc, options or nil)
 end
 
-function OBJDEF:encode_pretty(value, etc)
-   if type(self) ~= 'table' or self.__index ~= OBJDEF then
-      OBJDEF:onEncodeError("JSON:encode_pretty must be called in method format", etc)
-   end
-   return encode_value(self, value, {}, etc, "")
-end
-
-function OBJDEF.__tostring()
+function JSON.__tostring()
    return "JSON encode/decode package"
 end
 
-OBJDEF.__index = OBJDEF
+JSON.__index = JSON
 
-function OBJDEF:new(args)
+function JSON:new(args)
    local new = { }
 
    if args then
@@ -822,8 +689,7 @@ function OBJDEF:new(args)
       end
    end
 
-   return setmetatable(new, OBJDEF)
+   return setmetatable(new, JSON)
 end
 
--- Return an instance of the encoder
-return OBJDEF:new()
+return JSON:new()

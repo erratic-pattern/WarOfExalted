@@ -1,0 +1,62 @@
+#WoeStatsContainer
+{
+    
+    width: 106px;
+    height: 80px; //this height will cover armor/MS but not damage
+    //height: 115px; //this height will cover armor/MS/damage display
+    
+    horizontal-align: left;
+    vertical-align: bottom;
+    margin-left: 672px;
+    margin-bottom: 5px;
+    
+    //padding-top: 5px;
+    
+    flow-children: down;
+    //overflow: clip;
+    background-color: #000000;
+    color: #B6B6AE;
+    //uncomment for debugging
+    //background-color: green;
+    //color: red;
+    //opacity: 0.4;
+    
+    text-align: center;
+}
+
+.WoeStatsRow
+{
+    //height: 25px;
+    width: fill-parent-flow(1.0);
+    //margin-left: 4px;
+    //margin-top: 2px;
+    flow-children: right;
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.WoeStatsCol
+{
+    //width: 55px;
+    width: fill-parent-flow(1.0);
+    //height: 30px;
+    flow-children: down;
+    font-size: 13;
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.WoeStatsIcon
+{
+    height: 23px;
+    width: 23px;
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.WoeStatsNumber
+{
+    horizontal-align: center;
+    vertical-align: center;
+    //margin-top: 1px;
+}

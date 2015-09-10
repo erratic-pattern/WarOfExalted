@@ -10,4 +10,5 @@
 	"addonContent_Campaign"			"0"
 	"addonURL0"						""
 	"addonDescription"				"A unique MOBA/ARTS concept exploring new gameplay mechanics."
+    "storageApiKey"                 "dfc05b0335e1cf89736c6e9a2c74ecb29a595822"
 }

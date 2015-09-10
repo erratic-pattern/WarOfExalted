@@ -455,7 +455,8 @@
 	
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"		        "1700"
+		//"AbilityCastRange"		        "1700"
+	    "Keywords"                      "spell projectile area"
 		"AbilityCastPoint"				"0.3"
 		"AbilityCooldown"				"6"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
@@ -468,13 +469,6 @@
 			"particle"					"particles/heroes/pyromancer/fireball.vpcf"
 	        "particle"                  "particles/heroes/pyromancer/fireball_explosion.vpcf"
 			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
-		}
-	
-		
-		
-		"Modifiers"
-		{
-	
 		}
 		
 		// Special	
@@ -515,7 +509,7 @@
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
-	    "AbilityUnitTargetType"         "DOTA_UNIT_HERO | DOTA_UNIT_TARGET_BASIC"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
 	    "AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
 	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 	    "FightRecapLevel"				"1"
@@ -525,6 +519,7 @@
 	
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
+	    "Keywords"                      "spell area duration"
 		"AbilityCastRange"				"750"
 		"AbilityCastPoint"				"0.3"
 		"AbilityCooldown"				"20 18 16 14"
@@ -817,5 +812,12 @@
 		"MaxLevel"						"0"
 		"BaseClass" 					"ability_datadriven"
 		"AbilityTextureName"            "rubick_empty1"
+	}
+	"woe_attributes"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+	    "AbilityType"                   "DOTA_ABILITY_TYPE_HIDDEN"
+		"BaseClass"						"ability_lua"
+	    "ScriptFile"                    "abilities/woe_attributes.lua"    
 	}
 }

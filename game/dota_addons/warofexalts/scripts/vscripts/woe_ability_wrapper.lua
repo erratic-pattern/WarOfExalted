@@ -28,9 +28,10 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     --WoE ability instance variables
     abi._woeKeys = {
         StaminaCost = 0,
+        ManaCostMultiplier = 0,
+        StaminaCostMultiplier = 0,
         SpellSpeedRatio = 1,
         AttackSpeedRatio = 1,
-        IsVectorTarget = false,
         AutoDeriveKeywords = true, -- whether or not we derive keywords from dota ability behaviors
         AutoDeriveBehaviors = true -- whether or not we derive behaviors from WoE keywords
     }
@@ -42,7 +43,10 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     util.updateTable(abi._woeKeys, abi._woeDatadriven)
     util.updateTable(abi._woeKeys, extraKeys)
     
-    abi._woeKeys.Keywords = WoeKeywords(extraKeys.Keywords or abi._woeDatadriven.Keywords) --parse keyword string
+    abi._woeKeys.Keywords = WoeKeywords(abi._woeKeys.Keywords) --parse keyword string
+    for _, key in pairs({"StaminaCost", "SpellSpeedRatio", "AttackSpeedRatio"}) do -- split these keys by spaces
+        abi._woeKeys[key] = string.split(abi._woeKeys[key])
+    end
     
     -- convenience function that collects all of the ability special fields for the given level (or the casters current level if none)
     function abi:GetSpecials(i)
@@ -140,7 +144,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     
     --helper function for CastFilters
     function abi:CastFilterSpendStamina(cb, ...)
-        if not self:SpendStaminaCost() then --insufficient stamina
+        if not self:CanSpendStaminaCost() then --insufficient stamina
             return UF_FAIL_CUSTOM
         elseif cb then
             return cb(self, ...)

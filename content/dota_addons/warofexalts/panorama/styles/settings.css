@@ -1,0 +1,73 @@
+#SettingsContainer
+{
+    
+    //width: 106px;
+    //height: 80px; //this height will cover armor/MS but not damage
+    //height: 115px; //this height will cover armor/MS/damage display
+    
+    x: 35%;
+    y: 35%;
+    height: 100px;
+    width: 500px;
+    
+    visibility: collapse;
+    
+    //padding-top: 5px;
+    
+    flow-children: down;
+    //overflow: clip;
+    background-color: #666666;
+    color: #B6B6AE;
+    //uncomment for debugging
+    //background-color: green;
+    //color: red;
+    //opacity: 0.4;
+    
+    font-size: 15;
+    
+    //text-align: center;
+}
+
+.SettingsButtonRow
+{
+    flow-children: right;
+    horizontal-align: right;
+    vertical-align: bottom;
+    margin-bottom: 10px;
+}
+
+.SettingsButton
+{
+    //width: 50px;
+    //height: 50px;
+    margin-left: 5px;
+    margin-right: 5px;
+    border: 1px black;
+    color: white;
+    background-color: black;
+    font-size: 14;
+    
+}
+
+#VectorTargetClickDragToggle
+{
+    width: 500px;
+    
+}
+
+
+#SettingsShowButton
+{
+    x:20%;
+    y:90%;
+    background-color: black;
+    color: #B6B6AE;
+    font-size: 25;
+    height:100px;
+    width:100px;
+}
+
+
+
+
+

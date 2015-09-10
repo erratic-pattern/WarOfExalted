@@ -4,6 +4,10 @@ function pyromancer_fireball:GetAreaRadius()
     return self:GetSpecialValueFor("area_radius") * 1
 end
 
+function pyromancer_fireball:GetCastRange()
+    return self:GetSpecialValueFor("duration")*self:GetSpecialValueFor("speed")
+end
+
 function pyromancer_fireball:OnSpellStart()
     local height = 70
     local caster = self:GetCaster()

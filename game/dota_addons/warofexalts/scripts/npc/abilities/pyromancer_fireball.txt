@@ -12,7 +12,8 @@
 
 	// Stats
 	//-------------------------------------------------------------------------------------------------------------
-	"AbilityCastRange"		        "1700"
+	//"AbilityCastRange"		        "1700"
+    "Keywords"                      "spell projectile area"
 	"AbilityCastPoint"				"0.3"
 	"AbilityCooldown"				"6"
 	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
@@ -25,13 +26,6 @@
 		"particle"					"particles/heroes/pyromancer/fireball.vpcf"
         "particle"                  "particles/heroes/pyromancer/fireball_explosion.vpcf"
 		"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
-	}
-
-	
-	
-	"Modifiers"
-	{
-
 	}
 	
 	// Special	

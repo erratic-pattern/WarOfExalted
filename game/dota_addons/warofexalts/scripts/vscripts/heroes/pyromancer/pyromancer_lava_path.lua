@@ -27,7 +27,7 @@ function pyromancer_lava_path:OnSpellStart()
 	local stepLength = pathLength / ( numProjectiles - 1 )
 
     --wait 0.5 seconds
-    Timers:CreateTimers(interval, function()
+    Timers:CreateTimer(interval, function()
         for i=1, numProjectiles do
             local pos = startPos + self:GetDirectionVector() * (i-1) * stepLength
             --CreateModifierThinker(caster, self, "modifier_lava_path_thinker", {duration = duration}, pos, caster:GetTeam(), false)
@@ -45,6 +45,7 @@ function pyromancer_lava_path:OnSpellStart()
                         Interval = interval,
                         IsHidden = true,
                         MagicalDamage = damage * interval,
+                        Test    = "Test"
                     })
                 end,
             })

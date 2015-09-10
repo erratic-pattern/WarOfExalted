@@ -1,15 +1,32 @@
 <root>    
     <styles>
-        <include src="file://{resources}/styles/custom_game/stats_container.css" />
-        <include src="file://{resources}/styles/custom_game/woe_overlay.css" />
+        <include src="file://{resources}/styles/stats_container.css" />
+        <include src="file://{resources}/styles/woe_overlay.css" />
+        <include src="file://{resources}/styles/settings.css" />
     </styles>
     <scripts>
-        <include src="file://{resources}/scripts/custom_game/woe.js" />
-        <include src="file://{resources}/scripts/custom_game/stats_container.js" />
-        <include src="file://{resources}/scripts/custom_game/vector_target.js" />
+        <include src="file://{resources}/scripts/woe.js" />
+        <include src="file://{resources}/scripts/stats_container.js" />
+        <include src="file://{resources}/scripts/vector_target.js" />
+        <include src="file://{resources}/scripts/settings.js" />
     </scripts>
     <Panel class="WoeOverlay" hittest="false">
-        <Panel class="WoeStatsContainer">
+        <Button id="SettingsShowButton" class="SettingsButton" onactivate="OnSettingsShowButtonPressed()">
+            <Label text="Settings" />
+        </Button>
+        <Panel id="SettingsContainer">
+            <ToggleButton id="VectorTargetClickDragToggle" text="Use click-and-drag behavior for vector targeted abiltiies" />
+            <Panel class="SettingsButtonRow" >
+                <Button id="SettingsSaveButton" class="SettingsButton" onactivate="OnSettingsSaveButtonPressed()">
+                    <Label text="Save" />
+                </Button>
+                <Button id="SettingsCancelButton" class="SettingsButton" onactivate="OnSettingsCancelButtonPressed()">
+                    <Label text="Cancel" />
+                </Button>
+            </Panel>
+        </Panel>
+        
+        <Panel id="WoeStatsContainer">
             <Panel class="WoeStatsRow">
                 <Panel class="WoeStatsCol WoeStatsMoveSpeedCol">
                     <Image src="file://{resources}/images/boots.png" class="WoeStatsIcon" />

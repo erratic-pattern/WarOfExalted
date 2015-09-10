@@ -26,12 +26,54 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         StaminaRegenBonus = 0,
         StaminaRegenBaseModifier = 0,
         StaminaRechargeDelayBase = 5,
-        StaminaRechargeDelayReduction = 0,
+        StaminaRechargeDelayModifier = 0,
         StaminaRechargeRateBase = 0.1,
         StaminaRechargeRateBonus = 0,
         StaminaTimer = 0,
         ForceStaminaRecharge = false,
     }
+    
+    unit.suppressEvents = false
+    unit.suppressedEvents = { }
+    
+    --send to clients to indicate that stats were changed
+    --note: for stats that are expected to rapidly change (i.e. current stamina) this event is not used
+    function unit:SendUpdateEvent(eventName, eventParams)
+        eventParams = eventParams or { }
+        if self._woeKeys.suppressEvents then
+            self._woeKeys.suppressedEvents[eventName] = eventParams
+        else
+            eventParams.unit = eventParams.unit or self
+            CustomGameEventManager:Send_ServerToAllClients(eventName, eventParams)
+        end
+    end
+    
+    --begin suppressing update events
+    function unit:SuppressEvents()
+        self.suppressEvents = true
+    end
+    
+    --stop suppressing update events
+    function unit:UnsuppressEvents()
+        self.suppressEvents = false
+        self.suppressedEvents = { }
+    end
+    
+    --execute callback with suppressed events, then trigger events at end
+    function unit:BatchUpdate(cb, ...)
+        self:SuppressEvents()
+        local status, res = pcall(cb)
+        local suppressed = self.suppressedEvents
+        self:UnsuppressEvents()
+        for name, params in pairs(suppressed) do
+            self:SendUpdateEvent(eventName, eventParams)
+        end
+        if status then
+            return res
+        else
+            error(res)
+        end
+    end
     
     --Get the total WoE MR rating (analogous to armor rating)
     function unit:GetWoeMagicResist() 
@@ -50,14 +92,20 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     
     --Set the base MR rating of the unit
     function unit:SetWoeMagicResistBase(v)
-        self._woeKeys.MagicResistBase = v
-        self:_RecalculateMagicReduction()
+        if v ~= self._woeKeys.MagicResistBase then
+            self._woeKeys.MagicResistBase = v
+            self:_RecalculateMagicReduction()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     --Set the bonus MR rating of the unit
     function unit:SetWoeMagicResistBonus(v)
-        self._woeKeys.MagicResistBonus = v
-        self:_RecalculateMagicReduction()
+        if v ~= self._woeKeys.MagicResistBonus then
+            self._woeKeys.MagicResistBonus = v
+            self:_RecalculateMagicReduction()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetWoeMagicResistModifier()
@@ -65,8 +113,11 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetWoeMagicResistModifier(v)
+        if v ~= self._woeKeys.MagicResistModifier then
         self._woeKeys.MagicResistModifier = v
         self:_RecalculateMagicReduction()
+        self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     --Calculates % magic reduction from current MR rating and resets it via the dota API
@@ -82,7 +133,10 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     
     --Set spell SpellSpeed rating
     function unit:SetSpellSpeedBase(v)
-        self._woeKeys.SpellSpeedBase = v
+        if v ~= self._woeKeys.SpellSpeedBase then
+            self._woeKeys.SpellSpeedBase = v
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetSpellSpeedBonus()
@@ -90,7 +144,10 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetSpellSpeedBonus(v)
-        self._woeKeys.SpellSpeedBonus = v
+        if v ~= self._woeKeys.SpellSpeedBonus then
+            self._woeKeys.SpellSpeedBonus = v
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetSpellSpeedModifier()
@@ -98,7 +155,10 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetSpellSpeed(v)
-        self._woeKeys.SpellSpeedModifier = v
+        if v ~= self._woeKeys.SpellSpeedModifier then
+            self._woeKeys.SpellSpeedModifier = v
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetSpellSpeed()
@@ -110,7 +170,10 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetCdrPercent(v)
-        self._woeKeys.CdrPercent = v
+        if v ~= self._woeKeys.CdrPercent then
+            self._woeKeys.CdrPercent = v
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetStamina()
@@ -124,7 +187,10 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         elseif v < 0 then
             v = 0
         end
-        self._woeKeys.StaminaCurrent = v
+        if v ~= self._woeKeys.StaminaCurrent then
+            self._woeKeys.StaminaCurrent = v
+            self:SendUpdateEvent("woe_stamina_changed", {unit = self, amount = v})
+        end
     end
     
     function unit:GetStaminaPercent()
@@ -147,10 +213,13 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         if v < 0 then
             v = 0
         end
+        if v ~= self._woeKeys.StaminaMax then
         local ratio = self:GetStaminaPercent()
-        self._woeKeys.StaminaMax = v
-        self._woeKeys.StaminaCurrent = ratio*v
-        self:_InitializeStaminaRegenerator()
+            self._woeKeys.StaminaMax = v
+            self._woeKeys.StaminaCurrent = ratio*v
+            self:_InitializeStaminaRegenerator()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     --Sets max stamina without adjusting current stamina by percentage. Current stamina will be clipped at the new max if it exceeds the new max.
@@ -158,9 +227,13 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         if v < 0 then
             v = 0
         end
-        self._woeKeys.staminaMax = v
-        if self._woeKeys.CurrentStamina > v then
-          self._woeKeys.CurrentStamina = v
+        if v ~= self._woeKeys.StaminaMax then
+            self._woeKeys.staminaMax = v
+            if self._woeKeys.CurrentStamina > v then
+              self._woeKeys.CurrentStamina = v
+              self:SendUpdateEvent("woe_stamina_changed", {unit = self, amount = v})
+            end
+            self:SendUpdateEvent("woe_stats_changed")
         end
     end
     
@@ -235,8 +308,11 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetStaminaRegenBase(v)
-        self._woeKeys.StaminaRegenBase = v
-        self:_InitializeStaminaRegenerator()
+        if v ~= self._woeKeys.StaminaRegenBase then
+            self._woeKeys.StaminaRegenBase = v
+            self:_InitializeStaminaRegenerator()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetStaminaRegenBonus()
@@ -244,8 +320,11 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetStaminaRegenBonus(v)
-        self._woeKeys.StaminaRegenBonus = v
-        self:_InitializeStaminaRegenerator()
+        if v ~= self._woeKeys.StaminaRegenBonus then
+            self._woeKeys.StaminaRegenBonus = v
+            self:_InitializeStaminaRegenerator()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetStaminaRegenBaseModifier()
@@ -253,8 +332,11 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetStaminaRegenBaseModifier(v)
-        self._woeKeys.StaminaRegenBaseModifier = v
-        self:_InitializeStaminaRegenerator()
+        if v ~= self._woeKeys.StaminaRegenBaseModifier then
+            self._woeKeys.StaminaRegenBaseModifier = v
+            self:_InitializeStaminaRegenerator()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetStaminaRegen()
@@ -266,19 +348,25 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetStaminaRechargeDelayBase(v)
-        self._woeKeys.StaminaRechargeDelayBase = v
+        if v ~= self._woeKeys.StaminaRechargeDelayBase then
+            self._woeKeys.StaminaRechargeDelayBase = v
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
-    function unit:GetStaminaRechargeDelayReduction()
-        return self._woeKeys.StaminaRechargeDelayReduction
+    function unit:GetStaminaRechargeDelayModifier()
+        return self._woeKeys.StaminaRechargeDelayModifier
     end
     
-    function unit:SetStaminaRechargeDelayReduction(v)
-        self._woeKeys.StaminaRechargeDelayReduction = v
+    function unit:SetStaminaRechargeDelayModifier(v)
+        if v ~= self._woeKeys.StaminaRechargeDelayModifier then
+            self._woeKeys.StaminaRechargeDelayModifier = v
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetStaminaRechargeDelay()
-        return self:GetStaminaRechargeDelayBase() * (1 - self:GetStaminaRechargeDelayReduction())
+        return self:GetStaminaRechargeDelayBase() * (1 + self:GetStaminaRechargeDelayModifier())
     end
     
     function unit:GetStaminaRechargeRateBase()
@@ -286,8 +374,11 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetStaminaRechargeRateBase(v)
-        self._woeKeys.StaminaRechargeRateBase = v
-        self:_InitializeStaminaRegenerator()
+        if v ~= self._woeKeys.StaminaRechargeRateBase then
+            self._woeKeys.StaminaRechargeRateBase = v
+            self:_InitializeStaminaRegenerator()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     function unit:GetStaminaRechargeRateBonus()
@@ -295,8 +386,11 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetStaminaRechargeRateBonus(v)
-        self._woeKeys.StaminaRechargeRateBonus = v
-        self:_InitializeStaminaRegenerator()
+        if v ~= self._woeKeys.StaminaRechargeRateBonus then
+            self._woeKeys.StaminaRechargeRateBonus = v
+            self:_InitializeStaminaRegenerator()
+            self:SendUpdateEvent("woe_stats_changed")
+        end
     end
     
     --returns the % of max stamina that's restored per second when in stamina recharge mode
@@ -305,10 +399,8 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:_InitializeStaminaRegenerator()
-        if (not self._woeStaminaRegeneratorInitialized 
-            and self:GetMaxStamina() > 0 
-            and (self:GetStaminaRegen() > 0 or self:GetStaminaRechargeRate() > 0)) then
-                self._woeStaminaRegeneratorInitialized = true
+        if self:GetMaxStamina() > 0 
+            and (self:GetStaminaRegen() > 0 or self:GetStaminaRechargeRate() > 0) then
                 unit:AddNewModifier(unit, nil, "modifier_woe_stamina_regenerator", {})
         end
     end
@@ -319,7 +411,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
             if abil ~= nil then
                 cb(abil)
             end
-        end    
+        end
     end
     
     function unit:CallOnModifiers(fName, ...)
@@ -346,6 +438,6 @@ function WarOfExalts:WoeHeroWrapper(unit)
     local keys = self.datadriven.heroes[unit:GetUnitName()]
     util.updateTable(unit._woeKeys, keys)
     
-    unit:AddNewModifier(unit, nil, "modifier_woe_attributes", {})
+    unit:AddAbility("woe_attributes")
 end
  
