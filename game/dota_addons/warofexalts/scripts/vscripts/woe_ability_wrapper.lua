@@ -28,8 +28,6 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     --WoE ability instance variables
     abi._woeKeys = {
         StaminaCost = 0,
-        ManaCostMultiplier = 0,
-        StaminaCostMultiplier = 0,
         SpellSpeedRatio = 1,
         AttackSpeedRatio = 1,
         AutoDeriveKeywords = true, -- whether or not we derive keywords from dota ability behaviors
@@ -180,12 +178,21 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         return ""
     end
     
-    function abi:GetStaminaCost()
+    function abi:GetBaseStaminaCost()
         return self._woeKeys.StaminaCost
     end
     
-    function abi:SetStaminaCost(v)
+    function abi:SetBaseStaminaCost(v)
         self._woeKeys.StaminaCost = v
+    end
+    
+    function abi:GetStaminaCost()
+        local caster = self:GetCaster()
+        local m = 1
+        if caster then
+            m = 1 + caster:GetStaminaCostModifier()
+        end
+        return m * self:GetBaseStaminaCost()
     end
     
     function abi:SpendStaminaCost()

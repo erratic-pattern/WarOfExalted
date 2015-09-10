@@ -31,6 +31,8 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         StaminaRechargeRateBonus = 0,
         StaminaTimer = 0,
         ForceStaminaRecharge = false,
+        StaminaCostModifier = 0,
+        ProjectileSpeedModifier = 0,
     }
     
     unit.suppressEvents = false
@@ -114,9 +116,9 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     
     function unit:SetWoeMagicResistModifier(v)
         if v ~= self._woeKeys.MagicResistModifier then
-        self._woeKeys.MagicResistModifier = v
-        self:_RecalculateMagicReduction()
-        self:SendUpdateEvent("woe_stats_changed")
+            self._woeKeys.MagicResistModifier = v
+            self:_RecalculateMagicReduction()
+            self:SendUpdateEvent("woe_stats_changed")
         end
     end
     
@@ -403,6 +405,22 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
             and (self:GetStaminaRegen() > 0 or self:GetStaminaRechargeRate() > 0) then
                 unit:AddNewModifier(unit, nil, "modifier_woe_stamina_regenerator", {})
         end
+    end
+    
+    function unit:GetStaminaCostModifier()
+        return self._woeKeys.StaminaCostModifier
+    end
+    
+    function unit:SetStaminaCostModifier(v)
+        self._woeKeys.StaminaCostModifier = v
+    end
+    
+    function unit:GetProjectileSpeedModifier()
+        return self._woeKeys.ProjectileSpeedModifier()
+    end
+    
+    function unit:SetProjectileSpeedModifier(v)
+        self._woeKeys.ProjectileSpeedModifier() = v
     end
     
     function unit:WithAbilities(cb)
