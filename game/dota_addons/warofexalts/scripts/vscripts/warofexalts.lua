@@ -516,7 +516,7 @@ function WarOfExalts:InitWarOfExalts()
 	print('[WAROFEXALTS] Starting to load WarOfExalts gamemode...')
     
     
-    CustomNetTables:SetTableValue("GameConfig", "Testing", Testing)
+    CustomNetTables:SetTableValue("GameConfig", "Testing", {value = Testing})
     
     self:LinkModifiers() --Initialize custom Lua modifiers
     

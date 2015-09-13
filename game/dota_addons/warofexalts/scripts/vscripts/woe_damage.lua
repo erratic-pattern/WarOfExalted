@@ -219,9 +219,9 @@ function WoeDamage:Apply()
         damage_flags = bit.bor(DOTA_DAMAGE_FLAG_IGNORES_PHYSICAL_ARMOR, DOTA_DAMAGE_FLAG_IGNORES_MAGIC_ARMOR, self.DotaDamageFlags)
     }
     local dmgIter = {
-        [DAMAGE_TYPE_PHYSICAL] = self:GetPhysicalDamage(),
-        [DAMAGE_TYPE_MAGICAL] = self:GetMagicalDamage(),
-        [DAMAGE_TYPE_PURE] = self:GetPureDamage()
+        [DAMAGE_TYPE_PHYSICAL] = mitigated:GetPhysicalDamage(),
+        [DAMAGE_TYPE_MAGICAL] = mitigated:GetMagicalDamage(),
+        [DAMAGE_TYPE_PURE] = mitigated:GetPureDamage()
     }
     for dType, dmg in ipairs(dmgIter) do
         if dmg > 0 then

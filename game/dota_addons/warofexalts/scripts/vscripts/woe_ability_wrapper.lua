@@ -178,8 +178,14 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         return ""
     end
     
-    function abi:GetBaseStaminaCost()
-        return self._woeKeys.StaminaCost
+    --retrieves a value from an array based on ability levels
+    function abi:_GetLevelScalableKey(arr, iLvl)
+        local index = math.min(table.getn(arr), self:GetMaxLevel(), iLvl or self:GetLevel())
+        return arr[index]
+    end
+    
+    function abi:GetBaseStaminaCost(iLvl)
+        return self:_GetLevelScalableKey(self._woeKeys.StaminaCost, iLvl)
     end
     
     function abi:SetBaseStaminaCost(v)
@@ -198,29 +204,29 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     function abi:SpendStaminaCost()
         caster = caster or self:GetCaster()
         if caster and caster.isWoeUnit then
-            return caster:SpendStamina(self:GetStaminaCost())
+            return caster:SpendStamina(self:GetStaminaCost(), {ability = self})
         end
         return true
     end
     
     function abi:CanSpendStaminaCost()
-        caster = self:getCaster()
+        caster = self:GetCaster()
         if caster and caster.isWoeUnit then
             return caster:CanSpendStamina(self:GetStaminaCost())
         end
         return true
     end
     
-    function abi:GetSpellSpeedRatio()
-        return self._woeKeys.SpellSpeedRatio
+    function abi:GetSpellSpeedRatio(iLvl)
+        return self:_GetLevelScalableKey(self._woeKeys.SpellSpeedRatio, iLvl)
     end
     
     function abi:SetSpellSpeedRatio(v)
         self._woeKeys.SpellSpeedRatio = v
     end
     
-    function abi:GetAttackSpeedRatio()
-        return self._woeKeys.AttackSpeedRatio
+    function abi:GetAttackSpeedRatio(iLvl)
+        return self:_GetLevelScalableKey(self._woeKeys.AttackSpeedRatio, iLvl)
     end
     
     function abi:SetAttackSpeedRatio(v)

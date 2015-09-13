@@ -191,7 +191,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end
         if v ~= self._woeKeys.StaminaCurrent then
             self._woeKeys.StaminaCurrent = v
-            self:SendUpdateEvent("woe_stamina_changed", {unit = self, amount = v})
+            self:SendUpdateEvent("woe_stamina_changed", {unit = self, value = v})
         end
     end
     
@@ -233,7 +233,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
             self._woeKeys.staminaMax = v
             if self._woeKeys.CurrentStamina > v then
               self._woeKeys.CurrentStamina = v
-              self:SendUpdateEvent("woe_stamina_changed", {unit = self, amount = v})
+              self:SendUpdateEvent("woe_stamina_changed", {unit = self, value = v})
             end
             self:SendUpdateEvent("woe_stats_changed")
         end
@@ -268,7 +268,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
          
     --attempts to spend the given amount of stamina. will not reduce stamina if there is not enough available. returns true and triggers stamina recharge cooldown if stamina was successfully spent.
-    function unit:SpendStamina(v)
+    function unit:SpendStamina(v, context)
         if v <= 0 then
             return true
         end
@@ -278,6 +278,9 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end
         self:SetStamina(newStamina)
         self:TriggerStaminaRechargeCooldown()
+        context = context or { }
+        context.value = v
+        self:CallOnModifiers("OnSpentStamina", context)
         return true;
     end
     
@@ -420,7 +423,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     end
     
     function unit:SetProjectileSpeedModifier(v)
-        self._woeKeys.ProjectileSpeedModifier() = v
+        self._woeKeys.ProjectileSpeedModifier = v
     end
     
     function unit:WithAbilities(cb)

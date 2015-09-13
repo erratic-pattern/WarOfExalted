@@ -1,37 +1,58 @@
-function InitLuaModifier(modifier, keys)
-    util.printTable(keys)
-    modifier._AllowIllusionDuplicate = keys.AllowIllusionDuplicate
-    modifier._DestroyOnExpire = keys.DestroyOnExpire
-    modifier._Attributes = keys.Attributes
-    modifier._AuraEntityReject = keys.AuraEntityReject or modifier.GetAuraEntityReject
-    modifier._AuraRadius = keys.AuraRadius
-    modifier._AuraSearchFlags = keys.AuraSearchFlags
-    modifier._AuraSearchTeam = keys.AuraSearchTeam
-    modifier._AuraSearchType = keys.AuraSearchType
-    modifier._EffectAttachType = keys.EffectAttachType
-    modifier._EffectName = keys.EffectName
-    modifier._StatusEffectName = keys.StatusEffectName
-    modifier._Texture = keys.Texture
-    modifier._HeroEffectPriority = keys.HeroEffectPriority
-    modifier._IsAuraActiveOnDeath = keys.IsAuraActiveOnDeath
-    if keys.IsAura ~= nil then
-        modifier._IsAura = keys._IsAura
+--default handling
+local default = function(key, modifier, keys)
+    if keys[key] == nil then
+        modifier["_" .. key] = modifier[key](modifier)
     else
-        modifier._IsAura = modifier._AuraSearchFlags ~= nil or modifier._AuraSearchTeam ~= nil or modifier._AuraSearchType ~= nil 
-                           or modifier._AuraRadius  ~= nil or keys.AuraEntityReject ~= nil or modifier._IsAuraActiveOnDeath ~= nil
+        modifier["_" .. key] = keys[key]
     end
-    modifier._IsDebuff = keys.IsDebuff
-    modifier._IsHidden = keys.IsHidden
-    modifier._IsPurgable = keys.IsPurgable
-    modifier._IsPurgeException = keys.IsPurgeException
-    modifier._IsStunDebuff = keys.IsStunDebuff
-    modifier._RemoveOnDeath = keys.RemoveOnDeath
-    modifier._StatusEffectPriority = keys.StatusEffectPriority
+end
+
+--default handling for keys with a "get" function
+local getDefault = function(key, modifier, keys)
+    if keys[key] == nil then
+        modifier["_" .. key] = modifier["Get" .. key](modifier)
+    else
+        modifier["_" .. key] = keys[key]
+    end
+end
+
+function InitModifier(modifier, keys)
+    --util.printTable(keys)
+    getDefault("Attributes", modifier, keys)
+    getDefault("AuraRadius", modifier, keys)
+    getDefault("AuraSearchFlags", modifier, keys)
+    getDefault("AuraSearchTeam", modifier, keys)
+    getDefault("AuraSearchType", modifier, keys)
+    getDefault("EffectAttachType", modifier, keys)
+    getDefault("EffectName", modifier, keys)
+    getDefault("StatusEffectName", modifier, keys)
+    getDefault("Texture", modifier, keys)
+    default("HeroEffectPriority", modifier, keys)
+    default("StatusEffectPriority", modifier, keys)
+    default("IsAuraActiveOnDeath", modifier, keys)
+    default("AllowIllusionDuplicate", modifier, keys)
+    default("DestroyOnExpire", modifier, keys)
+    default("IsDebuff", modifier, keys)
+    default("IsHidden", modifier, keys)
+    default("IsPurgable", modifier, keys)
+    default("IsPurgeException", modifier, keys)
+    default("IsStunDebuff", modifier, keys)
+    default("RemoveOnDeath", modifier, keys)
     
+    --event handlers (note: these cannot be passed in via AddNewModifier)
+    modifier.GetAuraEntityReject = keys.GetAuraEntityReject or modifier.GetAuraEntityReject or function() return true end
     modifier.OnDestroy = keys.OnDestroy or modifier.OnDestroy
     modifier.OnIntervalThink = keys.OnIntervalThink or modifier.OnIntervalThink
     modifier.OnRefresh = keys.OnRefresh or modifier.OnRefresh
 
+    --smart IsAura defaulting based on existence of aura-related keys
+    if keys.IsAura ~= nil then
+        modifier._IsAura = keys._IsAura
+    else
+        modifier._IsAura = keys.AuraSearchFlags ~= nil or keys.AuraSearchTeam ~= nil or keys.AuraSearchType ~= nil 
+                           or keys.AuraRadius  ~= nil or keys.AuraEntityReject ~= nil or keys.IsAuraActiveOnDeath ~= nil
+    end
+    
     function modifier:AllowIllusionDuplicate()
         return self._AllowIllusionDuplicate and self._AllowIllusionDuplicate ~= 0
     end
@@ -74,10 +95,6 @@ function InitLuaModifier(modifier, keys)
     
     function modifier:GetAttributes()
         return self._Attributes
-    end
-    
-    function modifier:GetAuraEntityReject(ent)
-        return self._AuraEntityReject(ent)
     end
     
     function modifier:DestroyOnExpire()
@@ -131,5 +148,28 @@ function InitLuaModifier(modifier, keys)
     if keys.ThinkInterval ~= nil then
         modifier:StartIntervalThink(keys.ThinkInterval)
     end
+    --util.printTable(modifier)
     return modifier
+end
+
+function InitDotModifier(modifier, keys)
+    keys.ThinkInterval = keys.ThinkInterval or keys.Interval or 0.5
+    if keys.IsPurgable == nil then
+        keys.IsPurgable = true
+    end
+    if keys.RemoveOnDeath == nil then
+        keys.RemoveOnDeath = true
+    end
+    if keys.DestroyOnExpire == nil then
+        keys.DestroyOnExpire = true
+    end
+    keys.Victim = keys.Victim or modifier:GetParent()
+    keys.Attacker = keys.Attacker or modifier:GetCaster()
+    keys.Ability = keys.Ability or modifier:GetAbility()
+    keys.OnIntervalThink = function(modifier)
+        modifier.Damage:Apply()
+    end
+    modifier.Damage = keys.Damage or WoeDamage(keys)
+    modifier.Damage:GetKeywords():Add("dot")
+    InitModifier(modifier, keys)
 end

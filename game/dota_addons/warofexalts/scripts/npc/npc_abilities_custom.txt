@@ -505,7 +505,7 @@
 	        }
 		}
 	}
-	"pyromancer_lava_path"
+	"pyromancer_lava_wake"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
@@ -515,7 +515,7 @@
 	    "FightRecapLevel"				"1"
 		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"jakiro_macropyte"
-	    "ScriptFile"                    "heroes/pyromancer/pyromancer_lava_path.lua"
+	    "ScriptFile"                    "heroes/pyromancer/pyromancer_lava_wake.lua"
 	
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
@@ -542,30 +542,35 @@
 	            "var_type"                  "FIELD_INTEGER"
 	            "damage"                    "25 30 35 40"
 	        }
-			"01"
-			{
-				"var_type"					"FIELD_INTEGER"
-				"cast_range"				"750"					
-			}
 			"02"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"duration"			        "6"
+				"effect_duration"	        "6"
 			}			
 			"03"
 			{
 				"var_type"					"FIELD_INTEGER"
-				"path_radius"				"240"
-			}			
-			"04"
+				"effect_radius"				"240"
+			}
+	        "04"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "burn_duration"             "0.5"
+	        }
+			"05"
 			{
 				"var_type"					"FIELD_FLOAT"
 				"burn_interval"				"0.5"
 			}
-	        "05"
+	        "06"
 	        {
 	            "var_type"                  "FIELD_INTEGER"
 	            "mr_reduction"              "3 4 5 6"
+	        }
+	        "07"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "debuff_duration"           "4"
 	        }
 		}
 	    

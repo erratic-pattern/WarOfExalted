@@ -3,7 +3,8 @@
 	"override_hero"			"npc_dota_hero_lina"
     
 	"Ability1"				"pyromancer_fireball" 
-	"Ability2"				"pyromancer_lava_path" 
+	"Ability2"				"pyromancer_lava_wake"
+    "Ability3"              "pyromancer_intensity"
 	//"Ability3"				""
 	//"Ability4"				""
 
