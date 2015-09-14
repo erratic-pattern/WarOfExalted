@@ -1,9 +1,10 @@
 modifier_pyromancer_lava_wake_mr_reduction = class({}, nil, modifier_woe_base)
 
 
-modifier_pyromancer_lava_wake_mr_reduction:Init(modifier_pyromancer_lava_wake_mr_reduction, {
+modifier_pyromancer_lava_wake_mr_reduction:Init({
     IsDebuff = true,
     isPurgable = true,
+    IsHidden = false,
     StatusEffectName = "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf",
     HeroEffectName = "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn.vpcf",
     EffectAttachType = PATTACH_ABSORIGIN_FOLLOW
