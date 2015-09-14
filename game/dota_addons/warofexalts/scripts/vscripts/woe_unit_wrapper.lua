@@ -15,7 +15,6 @@ local propGetter = function(name, onChange)
         if t > cached.cacheTime + CACHE_LIFETIME then
             print("fetching new value for ", name)
             v = unit._woeKeys[name] + unit:SumModifierProperties(name)
-            print("value", v)
             if v ~= old then
                 print("propGetter", "value changed", name, v, old)
                 cached.value = v
@@ -103,9 +102,13 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     function unit:SendUpdateEvent(eventName, eventParams)
         eventParams = eventParams or { }
         eventParams.unit = eventParams.unit or self
-        if self._woeKeys.suppressEvents then
-            self._woeKeys.suppressedEvents[eventName] = eventParams
+        print("SendUpdateEvent", eventName)
+        util.printTable(eventParam)
+        if self.suppressEvents then
+            print("suppressed")
+            self.suppressedEvents[eventName] = eventParams
         else
+            print("sending")
             CustomGameEventManager:Send_ServerToAllClients(eventName, eventParams)
         end
     end
@@ -129,7 +132,8 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     
     --execute callback with suppressed events, then trigger events at end
     function unit:BatchUpdate(cb)
-        return SuppressEvents(cb, function(suppressed) 
+        return SuppressEvents(cb, function(suppressed)
+            print("BatchUpdate: sending suppressed events")
             for name, params in pairs(suppressed) do
                 self:SendUpdateEvent(eventName, eventParams)
             end
@@ -378,7 +382,6 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
             if modifier._WoeProperties then
                 local prop = modifier._WoeProperties[pName]
                 if prop ~= nil then
-                    print(pName, "property defined for", modifier:GetName())
                     if type(prop) == "function" then
                         out = out + prop(modifier, ...)
                     else
@@ -386,9 +389,6 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
                     end
                 end
             end
-        end
-        if out > 0 then
-            print("SumModifierProperties", pName, out)
         end
         return out
     end

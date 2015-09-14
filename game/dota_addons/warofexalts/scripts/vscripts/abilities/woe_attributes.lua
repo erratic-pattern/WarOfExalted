@@ -1,5 +1,5 @@
 --Modifier used to implement stat bonuses from attributes
-woe_attributes = class({}, nil)
+woe_attributes = class({})
 
 MINUS_ARMOR_PER_AGI = 0.14 -- amount of base armor reduced per point of agility
 ARMOR_PER_STR = 0.14       -- amount of base armor increased per point of strength
