@@ -94,8 +94,6 @@ function WarOfExalts:OnAllPlayersLoaded()
     for steamID, player in pairs(self.vSteamIds) do
         local playerID = player:GetPlayerID()
         Storage:Get(steamID, function(config, success)
-            print("setting net table for player ID: ", playerID)
-            print(config)
             if not success or config == nil then
                 config = { }
             end
