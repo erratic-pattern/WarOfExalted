@@ -10,9 +10,9 @@
 		//"Ability3"				""
 		//"Ability4"				""
 	
-		"ArmorPhysical"				"0"									// Physical protection.
-		"MagicalResistance"		    "1"									// Magical protection (percentage).
-	
+		"ArmorPhysical"				"0"
+		"MagicResistBase"		    "1"
+	    
 		"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED_ATTACK"
 	    "ProjectileModel"           "particles/units/heroes/hero_lina/lina_base_attack.vpcf"
 	    "ProjectileSpeed"           "1000"

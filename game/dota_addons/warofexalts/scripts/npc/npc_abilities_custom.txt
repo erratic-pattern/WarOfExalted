@@ -519,7 +519,7 @@
 	
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
-	    "Keywords"                      "spell area duration"
+	    "Keywords"                      "spell area duration dot debuff"
 		"AbilityCastRange"				"750"
 		"AbilityCastPoint"				"0.3"
 		"AbilityCooldown"				"20 18 16 14"
@@ -578,6 +578,8 @@
 		{
 			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_jakiro.vsndevts"
 			"particle"					"particles/units/heroes/hero_jakiro/jakiro_macropyre.vpcf"
+	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn.vpcf"
+	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf"
 		}
 	}
 	"test_vector_targeting"
