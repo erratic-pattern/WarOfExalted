@@ -461,13 +461,17 @@ function WarOfExalts:OnWoeUnitRequest( keys )
     if unit then
         keys.isWoeUnit = unit.isWoeUnit
         if unit.isWoeUnit then
-            keys.MsBase = unit:GetBaseMoveSpeed()
-            keys.MsTotal = unit:GetIdealSpeed()
-            keys.MagicResistTotal = unit:GetWoeMagicResist()
-            keys.ArmorBase = unit:GetPhysicalArmorBaseValue()
-            keys.ArmorTotal = unit:GetPhysicalArmorValue()
-            keys.SpellSpeed = unit:GetSpellSpeed()
-            util.mergeTable(keys, unit._woeKeys)
+            unit:SuppressEvents(function()
+                keys.MsBase = unit:GetBaseMoveSpeed()
+                keys.MsTotal = unit:GetIdealSpeed()
+                keys.MagicResistTotal = unit:GetMagicResist()
+                keys.ArmorBase = unit:GetPhysicalArmorBaseValue()
+                keys.ArmorTotal = unit:GetPhysicalArmorValue()
+                keys.SpellSpeed = unit:GetSpellSpeed()
+                keys.MaxStamina = unit:GetMaxStamina()
+                keys.CurrentStamina = unit:GetCurrentStamina()
+                --util.mergeTable(keys, unit._woeKeys)
+            end)
         end
     end
     --util.printTable(keys)

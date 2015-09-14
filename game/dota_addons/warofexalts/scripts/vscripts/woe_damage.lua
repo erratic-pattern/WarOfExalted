@@ -246,7 +246,7 @@ function WoeDamage:_ApplyMitigation()
     mitigated.CritDamage.PhysicalDamage = physReduction * self.CritDamage.PhysicalDamage
     --print("mitigated phys: ", self:GetPhysicalDamage())
     local magReduction = 1 - self.Victim:GetMagicalArmorValue()
-    --print("mr: ", self.Victim:GetWoeMagicResist())
+    --print("mr: ", self.Victim:GetMagicResist())
     --print("unmitigated magic: ", self:GetMagicalDamage())
     --print("magic modifier", magReduction)
     mitigated.MagicalDamage = magReduction * self.MagicalDamage

@@ -74,6 +74,7 @@
     
     GameEvents.Subscribe("woe_stats_changed", function( data ) {
         if(data.unit == Players.GetLocalPlayerPortraitUnit()) {
+            $.Msg("woe_stats_changed UpdateStatsContainer");
             UpdateStatsContainer(data.unit)
         }
     });

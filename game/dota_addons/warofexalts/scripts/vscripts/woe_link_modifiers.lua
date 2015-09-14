@@ -8,6 +8,8 @@ function WarOfExalts:LinkModifiers()
 
     --Core game modifiers
     --LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
+    LinkLuaModifier("modifier_woe_base", "modifiers/modifier_woe_base", LUA_MODIFIER_MOTION_NONE) -- Note: this needs to be linked before most other modifiers
+    LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
     LinkLuaModifier("modifier_woe_stamina_regenerator", "modifiers/modifier_woe_stamina_regenerator", LUA_MODIFIER_MOTION_NONE)
     LinkLuaModifier("modifier_pyromancer_lava_wake_mr_reduction", "modifiers/modifier_pyromancer_lava_wake_mr_reduction", LUA_MODIFIER_MOTION_NONE)
 end
