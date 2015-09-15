@@ -1,3 +1,5 @@
+DEFAULT_TICK_RATE = 1/30
+
 require("modifiers/modifier_woe_base")
 modifier_woe_stamina_regenerator = class({}, nil, modifier_woe_base)
 
@@ -10,7 +12,7 @@ modifier_woe_stamina_regenerator:Init({
 
 function modifier_woe_stamina_regenerator:OnCreated(keys)
     if IsServer() then
-        self.Interval = keys.Interval or 0.01
+        self.Interval = keys.Interval or DEFAULT_TICK_RATE
         self:StartIntervalThink(self.Interval)
     end
 end

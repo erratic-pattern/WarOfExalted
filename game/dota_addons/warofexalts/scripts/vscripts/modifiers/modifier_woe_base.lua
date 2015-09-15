@@ -1,159 +1,199 @@
 modifier_woe_base = class({})
 
-
---default handling
-local default = function(key, modifier, keys)
-    if keys[key] == nil then
-        if modifier[key] ~= nil then
-            modifier["_" .. key] = modifier[key](modifier)
-        end
-    else
-        modifier["_" .. key] = keys[key]
-    end
-end
-
---default handling for keys with a "get" function
-local getDefault = function(key, modifier, keys)
-    if keys[key] == nil then
-        if modifier[key] ~= nil then
-            modifier["_" .. key] = modifier["Get" .. key](modifier)
-        end
-    else
-        modifier["_" .. key] = keys[key]
-    end
+function modifier_woe_base:WoeProperties(props)
+    self._woeProperties = props
 end
 
 function modifier_woe_base:Init(keys)
-    --util.printTable(keys)
-    getDefault("Attributes", self, keys)
-    getDefault("AuraRadius", self, keys)
-    getDefault("AuraSearchFlags", self, keys)
-    getDefault("AuraSearchTeam", self, keys)
-    getDefault("AuraSearchType", self, keys)
-    getDefault("EffectAttachType", self, keys)
-    getDefault("EffectName", self, keys)
-    getDefault("StatusEffectName", self, keys)
-    getDefault("Texture", self, keys)
-    default("HeroEffectPriority", self, keys)
-    default("StatusEffectPriority", self, keys)
-    default("IsAuraActiveOnDeath", self, keys)
-    default("AllowIllusionDuplicate", self, keys)
-    default("DestroyOnExpire", self, keys)
-    default("IsDebuff", self, keys)
-    default("IsHidden", self, keys)
-    default("IsPurgable", self, keys)
-    default("IsPurgeException", self, keys)
-    default("IsStunDebuff", self, keys)
-    default("RemoveOnDeath", self, keys)
-    
-    --event handlers (note: these cannot be passed in via AddNewModifier)
-    self.GetAuraEntityReject = keys.GetAuraEntityReject or self.GetAuraEntityReject or function() return true end
-    self.OnDestroy = keys.OnDestroy or self.OnDestroy
-    self.OnIntervalThink = keys.OnIntervalThink or self.OnIntervalThink
-    self.OnRefresh = keys.OnRefresh or self.OnRefresh
-    self.OnCreated = keys.OnCreated or self.OnCreated
+
+    function self:OnCreated(params, ...)
+        self._params = params
+        if keys.OnCreated ~= nil then
+            keys.OnCreated(self, params, ...)
+        end
+    end
 
     --smart IsAura defaulting based on existence of aura-related keys
+    if keys.IsAura == nil then
+        keys.IsAura = keys.AuraSearchFlags ~= nil or keys.AuraSearchTeam ~= nil or keys.AuraSearchType ~= nil 
+                       or keys.AuraRadius  ~= nil or keys.AuraEntityReject ~= nil or keys.IsAuraActiveOnDeath ~= nil
+                       or keys.ModifierAura ~= nil
+    end
+    
+    if keys.AllowIllusionDuplicate ~= nil then
+        function self:AllowIllusionDuplicate()
+            return keys.AllowIllusionDuplicate and keys.AllowIllusionDuplicate ~= 0
+        end
+    end
+    
+    if keys.GetHeroEffectName ~= nil then
+        function self:GetHeroEffectName()
+            return keys.HeroEffectName
+        end
+    end
+    
+    if keys.GetEffectName ~= nil then
+        function self:GetEffectName()
+            return keys.EffectName
+        end
+    end
+    
+    if keys.GetEffectAttachType ~= nil then
+        function self:GetEffectAttachType()
+            return keys.EffectAttachType
+        end
+    end
+    
+    if keys.GetStatusEffectName ~= nil then
+        function self:GetStatusEffectName()
+            return keys.StatusEffectName
+        end
+    end
+    
+    if keys.GetModifierAura ~= nil then
+        function self:GetModifierAura()
+            return keys.ModifierAura
+        end
+    end
+    
+    if keys.GetAuraSearchFlags ~= nil then
+        function self:GetAuraSearchFlags()
+            return keys.AuraSearchFlags
+        end
+    end
+    
+    if keys.GetAuraSearchTeam ~= nil then
+        function self:GetAuraSearchTeam()
+            return keys.AuraSearchTeam
+        end
+    end
+    
+    if keys.GetAuraSearchType ~= nil then
+        function self:GetAuraSearchType()
+            return keys.AuraSearchType
+        end
+    end
+    
+    if keys.GetAuraRadius ~= nil then
+        function self:GetAuraRadius()
+            return keys.AuraRadius
+        end
+    end
+    
+    if keys.GetAttributes ~= nil then
+        function self:GetAttributes()
+            return keys.Attributes
+        end
+    end
+    
+    if keys.DestroyOnExpire ~= nil then
+        function self:DestroyOnExpire()
+            return keys.DestroyOnExpire and keys.DestroyOnExpire ~= 0
+        end
+    end
+    
+    if keys.GetTexture ~= nil then
+        function self:GetTexture()
+            return keys.Texture
+        end
+    end
+    
+    if keys.HeroEffectPriority ~= nil then
+        function self:HeroEffectPriority()
+            return keys.HeroEffectPriority
+        end
+    end
+    
     if keys.IsAura ~= nil then
-        self._IsAura = keys._IsAura
-    else
-        self._IsAura = keys.AuraSearchFlags ~= nil or keys.AuraSearchTeam ~= nil or keys.AuraSearchType ~= nil 
-                           or keys.AuraRadius  ~= nil or keys.AuraEntityReject ~= nil or keys.IsAuraActiveOnDeath ~= nil
+        function self:IsAura()
+            return keys.IsAura and keys.IsAura ~= 0
+        end
     end
     
-    function self:AllowIllusionDuplicate()
-        return self._AllowIllusionDuplicate and self._AllowIllusionDuplicate ~= 0
-    end
-
-    function self:GetHeroEffectName()
-        return self._HeroEffectName
-    end
-
-    function self:GetEffectName()
-        return self._EffectName
-    end
-
-    function self:GetEffectAttachType()
-        return self._EffectAttachType
-    end
-
-    function self:GetStatusEffectName()
-        return self._StatusEffectName
+    if keys.IsAuraActiveOnDeath ~= nil then
+        function self:IsAuraActiveOnDeath()
+            return keys.IsAuraActiveOnDeath and keys.IsAuraActiveOnDeath ~= 0
+        end
     end
     
-    function self:GetselfAura()
-        return self._selfAura
+    if keys.IsDebuff ~= nil then
+        function self:IsDebuff()
+            return keys.IsDebuff and keys.IsDebuff ~= 0
+        end
     end
     
-    function self:GetAuraSearchFlags()
-        return self._AuraSearchFlags
+    if keys.IsHidden ~= nil then
+        function self:IsHidden()
+            return keys.IsHidden and keys.IsHidden ~= 0
+        end
     end
     
-    function self:GetAuraSearchTeam()
-        return self._AuraSearchTeam
+    if keys.IsPurgable ~= nil then
+        function self:IsPurgable()
+            return keys.IsPurgable and keys.IsPurgable ~= 0
+        end
     end
     
-    function self:GetAuraSearchType()
-        return self._AuraSearchType
+    if keys.IsPurgeException ~= nil then
+        function self:IsPurgeException()
+            return keys.IsPurgeException and keys.IsPurgeException ~= 0
+        end
     end
     
-    function self:GetAuraRadius()
-        return self._AuraRadius
+    if keys.IsStunDebuff ~= nil then
+        function self:IsStunDebuff()
+            return keys.IsStunDebuff and keys.IsStunDebuff ~= 0
+        end
     end
     
-    function self:GetAttributes()
-        return self._Attributes
+    if keys.RemoveOnDeath ~= nil then
+        function self:RemoveOnDeath()
+            return keys.RemoveOnDeath and keys.RemoveOnDeath ~= 0
+        end
     end
     
-    function self:DestroyOnExpire()
-        return self._DestroyOnExpire and self._DestroyOnExpire ~= 0
+    if keys.StatusEffectPriority ~= nil then
+        function self:StatusEffectPriority()
+            return keys.StatusEffectPriority
+        end
     end
     
-    function self:GetTexture()
-        return self._Texture
+    if keys.GetAuraEntityReject ~= nil then
+        function self:GetAuraEntityReject(...)
+            return keys.GetAuraEntityReject(self, ...)
+        end
     end
     
-    function self:HeroEffectPriority()
-        return self._HeroEffectPriority
+    if keys.OnRefresh ~= nil then
+        function self:OnRefresh(...)
+            keys.OnRefresh(self, ...)
+        end
     end
     
-    function self:IsAura()
-        return self._IsAura and self._IsAura ~= 0
+    if keys.OnIntervalThink ~= nil then
+        function self:OnIntervalThink(...)
+            keys.OnIntervalThink(self, ...)
+        end
     end
     
-    function self:IsAuraActiveOnDeath()
-        return self._IsAuraActiveOnDeath and self._IsAuraActiveOnDeath ~= 0
+    
+    function self:OnDestroy(...)
+        self._params = nil
+        if keys.OnDestroy ~= nil then
+            keys.OnDestroy(self, ...)
+        end
     end
     
-    function self:IsDebuff()
-        return self._IsDebuff and self._IsDebuff ~= 0
+    if keys.DeclareFunctions ~= nil then
+        function self:DeclareFunctions(...)
+            keys.DeclareFunctions(self, ...)
+        end
     end
     
-    function self:IsHidden()
-        return self._IsHidden and self._IsHidden ~= 0
-    end
-
-    function self:IsPurgable()
-        return self._IsPurgable and self._IsPurgable ~= 0
-    end
-
-    function self:IsPurgeException()
-        return self._IsPurgeException and self._IsPurgeException ~= 0
-    end
-
-    function self:IsStunDebuff()
-        return self._IsStunDebuff and self._IsStunDebuff ~= 0
-    end
-    
-    function self:RemoveOnDeath()
-        return self._RemoveOnDeath and self._RemoveOnDeath ~= 0
-    end
-    
-    function self:StatusEffectPriority()
-        return self._StatusEffectPriority
+    if keys.CheckState ~= nil then
+        function self:CheckState(...)
+            keys.CheckState(self, ...)
+        end
     end
 end
 
-function modifier_woe_base:WoeProperties(props)
-    self._WoeProperties = props
-end

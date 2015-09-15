@@ -103,7 +103,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         eventParams = eventParams or { }
         eventParams.unit = eventParams.unit or self
         print("SendUpdateEvent", eventName)
-        util.printTable(eventParam)
+        --util.printTable(eventParam)
         if self.suppressEvents then
             print("suppressed")
             self.suppressedEvents[eventName] = eventParams
@@ -376,14 +376,16 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end
     end
     
-    function unit:SumModifierProperties(pName, ...)
+    function unit:SumModifierProperties(pName, extraParams)
         local out = 0
         for k, modifier in pairs(self:FindAllModifiers()) do
-            if modifier._WoeProperties then
-                local prop = modifier._WoeProperties[pName]
+            if instanceof(modifier, modifier_woe_base) then
+                local prop = modifier._woeProperties[pName]
                 if prop ~= nil then
                     if type(prop) == "function" then
-                        out = out + prop(modifier, ...)
+                        local params = util.shallowCopy(modifier._params)
+                        util.mergeTable(params, extraParams or { })
+                        out = out + prop(modifier, params)
                     else
                         out = out + prop
                     end

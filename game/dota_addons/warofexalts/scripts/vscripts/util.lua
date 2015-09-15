@@ -130,6 +130,72 @@ function util.getOppositeTeam( unit )
 	end
 end
 
+function util.DebugTableProxy(name, t)
+    local out = { __isDebugTable = true, __debugTableName = name or "table" }
+    setmetatable(out, {
+        isDebugMetaTable = true,
+        __index = function(_, key)
+            print(name .. " key access: ", key)
+            return t[key]
+        end,
+        __newindex = function(_, key, val) 
+            print(name .. " key update: ", key, " = ", val)
+            if type(val) == "table" then
+                util.printTable(val)
+            end
+            t[key] = val
+        end
+    })
+    return out
+end
+
+function util.DebugTable(name, t)
+    if t.__isDebugTable then
+        return t
+    end
+    local inner = { }
+    util.mergeTable(inner, t)
+    setmetatable(inner, getmetatable(t))
+    t.__isDebugTable = true
+    t.__debugTableName = name or "table"
+    setmetatable(t, {
+        isDebugMetaTable = true,
+        __index = function(_, key)
+            local val = inner[key]
+            print(name .. " key access: ", key, " -> ", val)
+            return val
+        end,
+        __newindex = function(_, key, val) 
+            print(name .. " key update: ", key, " = ", val)
+            if type(val) == "table" then
+                util.printTable(val)
+            end
+            inner[key] = val
+        end
+    })
+    return t
+end
+
+function util.CheckDebugTable(t)
+    if t == nil then
+        print("CheckDebugTable: nil")
+        return false
+    elseif type(t) == 'table' then
+        if not t.__isDebugTable then
+            print ("CheckDebugTable: not a debug table")
+            return false
+        elseif not getmetatable(t).isDebugMetaTable then
+            print ("CheckDebugTable: " .. t.__debugTableName .. " metatable unset by volvo")
+            return false
+        else
+            return true
+        end
+    else
+        print("CheckDebugTable: type is " .. type(t) .. " not table")
+        return false
+    end
+end
+
 -- returns true 50% of the time.
 function util.coinFlip(  )
 	return RollPercentage(50)

@@ -15,15 +15,12 @@ modifier_woe_attributes:Init({
 
 modifier_woe_attributes:WoeProperties({
     MagicResistBase = function(m)
-        print("MagicResistBase modifier")
         return MR_PER_INT * m:GetParent():GetIntellect()
     end,
     SpellSpeedBase = function(m)
-        print("SpellSpeedBase modifier")
         return SS_PER_AGI * m:GetParent():GetAgility()
     end,
     MaxStamina = function(m)
-        print("MaxStamina modifier")
         return STAM_PER_AGI * m:GetParent():GetAgility()
     end
 })

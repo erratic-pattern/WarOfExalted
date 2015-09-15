@@ -585,6 +585,16 @@ function WarOfExalts:InitWarOfExalts()
     CustomGameEventManager:RegisterListener("woe_unit_request", Dynamic_Wrap(WarOfExalts, "OnWoeUnitRequest"))
     CustomGameEventManager:RegisterListener("woe_ability_request", Dynamic_Wrap(WarOfExalts, "OnWoeAbilityRequest"))
     CustomGameEventManager:RegisterListener("woe_save_config", Dynamic_Wrap(WarOfExalts, "OnWoeSaveConfig"))
+    
+    gameMode:SetModifierGainedFilter(function(a, b)
+        --[[print("modifierfilter")
+        print("IsServer", IsServer())
+        print(type(a), type(b))
+        util.printTable(a)
+        print("--------------")
+        util.printTable(b)]]
+        return true
+    end, { })
 
 
 	Convars:RegisterCommand('player_say', function(...)
