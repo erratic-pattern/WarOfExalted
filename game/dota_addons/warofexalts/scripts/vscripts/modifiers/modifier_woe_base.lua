@@ -12,6 +12,13 @@ function modifier_woe_base:Init(keys)
             keys.OnCreated(self, params, ...)
         end
     end
+    
+    function self:OnDestroy(...)
+        self._params = nil
+        if keys.OnDestroy ~= nil then
+            keys.OnDestroy(self, ...)
+        end
+    end
 
     --smart IsAura defaulting based on existence of aura-related keys
     if keys.IsAura == nil then
@@ -26,61 +33,61 @@ function modifier_woe_base:Init(keys)
         end
     end
     
-    if keys.GetHeroEffectName ~= nil then
+    if keys.HeroEffectName ~= nil then
         function self:GetHeroEffectName()
             return keys.HeroEffectName
         end
     end
     
-    if keys.GetEffectName ~= nil then
+    if keys.EffectName ~= nil then
         function self:GetEffectName()
             return keys.EffectName
         end
     end
     
-    if keys.GetEffectAttachType ~= nil then
+    if keys.EffectAttachType ~= nil then
         function self:GetEffectAttachType()
             return keys.EffectAttachType
         end
     end
     
-    if keys.GetStatusEffectName ~= nil then
+    if keys.StatusEffectName ~= nil then
         function self:GetStatusEffectName()
             return keys.StatusEffectName
         end
     end
     
-    if keys.GetModifierAura ~= nil then
+    if keys.ModifierAura ~= nil then
         function self:GetModifierAura()
             return keys.ModifierAura
         end
     end
     
-    if keys.GetAuraSearchFlags ~= nil then
+    if keys.AuraSearchFlags ~= nil then
         function self:GetAuraSearchFlags()
             return keys.AuraSearchFlags
         end
     end
     
-    if keys.GetAuraSearchTeam ~= nil then
+    if keys.AuraSearchTeam ~= nil then
         function self:GetAuraSearchTeam()
             return keys.AuraSearchTeam
         end
     end
     
-    if keys.GetAuraSearchType ~= nil then
+    if keys.AuraSearchType ~= nil then
         function self:GetAuraSearchType()
             return keys.AuraSearchType
         end
     end
     
-    if keys.GetAuraRadius ~= nil then
+    if keys.AuraRadius ~= nil then
         function self:GetAuraRadius()
             return keys.AuraRadius
         end
     end
     
-    if keys.GetAttributes ~= nil then
+    if keys.Attributes ~= nil then
         function self:GetAttributes()
             return keys.Attributes
         end
@@ -92,7 +99,7 @@ function modifier_woe_base:Init(keys)
         end
     end
     
-    if keys.GetTexture ~= nil then
+    if keys.Texture ~= nil then
         function self:GetTexture()
             return keys.Texture
         end
@@ -158,7 +165,7 @@ function modifier_woe_base:Init(keys)
         end
     end
     
-    if keys.GetAuraEntityReject ~= nil then
+    if keys.AuraEntityReject ~= nil then
         function self:GetAuraEntityReject(...)
             return keys.GetAuraEntityReject(self, ...)
         end
@@ -173,14 +180,6 @@ function modifier_woe_base:Init(keys)
     if keys.OnIntervalThink ~= nil then
         function self:OnIntervalThink(...)
             keys.OnIntervalThink(self, ...)
-        end
-    end
-    
-    
-    function self:OnDestroy(...)
-        self._params = nil
-        if keys.OnDestroy ~= nil then
-            keys.OnDestroy(self, ...)
         end
     end
     
