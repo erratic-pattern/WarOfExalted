@@ -103,6 +103,7 @@ function WarOfExalts:OnAllPlayersLoaded()
             CustomNetTables:SetTableValue("PlayerConfig", tostring(playerID), config)
         end)
     end
+    self:InitClientSideLua()
 end
 
 --[[
@@ -814,7 +815,11 @@ function WarOfExalts:OnConnectFull(keys)
 end
 
 function WarOfExalts:OnScriptReload()
-    --self:InitClientSideLua()
+    self:InitClientSideLua()
+end
+
+function WarOfExalts:InitClientSideLua()
+    CreateModifierThinker(self.vPlayers[1], nil, "modifier_client_side_init", { duration = 0.2 }, Vector(0,0,0), DOTA_TEAM_NEUTRALS, false)
 end
 
 -- This is an example console command
