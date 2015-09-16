@@ -813,6 +813,10 @@ function WarOfExalts:OnConnectFull(keys)
     end
 end
 
+function WarOfExalts:OnScriptReload()
+    --self:InitClientSideLua()
+end
+
 -- This is an example console command
 function WarOfExalts:ExampleConsoleCommand()
 	--print( '******* Example Console Command ***************' )
