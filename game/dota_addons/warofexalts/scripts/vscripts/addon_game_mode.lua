@@ -55,6 +55,12 @@ function Activate()
 	GameRules.WarOfExalts:InitWarOfExalts()
 end
 
+reloaded = reloaded ~= nil -- will be true if script_reload, otherwise false
+
 for i,v in ipairs(requires) do
-	require(v)	
+	require(v)
+end
+
+if reloaded then
+    GameRules.WarOfExalts:OnScriptReload()
 end
