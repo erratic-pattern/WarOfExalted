@@ -473,9 +473,11 @@ function WarOfExalts:OnWoeUnitRequest( keys )
         end
     end
     --util.printTable(keys)
-    CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
-    --Sending to PlayerID doesn't appear to be working correctly
-    --CustomGameEventManager:Send_ServerToPlayer(EntIndexToHScript(keys.PlayerID), "woe_unit_response", keys)
+    if keys.playerId then
+        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.playerId), "woe_unit_response", keys)
+    else
+        CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
+    end
 end
 
 function WarOfExalts:OnWoeAbilityRequest(keys)
@@ -486,7 +488,11 @@ function WarOfExalts:OnWoeAbilityRequest(keys)
             util.mergeTable(keys, abi._woeKeys)
         end
     end
-    CustomGameEventManager:Send_ServerToAllClients("woe_ability_response", keys)
+    if keys.playerId then
+        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.playerId), "woe_ability_response", keys)
+    else
+        CustomGameEventManager:Send_ServerToAllClients("woe_ability_response", keys)
+    end
 end
 
 function WarOfExalts:OnWoeSaveConfig(keys)
@@ -673,7 +679,7 @@ function WarOfExalts:InitWarOfExalts()
 	-- Change random seed
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')
 	math.randomseed(tonumber(timeTxt))
-
+    
 	-- Initialized tables for tracking state
 	self.vUserIds = {}
 	self.vSteamIds = {}

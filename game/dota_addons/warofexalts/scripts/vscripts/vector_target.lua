@@ -150,7 +150,7 @@ function VectorTargetOrderFilter(ctx, data)
             local targetPos = {x = data.position_x, y = data.position_y, z = data.position_z}
             if inProgress == nil or inProgress.abilId ~= abilId or inProgress.unitId ~= unitId then -- if no in-progress order, this order selects the initial point of a vector cast
                 if inProgress ~= nil then
-                    CustomGameEventManager:Send_ServerToAllClients("vector_target_order_cancel", inProgress)
+                    CustomGameEventManager:Send_ServerToPlayer(playerId, "vector_target_order_cancel", inProgress)
                 end
                 local orderData = {
                     abilId = abilId,
@@ -164,7 +164,7 @@ function VectorTargetOrderFilter(ctx, data)
                     targetingParticle = abil._vectorTargetKeys.targetingParticle,
                     cpMap = abil._vectorTargetKeys.cpMap
                 }
-                CustomGameEventManager:Send_ServerToAllClients("vector_target_order_start", orderData)
+                CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerId), "vector_target_order_start", orderData)
                 inProgressOrders[playerId] = orderData --set this order as our player's current in-progress order
                 return false
             else --in-progress order (initial point has been selected)
@@ -176,7 +176,7 @@ function VectorTargetOrderFilter(ctx, data)
                 end
                 inProgress.abilId = abilId
                 inProgress.terminalPosition = targetPos
-                CustomGameEventManager:Send_ServerToAllClients("vector_target_order_finish", inProgress)
+                CustomGameEventManager:Send_ServerToPlayer(playerId, "vector_target_order_finish", inProgress)
                 castQueues:get(unitId, abilId):push(inProgress, seqNum)
                 abil:SetInitialPosition(inProgress.initialPosition)
                 abil:SetTerminalPosition(inProgress.terminalPosition)
