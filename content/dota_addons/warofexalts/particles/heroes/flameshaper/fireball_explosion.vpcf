@@ -117,19 +117,19 @@
 	m_Children =
 	[
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_explosion_flare.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_explosion_flare.vpcf"
 		},
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_explosion_smoke.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_explosion_smoke.vpcf"
 		},
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_explosion_flash.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_explosion_flash.vpcf"
 		},
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_explosion_spark.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_explosion_spark.vpcf"
 		},
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_explosion_ember.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_explosion_ember.vpcf"
 		},
 	]
 }

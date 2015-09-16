@@ -1,6 +1,6 @@
-pyromancer_lava_wake = class({})
+flameshaper_lava_wake = class({})
 
-function pyromancer_lava_wake:OnSpellStart()
+function flameshaper_lava_wake:OnSpellStart()
     local caster = self:GetCaster()
     local data = self:GetSpecials()
     local pathLength = self:GetMaxDistance()
@@ -43,7 +43,7 @@ function pyromancer_lava_wake:OnSpellStart()
                     Ability = self,
                     MagicalDamage = data.damage * data.burn_interval
                 })
-                ent:AddNewModifier(caster, self, "modifier_pyromancer_lava_wake_mr_reduction", {
+                ent:AddNewModifier(caster, self, "modifier_flameshaper_lava_wake_mr_reduction", {
                     duration = data.debuff_duration,
                     value = data.mr_reduction,
                     Test = "Test"

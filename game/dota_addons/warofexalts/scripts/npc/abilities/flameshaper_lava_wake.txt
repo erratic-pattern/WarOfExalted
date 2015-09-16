@@ -1,4 +1,4 @@
-"pyromancer_lava_wake"
+"flameshaper_lava_wake"
 {
 	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
     "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
@@ -8,7 +8,7 @@
     "FightRecapLevel"				"1"
 	"BaseClass"						"ability_lua"
 	"AbilityTextureName"			"jakiro_macropyte"
-    "ScriptFile"                    "heroes/pyromancer/pyromancer_lava_wake.lua"
+    "ScriptFile"                    "heroes/flameshaper/flameshaper_lava_wake.lua"
 
 	// Stats
 	//-------------------------------------------------------------------------------------------------------------

@@ -157,7 +157,7 @@
 	m_Children =
 	[
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_core.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_core.vpcf"
 		},
 	]
 }

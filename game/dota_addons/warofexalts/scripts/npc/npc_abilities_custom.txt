@@ -441,10 +441,10 @@
 	        }
 	    }
 	}
-	"pyromancer_fireball"
+	"flameshaper_fireball"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DIRECTIONAL"
-	    "ScriptFile"                    "heroes/pyromancer/pyromancer_fireball"
+	    "ScriptFile"                    "heroes/flameshaper/flameshaper_fireball"
 		"AbilityTextureName"			"ogremagi_ignite"
 		"BaseClass"						"ability_lua"
 	    "FightRecapLevel"				"1"
@@ -466,8 +466,8 @@
 		
 		"precache"
 		{
-			"particle"					"particles/heroes/pyromancer/fireball.vpcf"
-	        "particle"                  "particles/heroes/pyromancer/fireball_explosion.vpcf"
+			"particle"					"particles/heroes/flameshaper/fireball.vpcf"
+	        "particle"                  "particles/heroes/flameshaper/fireball_explosion.vpcf"
 			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 		}
 		
@@ -505,7 +505,37 @@
 	        }
 		}
 	}
-	"pyromancer_lava_wake"
+	"flameshaper_lava_wake"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"BaseClass"						"ability_lua"
+		"AbilityTextureName"			"lina_fierysoul"
+	    //"ScriptFile"                    "heroes/flameshaper/flameshaper_intensification.lua"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+	    "Keywords"                      "passive buff duration"
+		
+	    // Special
+	    //-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+	        "01"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "spell_speed"               "10 20 30 40"
+	        }
+		}
+	    
+	    "precache"
+		{
+			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_jakiro.vsndevts"
+			"particle"					"particles/units/heroes/hero_jakiro/jakiro_macropyre.vpcf"
+	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn.vpcf"
+	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf"
+		}
+	}
+	"flameshaper_lava_wake"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
@@ -515,7 +545,7 @@
 	    "FightRecapLevel"				"1"
 		"BaseClass"						"ability_lua"
 		"AbilityTextureName"			"jakiro_macropyte"
-	    "ScriptFile"                    "heroes/pyromancer/pyromancer_lava_wake.lua"
+	    "ScriptFile"                    "heroes/flameshaper/flameshaper_lava_wake.lua"
 	
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------

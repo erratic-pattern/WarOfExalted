@@ -1,14 +1,14 @@
-pyromancer_fireball = class({})
+flameshaper_fireball = class({})
 
-function pyromancer_fireball:GetAreaRadius()
+function flameshaper_fireball:GetAreaRadius()
     return self:GetSpecialValueFor("area_radius") * 1
 end
 
-function pyromancer_fireball:GetCastRange()
+function flameshaper_fireball:GetCastRange()
     return self:GetSpecialValueFor("duration")*self:GetSpecialValueFor("speed")
 end
 
-function pyromancer_fireball:OnSpellStart()
+function flameshaper_fireball:OnSpellStart()
     local height = 70
     local caster = self:GetCaster()
     local data = self:GetSpecials()
@@ -23,7 +23,7 @@ function pyromancer_fireball:OnSpellStart()
     --util.printTable(data)
     
     function Explode(p)
-        local pfx = ParticleManager:CreateParticle("particles/heroes/pyromancer/fireball_explosion.vpcf", PATTACH_ABSORIGIN, caster)
+        local pfx = ParticleManager:CreateParticle("particles/heroes/flameshaper/fireball_explosion.vpcf", PATTACH_ABSORIGIN, caster)
         ParticleManager:SetParticleControl(pfx, 1, p.vel)
         ParticleManager:SetParticleControl(pfx, 3, p.pos)
         ParticleManager:SetParticleControl(pfx, 4, Vector(1,1,1))
@@ -42,7 +42,7 @@ function pyromancer_fireball:OnSpellStart()
     
     Projectiles:CreateProjectile({
         Ability             = self,
-        EffectName			= "particles/heroes/pyromancer/fireball.vpcf",
+        EffectName			= "particles/heroes/flameshaper/fireball.vpcf",
         Source				= caster,
         fGroundOffset       = height,
         bGroundLock         = true,

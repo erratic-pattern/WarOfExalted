@@ -1,7 +1,7 @@
-"pyromancer_fireball"
+"flameshaper_fireball"
 {
 	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DIRECTIONAL"
-    "ScriptFile"                    "heroes/pyromancer/pyromancer_fireball"
+    "ScriptFile"                    "heroes/flameshaper/flameshaper_fireball"
 	"AbilityTextureName"			"ogremagi_ignite"
 	"BaseClass"						"ability_lua"
     "FightRecapLevel"				"1"
@@ -23,8 +23,8 @@
 	
 	"precache"
 	{
-		"particle"					"particles/heroes/pyromancer/fireball.vpcf"
-        "particle"                  "particles/heroes/pyromancer/fireball_explosion.vpcf"
+		"particle"					"particles/heroes/flameshaper/fireball.vpcf"
+        "particle"                  "particles/heroes/flameshaper/fireball_explosion.vpcf"
 		"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 	}
 	

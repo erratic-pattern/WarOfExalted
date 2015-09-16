@@ -99,10 +99,12 @@
 	m_Children =
 	[
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_smoke.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_smoke.vpcf"
 		},
 		{
-			m_ChildRef = resource:"particles/heroes/pyromancer/fireball_trail.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/fireball_trail.vpcf"
+		},
+		{
 		},
 	]
 }
