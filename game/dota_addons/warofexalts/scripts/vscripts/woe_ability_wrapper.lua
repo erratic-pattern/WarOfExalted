@@ -1,7 +1,4 @@
-if WarOfExalts == nil then
-	--print ( '[WAROFEXALTS] creating warofexalts game mode' )
-	WarOfExalts = class({})
-end
+require("warofexalts")
 
 --all behavior flags that specify a targeting behavior
 ABILITY_TARGETING_BEHAVIOR = bit.bor(
@@ -256,7 +253,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
             end
             local baseCd = self:GetBaseCooldown(lvl)
             print("base cooldown: ", baseCd)
-            local cdOut =  baseCd * (1 - caster:GetCdrPercent()) / ((100 + ics) * 0.01)
+            local cdOut =  baseCd / ((100 + ics) * 0.01)
             print("reduced cooldown: ", cdOut)
             return cdOut
         else
