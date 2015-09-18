@@ -505,7 +505,7 @@
 	        }
 		}
 	}
-	"flameshaper_lava_wake"
+	"flameshaper_intensification"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"BaseClass"						"ability_lua"
@@ -540,7 +540,6 @@
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
 	    "AbilityUnitTargetType"         "DOTA_UNIT_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
-	    "AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
 	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 	    "FightRecapLevel"				"1"
 		"BaseClass"						"ability_lua"

@@ -1,0 +1,30 @@
+"flameshaper_intensification"
+{
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	"BaseClass"						"ability_lua"
+	"AbilityTextureName"			"lina_fierysoul"
+    //"ScriptFile"                    "heroes/flameshaper/flameshaper_intensification.lua"
+
+	// Stats
+	//-------------------------------------------------------------------------------------------------------------
+    "Keywords"                      "passive buff duration"
+	
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+	"AbilitySpecial"
+	{
+        "01"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "spell_speed"               "10 20 30 40"
+        }
+	}
+    
+    "precache"
+	{
+		"soundfile"					"soundevents/game_sounds_heroes/game_sounds_jakiro.vsndevts"
+		"particle"					"particles/units/heroes/hero_jakiro/jakiro_macropyre.vpcf"
+        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn.vpcf"
+        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf"
+	}
+}
