@@ -59,6 +59,9 @@ end
 function InitVectorTargetEventListeners()
     if initializedEventListeners then return end
     print("[VECTORTARGET] registering event listeners")
+    ListenToGameEvent("npc_spawned", function(keys)
+            AddVectorTargetingToUnit(EntIndexToHScript(keys.entindex))
+    end, {})
     CustomGameEventManager:RegisterListener("vector_target_order_cancel", function(eventSource, keys)
         --print("order canceled");
         inProgressOrders[keys.playerId] = nil
