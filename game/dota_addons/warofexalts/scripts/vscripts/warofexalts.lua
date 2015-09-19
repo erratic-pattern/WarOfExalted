@@ -182,7 +182,6 @@ function WarOfExalts:OnNPCSpawned(keys)
 	--print("[WAROFEXALTS] NPC Spawned")
 	--util.printTable(keys)
 	local npc = EntIndexToHScript(keys.entindex)
-    AddVectorTargetingToUnit(npc)
     self:WoeUnitWrapper(npc)
     npc:WithAbilities(function(a) self:WoeAbilityWrapper(a) end)
 
@@ -407,22 +406,22 @@ function WarOfExalts:OnWoeUnitRequest( keys )
     if unit then
         keys.isWoeUnit = unit.isWoeUnit
         if unit.isWoeUnit then
-            unit:SuppressEvents(function()
-                keys.MsBase = unit:GetBaseMoveSpeed()
-                keys.MsTotal = unit:GetIdealSpeed()
-                keys.MagicResistTotal = unit:GetMagicResist()
+            Property.BatchUpdateEvents(unit, function()
+                keys.MoveSpeedBase = unit:GetBaseMoveSpeed()
+                keys.MoveSpeed = unit:GetIdealSpeed()
+                keys.MagicResist = unit:GetMagicResist()
                 keys.ArmorBase = unit:GetPhysicalArmorBaseValue()
-                keys.ArmorTotal = unit:GetPhysicalArmorValue()
+                keys.Armor = unit:GetPhysicalArmorValue()
                 keys.SpellSpeed = unit:GetSpellSpeed()
                 keys.MaxStamina = unit:GetMaxStamina()
-                keys.CurrentStamina = unit:GetCurrentStamina()
-                --util.mergeTable(keys, unit._woeKeys)
+                keys.CurrentStamina = unit:GetStamina()
+                --util.mergeTable(keys, unit._props)
             end)
         end
     end
     --util.printTable(keys)
-    if keys.playerId then
-        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.playerId), "woe_unit_response", keys)
+    if keys.playerID then
+        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.playerID), "woe_unit_response", keys)
     else
         CustomGameEventManager:Send_ServerToAllClients("woe_unit_response", keys)
     end
@@ -436,8 +435,8 @@ function WarOfExalts:OnWoeAbilityRequest(keys)
             util.mergeTable(keys, abi._woeKeys)
         end
     end
-    if keys.playerId then
-        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.playerId), "woe_ability_response", keys)
+    if keys.playerID then
+        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(keys.playerID), "woe_ability_response", keys)
     else
         CustomGameEventManager:Send_ServerToAllClients("woe_ability_response", keys)
     end
@@ -477,6 +476,8 @@ function WarOfExalts:InitWarOfExalts()
     self:LinkModifiers() --Initialize custom Lua modifiers
     
     InitVectorTarget() --Initialize vector targeting system
+    
+    --Property.SetDebug(true)
     
     --gameMode:SetAbilityTuningValueFilter(Dynamic_Wrap(WarOfExalts, "AbilityTuningFilter"), self)
 
@@ -578,7 +579,7 @@ function WarOfExalts:InitWarOfExalts()
 			self:PlayerSay(keys)
 		end
 	end, 'player say', 0)
-
+    
 	-- Fill server with fake clients
 	-- Fake clients don't use the default bot AI for buying items or moving down lanes and are sometimes necessary for debugging
 	Convars:RegisterCommand('fake', function()
@@ -615,14 +616,15 @@ function WarOfExalts:InitWarOfExalts()
 	end, 'Connects and assigns fake Players.', 0)
     
     Convars:RegisterCommand("run_lua", function(...)
-        ex = select(2, ...)
-        loadstring(ex)() 
+        if not Convars:GetCommandClient() then
+            ex = select(2, ...)
+            loadstring(ex)()
+        end
     end, "Execute lua", 0 )
     
-    Convars:RegisterCommand("reload_modifiers", function(...)
-        self:LinkModifiers()
-        print("[WAROFEXALTS] Lua modifiers reloaded")
-    end, "Reload Lua modifiers", 0)
+    Convars:RegisterCommand("debug_properties", function(...)
+        Property.SetDebug(not Property.DebugMode)
+    end, "Enable/disable debugging of custom properties", 0)
 
 	-- Change random seed
 	local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','')
@@ -781,4 +783,8 @@ function WarOfExalts:ExampleConsoleCommand()
 		end
 	end
 	--print( '*********************************************' )
+end
+
+if reloaded then
+    WarOfExalts:OnScriptReload()
 end

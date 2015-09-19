@@ -1,3 +1,4 @@
+print("[WAROFEXALTS] loading woe_attributes")
 --Modifier used to implement stat bonuses from attributes
 woe_attributes = class({})
 
@@ -6,6 +7,7 @@ ARMOR_PER_STR = 0.14       -- amount of base armor increased per point of streng
 
 function woe_attributes:OnHeroCalculateStatBonus()
     if IsServer() then
+        --print("OnHeroCalculateStatBonus")
         self.lastStr = self.lastStr or 0
         self.lastAgi = self.lastAgi or 0
         local unit = self:GetCaster()

@@ -1,271 +1,217 @@
+require("warofexalts")
+require("lib/property")
 
-if WarOfExalts == nil then
-	--print ( '[WAROFEXALTS] creating warofexalts game mode' )
-	WarOfExalts = class({})
-end
 
-CACHE_LIFETIME = 0.1
+--local function declarations (code defined at bottom of file)
+local recalculateMagicReduction, initializeStaminaRegenerator, onMaxStaminaChange, onCurrentStaminaChange
 
-local propGetter = function(name, onChange)
-    return function(unit)
-        --print("propGetter", name)
-        local t = Time()
-        local cached = unit._woeKeysCache[name]
-        local old = cached.value
-        if t > cached.cacheTime + CACHE_LIFETIME then
-            print("fetching new value for ", name)
-            v = unit._woeKeys[name] + unit:SumModifierProperties(name)
-            if v ~= old then
-                print("propGetter", "value changed", name, v, old)
-                cached.value = v
-                cached.cacheTime = t
-                if onChange ~= nil then
-                    v = onChange(unit, v, old) or v
-                    cached.value = v
-                end
-                unit:SendUpdateEvent("woe_stats_changed")
-            end
-        else
-            print("fetching cached value for", name, cached.value)
-            v = cached.value
-        end 
-        return v
-    end
-end
 
-local propSetter = function(name)
-    return function(unit, v)
-        print("propSetter", name)
-        local old = unit._woeKeys[name]
-        if v ~= old then
-            unit._woeKeys[name] = v
-            local cached = unit._woeKeysCache[name]
-            cached.value = cached.value + v - old
-            if onChange ~= nil then
-                local old2 = v
-                v = onChange(unit, v, old)
-                unit._woeKeys[name] = v
-                cached.value = cached.value + v - old2
-            end
-            unit:SendUpdateEvent("woe_stats_changed")
-        end
-    end
-end
-
---Calculates % magic reduction from current MR rating and resets it via the dota API
-local recalculateMagicReduction = function(self, mr)
-    self:SetBaseMagicalResistanceValue(0.06 * mr / (1 + 0.06 * mr))
-end
-
-local initializeStaminaRegenerator = function(self)
-    if self:GetMaxStamina() > 0 
-        and (self:GetStaminaRegen() > 0 or self:GetStaminaRechargeRate() > 0) then
-            unit:AddNewModifier(unit, nil, "modifier_woe_stamina_regenerator", {})
-    end
-end
-
---This function takes a dota NPC and adds custom WoE functionality to it
 function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
-    if unit.isWoeUnit then return end
+    --[[ This function takes a dota NPC and adds custom WoE functionality to it.
+    ]]
+    
+    if unit.isWoeUnit then return end -- return if already initialized
     extraKeys = extraKeys or { }
     
-    --Special flag we can use to identify a WoE unit
-    unit.isWoeUnit = true
-    --Initialize WoE instance variables
-    unit._woeKeys = {
-        SpellSpeedBase = 0,
-        SpellSpeedBonus = 0,
-        SpellSpeedModifier = 0,
-        MagicResistBase = 0,
-        MagicResistBonus = 0,
-        MagicResistModifier = 0,
-        CdrPercent = 0,
-        CurrentStamina = 100,
-        MaxStamina = 100,
-        StaminaRegenBase = 0.01,
-        StaminaRegenBonus = 0,
-        StaminaRegenBaseModifier = 0,
-        StaminaRechargeDelayBase = 5,
-        StaminaRechargeDelayModifier = 0,
-        StaminaRechargeRateBase = 0.1,
-        StaminaRechargeRateBonus = 0,
-        StaminaTimer = 0,
-        ForceStaminaRecharge = false,
-        StaminaCostModifier = 0,
-        ProjectileSpeedModifier = 0,
-    }            
+    unit.isWoeUnit = true --flag we can use to identify a WoE unit
     
-    unit.suppressEvents = false
-    unit.suppressedEvents = { }
+    unit.suppressEvents = false -- when true, stat update events are suppressed for the unit
+                                -- we use this to limit unnecessary network usage and to prevent
+                                -- infinite event loops.
     
-    --send to clients to indicate that stats were changed
-    function unit:SendUpdateEvent(eventName, eventParams)
-        eventParams = eventParams or { }
-        eventParams.unit = eventParams.unit or self
-        print("SendUpdateEvent", eventName)
-        --util.printTable(eventParam)
-        if self.suppressEvents then
-            print("suppressed")
-            self.suppressedEvents[eventName] = eventParams
-        else
-            print("sending")
-            CustomGameEventManager:Send_ServerToAllClients(eventName, eventParams)
-        end
-    end
+    unit.suppressedEvents = { } -- a table of suppressed events, indexed by event name. thus, multiple suppressed events
+                                -- with the same name will be overwritten by each other. This behavior may be reworked
+                                -- in the future.
     
-    --begin suppressing update events
-    function unit:SuppressEvents(cb, supressedHandler)
-        self.suppressEvents = true
-        local status, res = pcall(cb)
-        local suppressed = self.suppressedEvents
-        self.suppressEvents = false
-        self.suppressedEvents = { }     
-        if suppressedHandler then
-            suppressedHandler(suppressed)
-        end
-        if status then
-            error(res)
-        else
-            return res
-        end
-    end
-    
-    --execute callback with suppressed events, then trigger events at end
-    function unit:BatchUpdate(cb)
-        return SuppressEvents(cb, function(suppressed)
-            print("BatchUpdate: sending suppressed events")
-            for name, params in pairs(suppressed) do
-                self:SendUpdateEvent(eventName, eventParams)
+    function unit:WithAbilities(cb)
+        --[[ Iterate over all abilities on this unit, passing them to the given callback
+        ]]
+        for i=0, self:GetAbilityCount()-1 do
+            local abil = self:GetAbilityByIndex(i)
+            if abil ~= nil then
+                cb(abil)
             end
-        end)
+        end
     end
     
-    --Get the total WoE MR rating (analogous to armor rating)
+    function unit:CallOnModifiers(fName, ...)
+        --[[ Calls a method on all child modifiers for this unit, specified by the string fName. 
+            The first argument to the modifier's function will always be the modifier itself, followed by any extra arguments passed to CallOnModifiers.
+        
+            If the modifier doesn't define the function, it is ignored. No error occurs.
+        ]]
+        --print(unit:GetUnitName() .. ":CallOnModifiers: ", fName)
+        for _, modifier in pairs(self:FindAllModifiers()) do
+            local f = modifier[fName]
+            if type(f) == "function" then
+                f(modifier, ...)
+            end
+        end
+    end
+    
+    --[[ unit-wide property settings ]]
+    Property.UnitOptions(unit, {
+        --debug = true,
+        defaultPropertyOptions = { -- default options for properties on this unit
+            type = "number",
+            useGameTime = true, -- use GetGameTime instead of Time for caching
+            updateEvent = "woe_stats_changed",
+            modifyEventParams = function(eventName, eventParams, unit)
+                eventParams.isWoeUnit = unit.isWoeUnit
+                eventParams.id = unit:GetEntityIndex()
+            end
+        }
+    })
+    
+    --[[ Property definitions and related functions
+
+        Note that many properties are split into three parts: base, bonus, and modifier.
+        
+        The general formula for calculating the total looks like:
+            ( modifier + 1 ) * (base + bonus) 
+    ]]
+    
+    --Returns the total magic resist rating for this unit, analogous to dota's armor stat.
     function unit:GetMagicResist() 
         return (1 + self:GetMagicResistModifier()) * (self:GetMagicResistBase() + self:GetMagicResistBonus())
     end
+    Property(unit, "MagicResistBase", {
+        onChange = recalculateMagicReduction
+    }) 
+    Property(unit, "MagicResistBonus", {
+        onChange =  recalculateMagicReduction
+    })
+    Property(unit, "MagicResistModifier", {
+        onChange =  recalculateMagicReduction
+    })
     
-    --Get only the base MR rating
-    unit.GetMagicResistBase = propGetter("MagicResistBase", recalculateMagicReduction)
     
-    --Get only the bonus MR rating
-    unit.GetMagicResistBonus = propGetter("MagicResistBonus", recalculateMagicReduction)
-    
-    --Set the base MR rating of the unit
-    unit.SetMagicResistBase = propSetter("MagicResistBase", recalculateMagicReduction)
-    
-    --Set the bonus MR rating of the unit
-    unit.SetMagicResistBonus = propSetter("MagicResistBonus", recalculateMagicReduction)
-    
-    unit.GetMagicResistModifier = propGetter("MagicResistModifier", recalculateMagicReduction)
-    
-    unit.SetMagicResistModifier = propSetter("MagicResistModifier", recalculateMagicReduction)
-    
-
-    
-    --Get spell SpellSpeed rating
-    unit.GetSpellSpeedBase = propGetter("SpellSpeedBase")
-    
-    --Set spell SpellSpeed rating
-    unit.SetSpellSpeedBase = propSetter("SpellSpeedBase")
-    
-    unit.GetSpellSpeedBonus = propGetter("SpellSpeedBonus")
-    
-    unit.SetSpellSpeedBonus = propSetter("SpellSpeedBonus")
-    
-    unit.GetSpellSpeedModifier = propGetter("SpellSpeedModifier")
-    
-    unit.SetSpellSpeedModifier = propSetter("SpellSpeedModifier")
-    
+    --Returns the total spell speed for this unit, analogous to dota's attack speed stat.
     function unit:GetSpellSpeed()
         return (1 + self:GetSpellSpeedModifier()) * (self:GetSpellSpeedBase() + self:GetSpellSpeedBonus())
     end
-    
-    unit.GetCdrPercent = propGetter("CdrPercent")
-    
-    unit.SetCdrPercent = propSetter("CdrPercent")
-    
-    function unit:GetStamina()
-        return self._woeKeys.CurrentStamina
-    end
-    
-    --directly sets current stamina. will not trigger recharge cooldown
-    function unit:SetStamina(v)
-        print("SetStamina", v)
-        v = math.max(math.min(self:GetMaxStamina(), v), 0)
-        if v ~= self._woeKeys.CurrentStamina then
-            print("SetStamina", "value changed")
-            self._woeKeys.CurrentStamina = v
-            self:SendUpdateEvent("woe_stats_changed")
-            self:SendUpdateEvent("woe_stamina_changed", {value = v})
-        end
-    end
+    Property(unit, "SpellSpeedBase")
+    Property(unit, "SpellSpeedBonus")
+    Property(unit, "SpellSpeedModifier")
     
     
+    --Current stamina pool
+    Property(unit, "CurrentStamina", {
+        get = "GetStamina",
+        set = "SetStamina",
+        --debug = false,
+        default = 100,
+        onChange = onCurrentStaminaChanged,
+        combine = Property.ignoreModifiers,
+    })
+    --Maximum stamina pool.
+    Property(unit, "MaxStamina", {
+        default = 100,
+        --debug = false,
+        onChange = onMaxStaminaChange
+    })
+    --Returns the effective ratio between current and max stamina
     function unit:GetStaminaPercent()
         local sMax = self:GetMaxStamina()
-        if sMax == 0 then
+        if sMax == 0 then -- avoid division by 0; no max stamina means that stamina ratio is considered to always be 100%
             return 1
         end
         return self:GetStamina() / sMax
     end
     
-    local onMaxStaminaChange = function(self, new, old)
-        if new < 0 then
-            new = 0
+    --[[ Sets max stamina without adjusting current stamina by percentage. 
+        Current stamina will be clipped at the new max if it exceeds the new max.
+    ]]
+    unit.SetMaxStaminaNoPercentAdjust = Property.PropSetter("MaxStamina", {
+        onChange = function(self, v)
+            v = math.min(0, v)
+            if self:GetStamina() > v then
+                self.SetStamina(v)
+            end
+            initializeStaminaRegenerator(self)
+            return v
         end
-        local ratio
-        if old == 0 then
-            ratio = 1
-        else
-            ratio = self:GetStamina() / old
-        end
-        self:SetStamina(ratio*new)
-        initializeStaminaRegenerator(self)
-        return new
+    })
+    
+    
+    --Returns the flat regen per second applied to stamina at all times, regardless of recharge mode.
+    function unit:GetStaminaRegen()
+        return self:GetStaminaRegenBase() * (1 + self:GetStaminaRegenBaseModifier()) + self:GetStaminaRegenBonus()
+    end   
+    Property(unit, "StaminaRegenBase", {
+        default = 0.01,
+        onChange = initializeStaminaRegenerator
+    })
+    Property(unit, "StaminaRegenBonus", {
+        onChange = initializeStaminaRegenerator
+    })
+    Property(unit, "StaminaRegenBaseModifier")
+    
+    
+    --Returns the time in seconds that we must wait, in total, before entering recharge mode
+    function unit:GetStaminaRechargeDelay()
+        return self:GetStaminaRechargeDelayBase() * (1 + self:GetStaminaRechargeDelayModifier())
     end
-    
-    unit.GetMaxStamina = propGetter("MaxStamina", onMaxStaminaChange)
-    
-    unit.SetMaxStamina = propSetter("MaxStamina", onMaxStaminaChange)
-    
-    --Sets max stamina without adjusting current stamina by percentage. Current stamina will be clipped at the new max if it exceeds the new max.
-    unit.SetMaxStaminaNoPercentAdjust = propSetter("MaxStamina", function(self, v)
-        v = math.min(0, v)
-        if self:GetStamina() > v then
-            self.SetStamina(v)
-        end
-        initializeStaminaRegenerator(self)
-        return v
-    end)
-    
-    --puts stamina recharge on cooldown. if already on cooldown, will reset the duration
-    function unit:TriggerStaminaRechargeCooldown()
-        self.forceStaminaRecharge = false
-        self.staminaTimer = GameRules:GetGameTime()
-    end
-    
-    --forces stamina to begin recharging regardless of when it was last used
-    function unit:ForceStaminaRecharge()
-        self.ForceStaminaRecharge = true
-    end
+    Property(unit, "StaminaRechargeDelayBase", {
+        default = 5
+    })
+    Property(unit, "StaminaRechargeDelayModifier")
     
     --returns the number of seconds until stamina will enter recharge mode. 0 indicates that we are in recharge mode.
     function unit:GetStaminaRechargeDelayRemaining()
-        if forceStaminaRecharge then
+        if self:IsStaminaRechargeForced() then
             return 0
         end
-        local t = self:GetStaminaRechargeDelay() - GameRules:GetGameTime() - self._woeKeys.StaminaTimer
+        local t = self:GetStaminaRechargeDelay() - GameRules:GetGameTime() - self:GetStaminaTimer()
         if t < 0 then
             t = 0
         end
         return t
     end
     
+    
+    --Returns the % of max stamina that's restored per second when in stamina recharge mode
+    function unit:GetStaminaRechargeRate()
+        return self:GetStaminaRechargeRateBase() * (1 + self:GetStaminaRechargeRateBonus())
+    end
+    Property(unit, "StaminaRechargeRateBase", {
+        default = 0.01,
+        onChange = initializeStaminaRegenerator
+    })
+    
+    Property(unit, "StaminaRechargeRateBonus", {
+        onChange = initializeStaminaRegenerator
+    })
+    
+    --Time in seconds since stamina was last spent/drained
+    Property(unit, "StaminaTimer")
+    
+    --If true, forces stamina to enter recharge mode regardless of the current timer value.
+    Property(unit, "ForceStaminaRecharge", {
+        type = "bool",
+        get = "IsStaminaRechargeForced",
+        set = "ForceStaminaRecharge",
+    })
+    
     --Returns true if stamina is in recharge mode
     function unit:IsStaminaRecharging()
-        return self:GetStaminaRechargeDelayRemaining() <= 0
+        return self:GetStaminaRechargeDelayRemaining() == 0
     end
+    
+    --[[ Puts stamina recharge on cooldown. If already on cooldown, will reset the duration.
+        The optional offset parameter is a number of seconds to increase or decrease the delay time before
+        stamina begins recharging again.
+    ]]
+    function unit:TriggerStaminaRechargeCooldown(offset)
+        self:ForceStaminaRecharge(false)
+        self.staminaTimer = GameRules:GetGameTime() + (offset or 0)
+    end
+    
+    --Percentage modifier on projectile speed of unit's abilities. A value of 0 indicates 100% projectile speed.
+    Property(unit, "ProjectileSpeedModifier")
+    
+    --Percentage modifier on ability stamina costs. A value of 0 indicates 100% stamina cost.
+    Property(unit, "StaminaCostModifier")
          
     --attempts to spend the given amount of stamina. will not reduce stamina if there is not enough available. returns true and triggers stamina recharge cooldown if stamina was successfully spent.
     function unit:SpendStamina(v, context)
@@ -294,7 +240,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         if amountDrained > 0 then
             self:TriggerStaminaRechargeCooldown()
         end
-        self:SetStamina(newStamina)
+        self:SetCurrentStamina(newStamina)
         return amountDrained
     end
     
@@ -308,112 +254,49 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end  
     end
     
-    unit.GetStaminaRegenBase = propGetter("StaminaRegenBase", initializeStaminaRegenerator)
-    
-    unit.SetStaminaRegenBase = propSetter("StaminaRegenBase", initializeStaminaRegenerator)
-    
-    unit.GetStaminaRegenBonus = propGetter("StaminaRegenBonus", initializeStaminaRegenerator)
-    
-    unit.SetStaminaRegenBonus = propSetter("StaminaRegenBonus", initializeStaminaRegenerator)
-    
-    unit.GetStaminaRegenBaseModifier = propGetter("StaminaRegenBaseModifier")
-    
-    unit.SetStaminaRegenBaseModifier = propSetter("StaminaRegenBaseModifier")
-    
-    function unit:GetStaminaRegen()
-        return self:GetStaminaRegenBase() * (1 + self:GetStaminaRegenBaseModifier()) + self:GetStaminaRegenBonus()
-    end
-    
-    unit.GetStaminaRechargeDelayBase = propGetter("StaminaRechargeDelayBase")
-    
-    unit.SetStaminaRechargeDelayBase = propSetter("StaminaRechargeDelayBase")
-    
-    unit.GetStaminaRechargeDelayModifier = propGetter("StaminaRechargeDelayModifier")
-    
-    unit.SetStaminaRechargeDelayModifier = propSetter("StaminaRechargeDelayModifier")
-    
-    function unit:GetStaminaRechargeDelay()
-        return self:GetStaminaRechargeDelayBase() * (1 + self:GetStaminaRechargeDelayModifier())
-    end
-    
-    unit.GetStaminaRechargeRateBase = propGetter("StaminaRechargeRateBase", initializeStaminaRegenerator)
-    
-    unit.SetStaminaRechargeRateBase = propSetter("StaminaRechargeRateBase", initializeStaminaRegenerator)
-    
-    unit.GetStaminaRechargeRateBonus = propGetter("StaminaRechargeRateBonus", initializeStaminaRegenerator)
-    
-    unit.SetStaminaRechargeRateBonus = propSetter("StaminaRechargeRateBonus", initializeStaminaRegenerator)
-    
-    --returns the % of max stamina that's restored per second when in stamina recharge mode
-    function unit:GetStaminaRechargeRate()
-        return self:GetStaminaRechargeRateBase() * (1 + self:GetStaminaRechargeRateBonus())
-    end
-    
-    unit.GetStaminaCostModifier = propGetter("StaminaCostModifier")
-    
-    unit.SetStaminaCostModifier = propSetter("StaminaCostModifier")
-    
-    unit.GetProjectileSpeedModifier = propGetter("ProjectileSpeedModifier")
-    
-    unit.SetProjectileSpeedModifier = propSetter("ProjectileSpeedModifier")
-    
-    function unit:WithAbilities(cb)
-        for i=0, self:GetAbilityCount()-1 do
-            local abil = self:GetAbilityByIndex(i)
-            if abil ~= nil then
-                cb(abil)
-            end
-        end
-    end
-    
-    function unit:CallOnModifiers(fName, ...)
-        --print(unit:GetUnitName() .. ":CallOnModifiers: ", fName)
-        for k, modifier in pairs(self:FindAllModifiers()) do
-            local f = modifier[fName]
-            if f then
-                f(modifier, ...)
-            end
-        end
-    end
-    
-    function unit:SumModifierProperties(pName, extraParams)
-        local out = 0
-        for k, modifier in pairs(self:FindAllModifiers()) do
-            if instanceof(modifier, modifier_woe_base) then
-                local prop = modifier._woeProperties[pName]
-                if prop ~= nil then
-                    if type(prop) == "function" then
-                        local params = util.shallowCopy(modifier._params)
-                        util.mergeTable(params, extraParams or { })
-                        out = out + prop(modifier, params)
-                    else
-                        out = out + prop
-                    end
-                end
-            end
-        end
-        return out
-    end
-    
+    --update property data from KV data
     if unit:IsHero() then
-        util.updateTable(unit._woeKeys, self.datadriven.heroes[unit:GetUnitName()])
+        util.updateTable(unit._props, self.datadriven.heroes[unit:GetUnitName()])
     else
-        util.updateTable(unit._woeKeys, self.datadriven.units[unit:GetUnitName()])
+        util.updateTable(unit._props, self.datadriven.units[unit:GetUnitName()])
     end   
-    util.updateTable(unit._woeKeys, extraKeys)
-    
-    --initialize property cache
-    unit._woeKeysCache = { }
-    local t = Time()
-    for k, v in pairs(unit._woeKeys) do
-        unit._woeKeysCache[k] = {
-            value = v,
-            cacheTime = t
-        }
-    end
-    
+    util.updateTable(unit._props, extraKeys)
+    DebugBreak()
     if unit:IsHero() then
         unit:AddNewModifier(unit, nil, "modifier_woe_attributes", { })    
         unit:AddAbility("woe_attributes")
     end
+end
+
+
+--[[ local property onChange event handlers ]]
+
+recalculateMagicReduction = function(self, mr)
+    self:SetBaseMagicalResistanceValue(0.06 * mr / (1 + 0.06 * mr))
+end
+
+initializeStaminaRegenerator = function(self)
+    if self:GetMaxStamina() > 0 
+        and (self:GetStaminaRegen() > 0 or self:GetStaminaRechargeRate() > 0) then
+            self:AddNewModifier(self, nil, "modifier_woe_stamina_regenerator", {})
+    end
+end
+
+onMaxStaminaChange = function(self, new, old)
+    if new < 0 then
+        new = 0
+    end
+    local ratio
+    if old == 0 then
+        ratio = 1
+    else
+        ratio = self:GetStamina() / old
+    end
+    self:SetStamina(ratio*new)
+    initializeStaminaRegenerator(self)
+    return new
+end
+
+onCurrentStaminaChange = function(self, v)
+    return math.max(math.min(self:GetMaxStamina(), v), 0)
 end

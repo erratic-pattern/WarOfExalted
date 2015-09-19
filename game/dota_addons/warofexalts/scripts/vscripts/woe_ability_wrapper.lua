@@ -17,7 +17,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     
     local abiName = abi:GetAbilityName()
     local isLuaAbility = "ability_lua" == abi:GetClassname()
-    if not isLuaAbility then
+    if Testing and not isLuaAbility then
         print("[WAROFEXALTS] warning: " .. abiName .. " is not a Lua ability. Can't implement all WoE functionality.")
     end
     abi.isWoeAbility = true --flag we can use to easily test if ability is wrapped

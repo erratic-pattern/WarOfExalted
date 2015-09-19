@@ -1,5 +1,5 @@
 DEFAULT_TICK_RATE = 1/30
-
+--print("[WAROFEXALTS] Loading stamina regenerator")
 require("modifiers/modifier_woe_base")
 modifier_woe_stamina_regenerator = class({}, nil, modifier_woe_base)
 
@@ -8,25 +8,26 @@ modifier_woe_stamina_regenerator:Init({
     IsHidden = true,
     IsPurgable = false,
     ExpireOnDeath = false,
+    OnCreated = function(self, keys)
+        if IsServer() then
+            self.Interval = keys.Interval or DEFAULT_TICK_RATE
+            self:StartIntervalThink(self.Interval)
+        end   
+    end,
+    OnIntervalThink = function(self)
+        if IsServer() then
+            local unit = self:GetParent()
+            Property.BatchUpdateEvents(unit, function()
+                local sMax = unit:GetMaxStamina()
+                local sCur = unit:GetStamina()
+                if sMax > sCur then
+                    local stamPerSec = unit:GetStaminaRegen()
+                    if unit:IsStaminaRecharging() then
+                        stamPerSec = stamPerSec + xMax * unit:GetStaminaRechargeRate()
+                    end
+                    unit:SetStamina(sCur + self.Interval * stamPerSec)
+                end
+            end)
+        end  
+    end
 })
-
-function modifier_woe_stamina_regenerator:OnCreated(keys)
-    if IsServer() then
-        self.Interval = keys.Interval or DEFAULT_TICK_RATE
-        self:StartIntervalThink(self.Interval)
-    end
-end
-
-function modifier_woe_stamina_regenerator:OnIntervalThink()
-    if IsServer() then
-        local unit = self:GetParent()
-        local sMax = unit:GetMaxStamina()
-        if sMax > unit:GetStamina() then 
-            local stamPerSec = unit:GetStaminaRegen()
-            if unit:IsStaminaRecharging() then
-                stamPerSec = stamPerSec + unit:GetMaxStamina() * unit:GetStaminaRechargeRate()
-            end
-            unit:SetStamina(unit:GetStamina() + self.Interval * stamPerSec)
-        end
-    end
-end

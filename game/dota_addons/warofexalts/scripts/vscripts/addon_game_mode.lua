@@ -6,6 +6,7 @@ requires = {
     "lib.projectiles",
     "lib.affectors",
     "lib.storage",
+    "lib.property",
 	'warofexalts',
     'woe_link_modifiers',
     'woe_keywords',
@@ -59,8 +60,4 @@ reloaded = reloaded ~= nil -- will be true if script_reload, otherwise false
 
 for i,v in ipairs(requires) do
 	require(v)
-end
-
-if reloaded then
-    GameRules.WarOfExalts:OnScriptReload()
 end

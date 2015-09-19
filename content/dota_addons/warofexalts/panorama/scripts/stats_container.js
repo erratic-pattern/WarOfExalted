@@ -1,12 +1,46 @@
 'use strict';
 (function() {
     
-    var currentListener;
+    var currentListener; // the current request/response listener handle (see woe.js)
+    
+    
+    /* Update functions and event handlers */
+    
+    function UpdateStatsContainer(keys) {
+        var panel = $.GetContextPanel();
+        if(keys.isWoeUnit) {
+            if (keys.MoveSpeed != null)
+                SetTextOfClass(panel, "WoeStatsMoveSpeedLabel", Math.floor(keys.MoveSpeed));
+            if( keys.MagicResist != null )
+                SetTextOfClass(panel, "WoeStatsMagicResistLabel", Math.floor(keys.MagicResist));
+            if( keys.SpellSpeed != null )
+                SetTextOfClass(panel, "WoeStatsSpellSpeedLabel", Math.floor(keys.SpellSpeed));
+            UpdateNonWoeStats(keys.id);
+            panel.visible = true;
+        }
+        else {
+            panel.visible = false;
+        }
+    }
+    
+    function UpdateNonWoeStats(unitId) {
+        var panel = $.GetContextPanel();
+        SetTextOfClass(panel, "WoeStatsArmorLabel",  Math.floor(Entities.GetArmorForDamageType(unitId, DAMAGE_TYPES.DAMAGE_TYPE_PHYSICAL)));
+        SetTextOfClass(panel, "WoeStatsAttackSpeedLabel", Math.floor(Entities.GetIncreasedAttackSpeed(unitId) * 100));
+    }
+    
+    function RequestUnitInfo(unitId) {
+        unlistenCurrent();
+        currentListener = woe.requestUnitInfo(unitId, UpdateStatsContainer);
+    }
+    
+    
+    /* Utility functions */
     
     function unlistenCurrent() {
         if(currentListener) {
-            currentListener.unlisten()
-            currentListener = null
+            currentListener.unlisten();
+            currentListener = undefined;
         }
     }
     
@@ -16,24 +50,7 @@
         });
     }
     
-    function UpdateStatsContainer(unitId) {
-        unlistenCurrent()
-        currentListener = woe.requestUnitInfo(unitId, function(keys) {
-            var panel = $.GetContextPanel();
-            if(keys.isWoeUnit) {
-                SetTextOfClass(panel, "WoeStatsMoveSpeedLabel", keys.MsTotal);
-                SetTextOfClass(panel, "WoeStatsArmorLabel",  Math.round(keys.ArmorTotal));
-                SetTextOfClass(panel, "WoeStatsMagicResistLabel", Math.round(keys.MagicResistTotal));
-                SetTextOfClass(panel, "WoeStatsAttackSpeedLabel", Math.round(Entities.GetIncreasedAttackSpeed(unitId) * 100));
-                SetTextOfClass(panel, "WoeStatsSpellSpeedLabel", Math.round(keys.SpellSpeed));
-                //SetTextOfClass(panel, "WoeStatsStaminaLabel", Math.round(keys.StaminaCurrent.toString()) + "/" + Math.round(keys.StaminaMax.toString()));
-                panel.visible = true;
-            }
-            else {
-                panel.visible = false;
-            }  
-        });
-    }
+    /* Event Handlers */
     
     GameEvents.Subscribe("dota_player_update_selected_unit", function( data ) {
         var panel = $("#WoeStatsContainer"),
@@ -46,7 +63,7 @@
             unlistenCurrent()
         }
         else {
-            UpdateStatsContainer(selection[0]);
+            RequestUnitInfo(selection[0]);
         }        
     });
     
@@ -56,26 +73,26 @@
         if (unitId == -1)
             unitId = Players.GetLocalPlayerPortraitUnit()
         //$.Msg("dota_player_update_query_unit: ", unitId);
-        UpdateStatsContainer(unitId);
+        RequestUnitInfo(unitId);
     });
     
     GameEvents.Subscribe("dota_portrait_unit_stats_changed", function( data ) {
-        UpdateStatsContainer(Players.GetLocalPlayerPortraitUnit());
+        RequestUnitInfo(Players.GetLocalPlayerPortraitUnit());
     });
     
-    GameEvents.Subscribe("dota_portrait_unit_modifiers_changed", function( data ) {
-        UpdateStatsContainer(Players.GetLocalPlayerPortraitUnit());
-    });
+    /*GameEvents.Subscribe("dota_portrait_unit_modifiers_changed", function( data ) {
+        RequestUnitInfo(Players.GetLocalPlayerPortraitUnit());
+    });*/   
     
     GameEvents.Subscribe("dota_force_portrait_update", function( data ) {
         $.Msg("dota_force_portrait_update: ", data);
-        UpdateStatsContainer(Players.GetLocalPlayerPortraitUnit());
+        RequestUnitInfo(Players.GetLocalPlayerPortraitUnit());
     });
     
     GameEvents.Subscribe("woe_stats_changed", function( data ) {
         if(data.unit == Players.GetLocalPlayerPortraitUnit()) {
-            $.Msg("woe_stats_changed UpdateStatsContainer");
-            UpdateStatsContainer(data.unit)
+            $.Msg("woe_stats_changed: ", data)
+            UpdateStatsContainer(data)
         }
     });
 

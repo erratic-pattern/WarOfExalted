@@ -1,7 +1,7 @@
 modifier_woe_base = class({})
 
 function modifier_woe_base:WoeProperties(props)
-    self._woeProperties = props
+    self._propHandlers = props
 end
 
 function modifier_woe_base:Init(keys)

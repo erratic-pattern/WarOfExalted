@@ -7,8 +7,8 @@
     "Ability3"              "flameshaper_intensification"
     //"Ability4"            "flameshaper_flameshaper"
 
-	"ArmorPhysical"				"0"
-	"MagicResistBase"		    "1"
+	"ArmorPhysical"				"-1"
+	"MagicResistBase"		    "-1"
     
 	"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED_ATTACK"
     "ProjectileModel"           "particles/units/heroes/hero_lina/lina_base_attack.vpcf"
