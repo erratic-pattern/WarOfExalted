@@ -15,14 +15,6 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     
     unit.isWoeUnit = true --flag we can use to identify a WoE unit
     
-    unit.suppressEvents = false -- when true, stat update events are suppressed for the unit
-                                -- we use this to limit unnecessary network usage and to prevent
-                                -- infinite event loops.
-    
-    unit.suppressedEvents = { } -- a table of suppressed events, indexed by event name. thus, multiple suppressed events
-                                -- with the same name will be overwritten by each other. This behavior may be reworked
-                                -- in the future.
-    
     function unit:WithAbilities(cb)
         --[[ Iterate over all abilities on this unit, passing them to the given callback
         ]]
