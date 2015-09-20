@@ -22,7 +22,7 @@
 			m_flFadeOutTime = 0.750000
 		},
 		{
-			_class = "C_OP_InterpolateRadius"
+_class = "C_OP_InterpolateRadius"
 			m_flEndScale = 1.500000
 		},
 		{
@@ -60,9 +60,9 @@
 			m_fLifetimeMax = 2.000000
 		},
 		{
-			_class = "C_INIT_RandomRadius"
-			m_flRadiusMin = 100.000000
-			m_flRadiusMax = 100.000000
+_class = "C_INIT_RandomRadius"
+m_flRadiusMin = 200
+m_flRadiusMax = 200
 		},
 		{
 			_class = "C_INIT_RandomRotation"

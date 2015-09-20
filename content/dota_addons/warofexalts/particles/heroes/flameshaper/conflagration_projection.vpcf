@@ -3,7 +3,7 @@
 	_class = "CParticleSystemDefinition"
 	m_bShouldHitboxesFallbackToRenderBounds = false
 	m_nMaxParticles = 1
-	m_flConstantRadius = 700.000000
+m_flConstantRadius = 1400
 	m_ConstantColor =
 	[
 		255,
@@ -30,7 +30,7 @@
 			]
 			m_flStartFalloff = 0.010000
 			m_flAlphaScale = 8.000000
-			m_flRadiusScale = 2.000000
+m_flRadiusScale = 4
 			m_hTexture = resource:"materials/particle/projected_fire_01.vtex"
 		},
 	]

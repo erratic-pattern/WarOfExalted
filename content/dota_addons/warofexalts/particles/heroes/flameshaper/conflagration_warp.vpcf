@@ -3,7 +3,7 @@
 	_class = "CParticleSystemDefinition"
 	m_bShouldHitboxesFallbackToRenderBounds = false
 	m_nMaxParticles = 12
-	m_flConstantRadius = 150.000000
+m_flConstantRadius = 300
 	m_ConstantColor =
 	[
 		255,
@@ -22,7 +22,7 @@
 			m_nSequenceCombineMode = "SEQUENCE_COMBINE_MODE_USE_SEQUENCE_0"
 			m_bRefract = true
 			m_flRefractAmount = 0.030000
-			m_nRefractBlurRadius = 3
+m_nRefractBlurRadius = 7
 			m_nRefractBlurType = "BLURFILTER_BOX"
 			m_bGammaCorrectVertexColors = false
 			m_hTexture = resource:"materials/particle/warp_spiral01.vtex"
@@ -73,7 +73,7 @@
 			_class = "C_OP_Decay"
 		},
 		{
-			_class = "C_OP_InterpolateRadius"
+_class = "C_OP_InterpolateRadius"
 			m_flEndScale = 3.000000
 		},
 		{

@@ -3,7 +3,7 @@
 	_class = "CParticleSystemDefinition"
 	m_bShouldHitboxesFallbackToRenderBounds = false
 	m_nMaxParticles = 100
-	m_flConstantRadius = 15.000000
+m_flConstantRadius = 30
 	m_ConstantColor =
 	[
 		162,
@@ -28,7 +28,7 @@
 			m_fDrag = 0.100000
 		},
 		{
-			_class = "C_OP_InterpolateRadius"
+_class = "C_OP_InterpolateRadius"
 			m_flOpEndFadeOutTime = 1.000000
 			m_flOpStartFadeOutTime = 1.000000
 			m_flStartScale = 0.000000

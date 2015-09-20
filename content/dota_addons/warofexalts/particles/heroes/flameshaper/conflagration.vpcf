@@ -24,7 +24,7 @@
 			m_ChildRef = resource:"particles/heroes/flameshaper/conflagration_column.vpcf"
 		},
 		{
-			m_ChildRef = resource:"particles/heroes/flameshaper/emberspirit_flame_shield_aoe_trails.vpcf"
+			m_ChildRef = resource:"particles/heroes/flameshaper/conflagration_aoe_trails.vpcf"
 		},
 	]
 }
