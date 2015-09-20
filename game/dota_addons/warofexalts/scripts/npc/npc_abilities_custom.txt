@@ -443,8 +443,9 @@
 	}
 	"flameshaper_conflagration"
 	{
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
-	    "ScriptFile"                    "heroes/flameshaper/flameshaper_fireball"
+	    "AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+	    "ScriptFile"                    "heroes/flameshaper/flameshaper_conflagration"
 		"AbilityTextureName"			"emberspirit_flameguard"
 		"BaseClass"						"ability_lua"
 	    "FightRecapLevel"				"2"
@@ -457,6 +458,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 	    "Keywords"                      "spell buff duration area dot"
 		"AbilityCastPoint"				"0.3"
+	    "AbilityCastRange"              "%radius"
 		"AbilityCooldown"				"140 120 100"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"

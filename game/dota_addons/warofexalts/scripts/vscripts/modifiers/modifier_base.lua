@@ -16,7 +16,7 @@ function modifier_base:Properties(propTable)
     if self._propHandlers == nil then
         self._propHandlers = { }
     end
-    for k, v in pairs(props) do
+    for k, v in pairs(propTable) do
         self._propHandlers[k] = v
     end
 end
@@ -294,7 +294,7 @@ function modifier_base:Init(keys)
     end
     
     --copy remaining input keys into modifier's table
-    for k, v in pairs(keys)
+    for k, v in pairs(keys) do
         if self[k] == nil then
             self[k] = v
         end

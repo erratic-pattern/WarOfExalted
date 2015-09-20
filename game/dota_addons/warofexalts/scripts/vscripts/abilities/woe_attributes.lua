@@ -6,7 +6,7 @@ MINUS_ARMOR_PER_AGI = 0.14 -- amount of base armor reduced per point of agility
 ARMOR_PER_STR = 0.14       -- amount of base armor increased per point of strength
 
 local modName = "modifier_woe_attributes"
-LinkLuaModifiers(modName, "modifiers/" .. modifier, LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier(modName, "modifiers/" .. modName, LUA_MODIFIER_MOTION_NONE)
 
 function woe_attributes:GetIntrinsicModifierName()
     return modName

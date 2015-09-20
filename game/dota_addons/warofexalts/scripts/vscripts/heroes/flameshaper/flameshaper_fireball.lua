@@ -6,9 +6,11 @@ end
 
 function flameshaper_fireball:GetProjectileSpeed()
     local speed = self:GetSpecialValueFor("speed")
-    local conflagration = self:GetCaster():FindModifierByName("modifier_flameshaper_conflagration")
-    if conflagration then
-        speed = speed + conflagration.fireballSpeedBonus
+    if IsServer() then 
+        local conflagration = self:GetCaster():FindModifierByName("modifier_flameshaper_conflagration")
+        if conflagration then
+            speed = speed + conflagration.fireballSpeedBonus
+        end
     end
     return speed
 end

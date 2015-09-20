@@ -39,7 +39,7 @@ modifier_flameshaper_pyromania:Init({
         end
     end,
     
-    OnAbilityExecute = function(params)
+    OnAbilityExecuted = function(self, params)
         if IsServer() then
             if params.unit == self:GetParent() then
                 if self:GetParent():PassivesDisabled() then
