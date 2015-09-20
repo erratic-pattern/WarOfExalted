@@ -1,5 +1,7 @@
 flameshaper_lava_wake = class({})
 
+LinkLuaModifier("modifier_flameshaper_lava_wake_mr_reduction", "modifiers/modifier_flameshaper_lava_wake_mr_reduction", LUA_MODIFIER_MOTION_NONE)
+
 function flameshaper_lava_wake:OnSpellStart()
     local caster = self:GetCaster()
     local data = self:GetSpecials()

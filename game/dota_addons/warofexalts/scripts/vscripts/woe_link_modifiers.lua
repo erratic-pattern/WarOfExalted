@@ -12,7 +12,4 @@ function WarOfExalts:LinkModifiers()
     LinkLuaModifier("modifier_woe_stamina_regenerator", "modifiers/modifier_woe_stamina_regenerator", LUA_MODIFIER_MOTION_NONE)
     LinkLuaModifier("modifier_woe_attributes", "modifiers/modifier_woe_attributes", LUA_MODIFIER_MOTION_NONE)
     
-    --Flameshaper
-    LinkLuaModifier("modifier_flameshaper_lava_wake_mr_reduction", "modifiers/modifier_flameshaper_lava_wake_mr_reduction", LUA_MODIFIER_MOTION_NONE)
-    --LinkLuaModifier("modifier_flameshaper_intensification", "modifiers/modifier_flameshaper_intensifcation", LUA_MODIFIER_MOTION_NONE)
 end

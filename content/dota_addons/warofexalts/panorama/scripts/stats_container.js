@@ -90,9 +90,9 @@
     });
     
     GameEvents.Subscribe("woe_stats_changed", function( data ) {
-        if(data.unit == Players.GetLocalPlayerPortraitUnit()) {
+        if(data.id == Players.GetLocalPlayerPortraitUnit()) {
             $.Msg("woe_stats_changed: ", data)
-            UpdateStatsContainer(data)
+            RequestUnitInfo(data.id)
         }
     });
 

@@ -185,7 +185,7 @@ function modifier_woe_base:Init(keys)
     
     if keys.DeclareFunctions ~= nil then
         function self:DeclareFunctions(...)
-            keys.DeclareFunctions(self, ...)
+            return keys.DeclareFunctions
         end
     end
     
