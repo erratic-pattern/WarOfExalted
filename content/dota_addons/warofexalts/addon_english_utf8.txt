@@ -12,7 +12,7 @@
         "woe_test_hero_stamina_ui"                                             "Stamina UI Test"
         "woe_test_hero_vector_targeting"                                       "Vector Target Test"
         
-        "pyromancer"        "Pyromancer"
+        "npc_dota_hero_lina"        "flameshaper"
 
 		// ******************** UNITS ********************
 		"npc_dummy_unit"                                                                  "Dummy Unit"

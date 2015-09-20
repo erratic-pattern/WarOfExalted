@@ -7,6 +7,7 @@ function flameshaper_conflagration:OnSpellStart()
     local caster = self:GetCaster()
     caster:AddNewModifier(caster, self, modName, {
         duration = self:GetSpecialValueFor("duration"),
+        damage = self:GetSpecialValueFor("damage"),
         radius = self:GetSpecialValueFor("radius"),
         interval = self:GetSpecialValueFor("burn_interval"),
         fireballSpeedBonus = self:GetSpecialValueFor("fireball_speed_bonus"),

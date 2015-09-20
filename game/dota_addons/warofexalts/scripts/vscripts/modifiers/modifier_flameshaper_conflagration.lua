@@ -11,7 +11,8 @@ modifier_flameshaper_conflagration:Init({
         self.lavaWakeDurationBonus = params.lavaWakeDurationBonus or 0
         self.interval = params.interval or 0.1
         self.radius = params.radius or 100
-        self:StartIntervalThink(params.interval)
+        self.damage = params.damage or 0
+        self:StartIntervalThink(self.interval)
     end,
     
     OnIntervalThink = function(self)
@@ -19,13 +20,13 @@ modifier_flameshaper_conflagration:Init({
             local center = self:GetParent()
             local abil = self:GetAbility()
             local caster = abil:GetCaster()
-            local units = FindUnitsInRadius(caster:GetTeam(), center:GetAbsOrigin(), nil, self.radius, abil:GetAbilityTargetTeam(), abil:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+            local units = FindUnitsInRadius(caster:GetTeam(), center:GetAbsOrigin(), nil, self.radius, abil:GetAbilityTargetTeam(), abil:GetAbilityTargetType(), abil:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
             for _, unit in pairs(units) do
                 ApplyWoeDamage({
                     Victim = unit,
                     Attacker = caster,
                     Ability = abil,
-                    MagicalDamage = abil:GetAbilityDamage() * self.interval
+                    MagicalDamage = self.damage * self.interval
                 })
             end
         end

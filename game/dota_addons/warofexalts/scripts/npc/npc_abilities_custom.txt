@@ -459,10 +459,9 @@
 	    "Keywords"                      "spell buff duration area dot"
 		"AbilityCastPoint"				"0.3"
 	    "AbilityCastRange"              "%radius"
-		"AbilityCooldown"				"140 120 100"
+		"AbilityCooldown"				"140"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
-		"AbilityDamage"					"60 80 100"
 		"AbilityManaCost"				"150 250 350"
 		
 		"precache"
@@ -503,6 +502,11 @@
 	        {
 	            "var_type"      "FIELD_FLOAT"
 	            "burn_interval" "0.2"
+	        }
+	        "06"
+	        {
+	            "var_type"      "FIELD_INTEGER"
+	            "damage"        "60 80 100"
 	        }
 		}
 	}
@@ -574,7 +578,7 @@
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
-	    "AbilityUnitTargetType"         "DOTA_UNIT_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
 	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 	    "FightRecapLevel"				"1"
 		"BaseClass"						"ability_lua"
