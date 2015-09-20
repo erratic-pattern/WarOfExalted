@@ -279,10 +279,10 @@ initializeStaminaRegenerator = function(self)
     end
 end
 
-updateCooldowns = function(self, new)
+updateCooldowns = function(self, new, old)
     self:EachAbility(function(a)
-        if a.isWoeAbility and a:GetKeywords():Has("spell") and a:GetCooldownTimeRemaining() > 0 then
-            a:StartCooldown(a:GetCooldown())
+        if a.isWoeAbility then
+            a:UpdateCurrentCooldown()
         end
     end)
 end

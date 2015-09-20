@@ -234,35 +234,48 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     --GetCooldown that existed before wrapper was applied
     abi.GetBaseCooldown = abi.GetCooldown
     
+    
+    
     --gets the total cooldown after all CDR has been calculated
     function abi:GetCooldown(lvl)
         print(self:GetAbilityName() .. ":GetCooldown called")
-        if not isLuaAbility then -- remove this if overriding on ability_datadriven suddenly works
-            return self:GetBaseCooldown(lvl)
-        end
         local caster = self:GetCaster()
-        if caster and caster.isWoeUnit then
+        local baseCd = self:GetBaseCooldown(lvl)
+        local cdOut
+        if not isLuaAbility or not caster or not caster.isWoeUnit then
+            cdOut = baseCd
+        else
             local ics = 0
             local keys = self:GetKeywords()
             if keys:Has("attack") then
-                ics = caster:GetIncreasedAttackSpeed() * self:GetAttackSpeedRatio()
-                print("ias: ", ics)
-            elseif keys:Has("spell") then
-                ics = caster:GetSpellSpeed() * self:GetSpellSpeedRatio()
-                print("SpellSpeed: ", ics)
+                ics = ics + caster:GetIncreasedAttackSpeed() * self:GetAttackSpeedRatio()
             end
-            local baseCd = self:GetBaseCooldown(lvl)
+            if keys:Has("spell") then
+                ics = ics + caster:GetSpellSpeed() * self:GetSpellSpeedRatio()
+            end
+            cdOut =  baseCd / ((100 + ics) * 0.01)
             print("base cooldown: ", baseCd)
-            local cdOut =  baseCd / ((100 + ics) * 0.01)
+            print("ics: ", ics)
             print("reduced cooldown: ", cdOut)
-            return cdOut
-        else
-            return self:GetBaseCooldown(lvl)
         end
+        self._prevCd = cdOut
+        self._prevCdLvl = lvl
+        return cdOut
     end
     
-    --[[if abi._woeKeys.IsVectorTarget then
-        VectorTargetWrapper(abi)
-    end]]
+    --Updates the current cooldown based on the ratio of the old cooldown to the new one
+    function abi:UpdateCurrentCooldown(newCd)
+        local remaining = self:GetCooldownTimeRemaining()
+        if self._prevCd and remaining > 0 then
+            print("updating current cooldown")
+            local oldCd = self._prevCd
+            newCd = newCd or self:GetCooldown(self._prevCdLvl)
+            local newRemaining = newCd * (remaining / oldCd)
+            if newRemaining < remaining then
+                self:EndCooldown()
+            end
+            self:StartCooldown(newRemaining)
+        end
+    end
 end
 
