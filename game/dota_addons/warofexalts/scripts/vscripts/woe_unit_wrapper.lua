@@ -3,7 +3,7 @@ require("lib/property")
 
 
 --local function declarations (code defined at bottom of file)
-local recalculateMagicReduction, initializeStaminaRegenerator, onMaxStaminaChange, onCurrentStaminaChange
+local recalculateMagicReduction, initializeStaminaRegenerator, updateCooldowns, onMaxStaminaChange, onCurrentStaminaChange
 
 
 function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
@@ -15,7 +15,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     
     unit.isWoeUnit = true --flag we can use to identify a WoE unit
     
-    function unit:WithAbilities(cb)
+    function unit:EachAbility(cb)
         --[[ Iterate over all abilities on this unit, passing them to the given callback
         ]]
         for i=0, self:GetAbilityCount()-1 do
@@ -67,6 +67,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     function unit:GetMagicResist() 
         return (1 + self:GetMagicResistModifier()) * (self:GetMagicResistBase() + self:GetMagicResistBonus())
     end
+    
     Property(unit, "MagicResistBase", {
         onChange = recalculateMagicReduction
     }) 
@@ -82,9 +83,15 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     function unit:GetSpellSpeed()
         return (1 + self:GetSpellSpeedModifier()) * (self:GetSpellSpeedBase() + self:GetSpellSpeedBonus())
     end
-    Property(unit, "SpellSpeedBase")
-    Property(unit, "SpellSpeedBonus")
-    Property(unit, "SpellSpeedModifier")
+    Property(unit, "SpellSpeedBase", {
+        onChange = updateCooldowns
+    })
+    Property(unit, "SpellSpeedBonus", {
+        onChange = updateCooldowns
+    })
+    Property(unit, "SpellSpeedModifier", {
+        onChange = updateCooldowns
+    })
     
     
     --Current stamina pool
@@ -253,9 +260,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         util.updateTable(unit._props, self.datadriven.units[unit:GetUnitName()])
     end   
     util.updateTable(unit._props, extraKeys)
-    DebugBreak()
-    if unit:IsHero() then
-        unit:AddNewModifier(unit, nil, "modifier_woe_attributes", { })    
+    if unit:IsHero() then 
         unit:AddAbility("woe_attributes")
     end
 end
@@ -272,6 +277,14 @@ initializeStaminaRegenerator = function(self)
         and (self:GetStaminaRegen() > 0 or self:GetStaminaRechargeRate() > 0) then
             self:AddNewModifier(self, nil, "modifier_woe_stamina_regenerator", {})
     end
+end
+
+updateCooldowns = function(self, new)
+    self:EachAbility(function(a)
+        if a.isWoeAbility and a:GetKeywords():Has("spell") and a:GetCooldownTimeRemaining() > 0 then
+            a:StartCooldown(a:GetCooldown())
+        end
+    end)
 end
 
 onMaxStaminaChange = function(self, new, old)
