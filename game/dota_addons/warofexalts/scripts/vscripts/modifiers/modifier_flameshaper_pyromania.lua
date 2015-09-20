@@ -1,5 +1,5 @@
-require("modifiers/modifier_woe_base")
-modifier_flameshaper_pyromania = class({}, nil, modifier_woe_base)
+require("modifiers/modifier_base")
+modifier_flameshaper_pyromania = class({}, nil, modifier_base)
 
 modifier_flameshaper_pyromania:Init({
     IsPurgable = false,
@@ -29,7 +29,7 @@ modifier_flameshaper_pyromania:Init({
     end
 })
 
-modifier_flameshaper_pyromania:WoeProperties({
+modifier_flameshaper_pyromania:Properties({
     SpellSpeedBonus = function(self)
         return self:GetStackCount() * self:GetAbility():GetSpecialValueFor("spell_speed")
     end

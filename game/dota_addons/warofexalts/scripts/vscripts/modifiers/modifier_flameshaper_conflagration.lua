@@ -1,5 +1,5 @@
-require("modifiers/modifier_woe_base")
-modifier_flameshaper_conflagration = class({}, nil, modifier_woe_base)
+require("modifiers/modifier_base")
+modifier_flameshaper_conflagration = class({}, nil, modifier_base)
 
 modifier_flameshaper_conflagration:Init({
     IsHidden = false,
