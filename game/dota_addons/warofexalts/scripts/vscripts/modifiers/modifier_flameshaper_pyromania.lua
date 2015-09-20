@@ -3,8 +3,19 @@ modifier_flameshaper_pyromania = class({}, nil, modifier_base)
 
 modifier_flameshaper_pyromania:Init({
     IsPurgable = false,
-    DeclareFunctions = { MODIFIER_EVENT_ON_ABILITY_EXECUTED },
     DestroyOnExpire = false,
+    DeclareFunctions = { MODIFIER_EVENT_ON_ABILITY_EXECUTED },
+    
+    IsHidden = function(self)
+        return self:GetStackCount() == 0
+    end,
+    
+    Properties = {
+        SpellSpeedBonus = function(self)
+            return self:GetStackCount() * self:GetAbility():GetSpecialValueFor("spell_speed")
+        end
+    },
+    
     OnCreated = function(self, params)
         if IsServer() then
             self.pfx = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_fiery_soul.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
@@ -26,40 +37,29 @@ modifier_flameshaper_pyromania:Init({
             ParticleManager:SetParticleControl( self.pfx, 1, Vector( self:GetStackCount(), 0, 0 ) )
             self:GetParent():GetSpellSpeed() -- force UI update
         end
-    end
+    end,
+    
+    OnAbilityExecute = function(params)
+        if IsServer() then
+            if params.unit == self:GetParent() then
+                if self:GetParent():PassivesDisabled() then
+                    return 0
+                end
+                local ability = params.ability 
+                if ability ~= nil and ( not ability:IsItem() ) and ( not ability:IsToggle() ) then
+                    if self:GetStackCount() < self:GetAbility():GetSpecialValueFor("max_stacks") then
+                        self:IncrementStackCount()
+                    else
+                        self:SetStackCount( self:GetStackCount() )
+                        self:ForceRefresh()
+                    end
+                    local duration = self:GetAbility():GetSpecialValueFor("duration")
+                    self:SetDuration(duration, true)
+                    self:StartIntervalThink(duration)
+                    self:GetParent():GetSpellSpeed() -- force UI update
+                end
+            end
+        end
+        return 0 
+    end,
 })
-
-modifier_flameshaper_pyromania:Properties({
-    SpellSpeedBonus = function(self)
-        return self:GetStackCount() * self:GetAbility():GetSpecialValueFor("spell_speed")
-    end
-})
-
-function modifier_flameshaper_pyromania:IsHidden()
-    return self:GetStackCount() == 0
-end
-
-function modifier_flameshaper_pyromania:OnAbilityExecuted(params)
-	if IsServer() then
-		if params.unit == self:GetParent() then
-			if self:GetParent():PassivesDisabled() then
-				return 0
-			end
-			local ability = params.ability 
-			if ability ~= nil and ( not ability:IsItem() ) and ( not ability:IsToggle() ) then
-				if self:GetStackCount() < self:GetAbility():GetSpecialValueFor("max_stacks") then
-					self:IncrementStackCount()
-				else
-					self:SetStackCount( self:GetStackCount() )
-					self:ForceRefresh()
-				end
-                local duration = self:GetAbility():GetSpecialValueFor("duration")
-                self:SetDuration(duration, true)
-                self:StartIntervalThink(duration)
-                self:GetParent():GetSpellSpeed() -- force UI update
-			end
-		end
-	end
-
-	return 0    
-end
