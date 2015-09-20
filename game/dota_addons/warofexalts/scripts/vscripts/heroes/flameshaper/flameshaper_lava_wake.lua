@@ -31,6 +31,12 @@ function flameshaper_lava_wake:OnSpellStart()
         GridNav:DestroyTreesAroundPoint(pos, pathRadius, false)
         --DebugDrawCircle(pos, Vector(255,0,0), 1, pathRadius, true, data.effect_duration)
     end
+    --check for conflagration buff and adjust duration
+    local conflagration = caster:FindModifierByName("modifier_flameshaper_conflagration")
+    if conflagration and conflagration.lavaWakeDurationBonus then
+        data.effect_duration = data.effect_duration + conflagration.lavaWakeDurationBonus
+    end
+    --start effect timer
     local elapsed = 0
     Timers:CreateTimer(data.burn_interval, function()
         for i=1, numProjectiles do

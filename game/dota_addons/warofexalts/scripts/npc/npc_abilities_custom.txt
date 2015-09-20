@@ -441,6 +441,69 @@
 	        }
 	    }
 	}
+	"flameshaper_conflagration"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+	    "ScriptFile"                    "heroes/flameshaper/flameshaper_fireball"
+		"AbilityTextureName"			"emberspirit_flameguard"
+		"BaseClass"						"ability_lua"
+	    "FightRecapLevel"				"2"
+	    
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+	    "Keywords"                      "spell buff duration area dot"
+		"AbilityCastPoint"				"0.3"
+		"AbilityCooldown"				"140 120 100"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+		"AbilityDamage"					"60 80 100"
+		"AbilityManaCost"				"150 250 350"
+		
+		"precache"
+		{
+			"particle"					"particles/heroes/flameshaper/conflagration.vpcf"
+			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
+		}
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"duration      			"20"
+			}
+			
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"		        "800"
+			}
+			
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"fireball_speed_bonus"  "250 500 750"
+			}
+	        
+	        "04"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "lava_wake_duration_bonus"  "2 3 4"
+	        }
+	        
+	        "05"
+	        {
+	            "var_type"      "FIELD_FLOAT"
+	            "burn_interval" "0.2"
+	        }
+		}
+	}
 	"flameshaper_fireball"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DIRECTIONAL"
@@ -503,46 +566,6 @@
 	            "var_type"              "FIELD_INTEGER"
 	            "vision_radius"         "450"
 	        }
-		}
-	}
-	"flameshaper_intensification"
-	{
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
-		"BaseClass"						"ability_lua"
-		"AbilityTextureName"			"lina_fierysoul"
-	    "ScriptFile"                  "heroes/flameshaper/flameshaper_intensification.lua"
-	
-		// Stats
-		//-------------------------------------------------------------------------------------------------------------
-	    "Keywords"                      "passive buff duration"
-		
-	    // Special
-	    //-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-	        "01"
-	        {
-	            "var_type"                  "FIELD_INTEGER"
-	            "spell_speed"               "30"
-	        }
-	        
-	        "02"
-	        {
-	            "var_type"                  "FIELD_INTEGER"
-	            "max_stacks"                "2 3 4 5"
-	        
-	        }
-	        
-	        "03"
-	        {
-	            "var_type"                  "FIELD_INTEGER"
-	            "duration"                  "8"
-	        }
-		}
-	    
-	    "precache"
-		{
-	        "particle"      "particles/units/heroes/hero_lina/lina_fiery_soul.vpcf"
 		}
 	}
 	"flameshaper_lava_wake"
@@ -619,6 +642,47 @@
 			"particle"					"particles/units/heroes/hero_jakiro/jakiro_macropyre.vpcf"
 	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn.vpcf"
 	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf"
+		}
+	}
+	"flameshaper_pyromania"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"BaseClass"						"ability_lua"
+		"AbilityTextureName"			"lina_fierysoul"
+	    "ScriptFile"                    "heroes/flameshaper/flameshaper_pyromania.lua"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+	    "Keywords"                      "passive buff duration"
+		
+	    // Special
+	    //-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+	        "01"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "spell_speed"               "30"
+	        }
+	        
+	        "02"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "max_stacks"                "2 3 4 5"
+	        
+	        }
+	        
+	        "03"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "duration"                  "8"
+	        }
+		}
+	    
+	    "precache"
+		{
+	        "particle"      "particles/units/heroes/hero_lina/lina_fiery_soul.vpcf"
+	        "soundfile"		"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 		}
 	}
 	"test_woe_damage"

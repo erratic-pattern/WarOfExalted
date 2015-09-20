@@ -1,9 +1,9 @@
-"flameshaper_intensification"
+"flameshaper_pyromania"
 {
 	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 	"BaseClass"						"ability_lua"
 	"AbilityTextureName"			"lina_fierysoul"
-    "ScriptFile"                  "heroes/flameshaper/flameshaper_intensification.lua"
+    "ScriptFile"                    "heroes/flameshaper/flameshaper_pyromania.lua"
 
 	// Stats
 	//-------------------------------------------------------------------------------------------------------------
@@ -36,5 +36,6 @@
     "precache"
 	{
         "particle"      "particles/units/heroes/hero_lina/lina_fiery_soul.vpcf"
+        "soundfile"		"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 	}
 }

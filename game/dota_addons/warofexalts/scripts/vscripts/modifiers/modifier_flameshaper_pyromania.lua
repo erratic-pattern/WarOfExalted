@@ -1,7 +1,7 @@
 require("modifiers/modifier_woe_base")
-modifier_flameshaper_intensification = class({}, nil, modifier_woe_base)
+modifier_flameshaper_pyromania = class({}, nil, modifier_woe_base)
 
-modifier_flameshaper_intensification:Init({
+modifier_flameshaper_pyromania:Init({
     IsPurgable = false,
     DeclareFunctions = { MODIFIER_EVENT_ON_ABILITY_EXECUTED },
     DestroyOnExpire = false,
@@ -29,17 +29,17 @@ modifier_flameshaper_intensification:Init({
     end
 })
 
-modifier_flameshaper_intensification:WoeProperties({
+modifier_flameshaper_pyromania:WoeProperties({
     SpellSpeedBonus = function(self)
         return self:GetStackCount() * self:GetAbility():GetSpecialValueFor("spell_speed")
     end
 })
 
-function modifier_flameshaper_intensification:IsHidden()
+function modifier_flameshaper_pyromania:IsHidden()
     return self:GetStackCount() == 0
 end
 
-function modifier_flameshaper_intensification:OnAbilityExecuted(params)
+function modifier_flameshaper_pyromania:OnAbilityExecuted(params)
 	if IsServer() then
 		if params.unit == self:GetParent() then
 			if self:GetParent():PassivesDisabled() then

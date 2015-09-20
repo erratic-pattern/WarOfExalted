@@ -6,8 +6,8 @@
 	    
 		"Ability1"				"flameshaper_fireball" 
 		"Ability2"				"flameshaper_lava_wake"
-	    "Ability3"              "flameshaper_intensification"
-	    //"Ability4"            "flameshaper_flameshaper"
+	    "Ability3"              "flameshaper_pyromania"
+	    "Ability4"              "flameshaper_conflagration"
 	
 		"ArmorPhysical"				"-1"
 		"MagicResistBase"		    "-1"

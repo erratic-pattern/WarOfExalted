@@ -4,8 +4,18 @@ function flameshaper_fireball:GetAreaRadius()
     return self:GetSpecialValueFor("area_radius") * 1
 end
 
+function flameshaper_fireball:GetProjectileSpeed()
+    local speed = self:GetSpecialValueFor("speed")
+    local conflagration = self:GetCaster():FindModifierByName("modifier_flameshaper_conflagration")
+    if conflagration then
+        speed = speed + conflagration.fireballSpeedBonus
+    end
+    return speed
+end
+
 function flameshaper_fireball:GetCastRange()
-    return self:GetSpecialValueFor("duration")*self:GetSpecialValueFor("speed")
+
+    return self:GetSpecialValueFor("duration") * self:GetProjectileSpeed()
 end
 
 function flameshaper_fireball:OnSpellStart()
@@ -16,11 +26,8 @@ function flameshaper_fireball:OnSpellStart()
     local maxDistance = data.speed*data.duration
     local forward = (self:GetCursorPosition() - self:GetAbsOrigin()):Normalized()
     forward.z = 0
-    local velocity = forward * data.speed
+    local velocity = forward * self:GetProjectileSpeed()
     local endPos = GetGroundPosition(startPos + velocity*data.duration, caster) + Vector(0,0,height)
-    --velocity.z = (endPos.z - startPos.z) / data.speed
-    --print(startPos, endPos, velocity)
-    --util.printTable(data)
     
     function Explode(p)
         local pfx = ParticleManager:CreateParticle("particles/heroes/flameshaper/fireball_explosion.vpcf", PATTACH_ABSORIGIN, caster)
