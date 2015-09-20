@@ -286,5 +286,18 @@ function modifier_base:Init(keys)
             keys.CheckState(self, ...)
         end
     end
+    
+    --add custom property handlers to the modifier
+    if keys.Properties ~= nil then
+        self:Properties(keys.Properties)
+        keys.Properties = nil --prevents Properties field from being copied into modifier's table
+    end
+    
+    --copy remaining input keys into modifier's table
+    for k, v in pairs(keys)
+        if self[k] == nil then
+            self[k] = v
+        end
+    end
 end
 
