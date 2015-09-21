@@ -598,7 +598,6 @@
 	    "VectorTarget"
 	    {
 	        "PointOfCast" "initial"
-	        "MaxDistance" "800"
 	    }
 		
 	    // Special
@@ -639,6 +638,11 @@
 	        {
 	            "var_type"                  "FIELD_INTEGER"
 	            "debuff_duration"           "4"
+	        }
+	        "08"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "effect_length"             "800"
 	        }
 		}
 	    
