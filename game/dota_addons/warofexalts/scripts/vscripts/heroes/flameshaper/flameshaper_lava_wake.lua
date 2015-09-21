@@ -20,8 +20,8 @@ function flameshaper_lava_wake:OnSpellStart()
     
 	local pathRadius = math.max( data.effect_radius, 64 )
 	local projectileRadius = pathRadius
-	local numProjectiles = math.floor( pathLength / (pathRadius*2) + 0.5) + 1
-	local stepLength = pathLength / ( numProjectiles - 1 )
+	local numProjectiles = math.floor( data.effect_length / (pathRadius*2) + 0.5) + 1
+	local stepLength = data.effect_length / ( numProjectiles - 1 )
 
     
     --destroy trees in area upon cast
