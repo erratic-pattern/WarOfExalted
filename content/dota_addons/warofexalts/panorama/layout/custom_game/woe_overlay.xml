@@ -3,12 +3,15 @@
         <include src="file://{resources}/styles/stats_container.css" />
         <include src="file://{resources}/styles/woe_overlay.css" />
         <include src="file://{resources}/styles/settings.css" />
+        <include src="file://{resources}/styles/stamina.css" />
     </styles>
     <scripts>
         <include src="file://{resources}/scripts/woe.js" />
+        <include src="file://{resources}/scripts/util.js" />
         <include src="file://{resources}/scripts/stats_container.js" />
         <include src="file://{resources}/scripts/vector_target.js" />
         <include src="file://{resources}/scripts/settings.js" />
+        <include src="file://{resources}/scripts/stamina.js" />
     </scripts>
     <Panel class="WoeOverlay" hittest="false">
         <Button id="SettingsShowButton" class="SettingsButton" onactivate="OnSettingsShowButtonPressed()">
@@ -24,8 +27,7 @@
                     <Label text="Cancel" />
                 </Button>
             </Panel>
-        </Panel>
-        
+        </Panel>       
         <Panel id="WoeStatsContainer">
             <Panel class="WoeStatsRow">
                 <Panel class="WoeStatsCol WoeStatsMoveSpeedCol">
@@ -52,5 +54,11 @@
                 </Panel>
             </Panel>
         </Panel>
+        <Panel id="StaminaContainer">
+            <Panel class="ResourceBar" id="StaminaBarContainer">
+                <Panel class="ResourceBar" id="StaminaBar"/>
+                <Label class="StaminaNumbersOverlay" id="StaminaCurrentMaxOverlay" />
+            </Panel>
+        </Panel>       
     </Panel>
 </root>

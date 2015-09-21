@@ -1,6 +1,7 @@
 "woe_test_hero_stamina_ui"
 {
 	"override_hero"			"npc_dota_hero_enchantress"
+    "Ability1"              "drain_stamina"
 	"Ability5"				"fill_modifier_ui"
     
 	"MovementSpeed"				"360"									// Speed.

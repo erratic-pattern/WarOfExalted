@@ -1,0 +1,65 @@
+#StaminaContainer
+{
+    
+    x: 1030px;
+    y: 888px;
+    //height: 5px;
+    //width: 60px;
+    
+    //visibility: collapse;
+    
+    //padding-top: 5px;  
+    flow-children: right;
+    //font-size: 15;
+}
+
+.ResourceBar
+{
+    height: 18px;
+    border-radius: 10px 20px 10px 10px;
+    vertical-align: center;
+}
+
+#StaminaBarContainer
+{
+    background-color: black;
+    border: 2px solid #141414;
+    width: 550px;
+    //height: 20px;
+    margin-left: 3px;
+    box-shadow: fill #121230EE 4px 2px 5px 1px;
+    vertical-align: center;
+}
+
+#StaminaBar
+{
+    background-color: gradient(linear, 100% 100%, 0% 100%, from( #C4C433 ), to( #D0D039  ));
+    //saturation: 1.4;
+    //wash-color: white;
+    brightness: 0.79;
+    //width: 500px;
+    x: 0%;
+    y: 0%;
+    z-index: 1;
+}
+
+#StaminaIcon
+{
+    color: #DDDD11;
+    font-weight: bold;
+    vertical-align: center;
+    horizontal-align: center;
+    text-shadow: 2px 2px 6px 4.1 #121212;
+}
+
+
+.StaminaNumbersOverlay
+{
+    z-index: 3;
+    color: #FFFFFF;
+    font-weight: bold;
+    horizontal-align: center;
+    //vertical-align: center;
+    font-size: 13;
+    text-shadow: 0px 0px 5px 4.1 #444422;
+}

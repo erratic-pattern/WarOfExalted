@@ -1,10 +1,6 @@
 #SettingsContainer
 {
     
-    //width: 106px;
-    //height: 80px; //this height will cover armor/MS but not damage
-    //height: 115px; //this height will cover armor/MS/damage display
-    
     x: 35%;
     y: 35%;
     height: 100px;
@@ -13,18 +9,11 @@
     visibility: collapse;
     
     //padding-top: 5px;
-    
     flow-children: down;
     //overflow: clip;
     background-color: #666666;
-    color: #B6B6AE;
-    //uncomment for debugging
-    //background-color: green;
-    //color: red;
-    //opacity: 0.4;
-    
+    color: #B6B6AE; 
     font-size: 15;
-    
     //text-align: center;
 }
 

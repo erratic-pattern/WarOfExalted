@@ -138,6 +138,6 @@
             cancelVectorTargetOrder();
         }
     });
-    
-    $.Msg("vector_target.js loaded");
 })()
+
+$.Msg("vector_target.js loaded");

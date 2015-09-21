@@ -1,7 +1,10 @@
 'use strict';
 (function() {
     
-    var currentListener; // the current request/response listener handle (see woe.js)
+    // the current request/response listener handle (see woe.js)
+    var unitListener = woe.newUniqueListener(function(unitId) {
+        woe.requestUnitInfo(unitId, UpdateStatsContainer);
+    }); 
     
     
     /* Update functions and event handlers */
@@ -10,11 +13,11 @@
         var panel = $.GetContextPanel();
         if(keys.isWoeUnit) {
             if (keys.MoveSpeed != null)
-                SetTextOfClass(panel, "WoeStatsMoveSpeedLabel", Math.floor(keys.MoveSpeed));
+                util.SetTextOfClass(panel, "WoeStatsMoveSpeedLabel", Math.floor(keys.MoveSpeed));
             if( keys.MagicResist != null )
-                SetTextOfClass(panel, "WoeStatsMagicResistLabel", Math.floor(keys.MagicResist));
+                util.SetTextOfClass(panel, "WoeStatsMagicResistLabel", Math.floor(keys.MagicResist));
             if( keys.SpellSpeed != null )
-                SetTextOfClass(panel, "WoeStatsSpellSpeedLabel", Math.floor(keys.SpellSpeed));
+                util.SetTextOfClass(panel, "WoeStatsSpellSpeedLabel", Math.floor(keys.SpellSpeed));
             UpdateNonWoeStats(keys.id);
             panel.visible = true;
         }
@@ -25,29 +28,8 @@
     
     function UpdateNonWoeStats(unitId) {
         var panel = $.GetContextPanel();
-        SetTextOfClass(panel, "WoeStatsArmorLabel",  Math.floor(Entities.GetArmorForDamageType(unitId, DAMAGE_TYPES.DAMAGE_TYPE_PHYSICAL)));
-        SetTextOfClass(panel, "WoeStatsAttackSpeedLabel", Math.floor(Entities.GetIncreasedAttackSpeed(unitId) * 100));
-    }
-    
-    function RequestUnitInfo(unitId) {
-        unlistenCurrent();
-        currentListener = woe.requestUnitInfo(unitId, UpdateStatsContainer);
-    }
-    
-    
-    /* Utility functions */
-    
-    function unlistenCurrent() {
-        if(currentListener) {
-            currentListener.unlisten();
-            currentListener = undefined;
-        }
-    }
-    
-    function SetTextOfClass(panel, cls, txt) {
-        panel.FindChildrenWithClassTraverse(cls).forEach(function(e) {
-            e.text = txt;
-        });
+        util.SetTextOfClass(panel, "WoeStatsArmorLabel",  Math.floor(Entities.GetArmorForDamageType(unitId, DAMAGE_TYPES.DAMAGE_TYPE_PHYSICAL)));
+        util.SetTextOfClass(panel, "WoeStatsAttackSpeedLabel", Math.floor(Entities.GetIncreasedAttackSpeed(unitId) * 100));
     }
     
     /* Event Handlers */
@@ -60,10 +42,10 @@
         //$.Msg(selection);
         if(selection.length > 1) {
             panel.visible = false;
-            unlistenCurrent()
+            unitListener.unlisten();
         }
         else {
-            RequestUnitInfo(selection[0]);
+            unitListener.request(selection[0]);
         }        
     });
     
@@ -73,28 +55,28 @@
         if (unitId == -1)
             unitId = Players.GetLocalPlayerPortraitUnit()
         //$.Msg("dota_player_update_query_unit: ", unitId);
-        RequestUnitInfo(unitId);
+        unitListener.request(unitId);
     });
     
     GameEvents.Subscribe("dota_portrait_unit_stats_changed", function( data ) {
-        RequestUnitInfo(Players.GetLocalPlayerPortraitUnit());
+        unitListener.request(Players.GetLocalPlayerPortraitUnit());
     });
     
     /*GameEvents.Subscribe("dota_portrait_unit_modifiers_changed", function( data ) {
-        RequestUnitInfo(Players.GetLocalPlayerPortraitUnit());
+        unitListener.request(Players.GetLocalPlayerPortraitUnit());
     });*/   
     
     GameEvents.Subscribe("dota_force_portrait_update", function( data ) {
         $.Msg("dota_force_portrait_update: ", data);
-        RequestUnitInfo(Players.GetLocalPlayerPortraitUnit());
+        unitListener.request(Players.GetLocalPlayerPortraitUnit());
     });
     
     GameEvents.Subscribe("woe_stats_changed", function( data ) {
         if(data.id == Players.GetLocalPlayerPortraitUnit()) {
             $.Msg("woe_stats_changed: ", data)
-            RequestUnitInfo(data.id)
+            unitListener.request(data.id);
         }
     });
-
-    $.Msg("stats_container.js loaded");
 })();
+
+$.Msg("stats_container.js loaded");

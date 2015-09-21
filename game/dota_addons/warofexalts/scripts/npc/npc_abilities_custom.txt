@@ -28,6 +28,35 @@
 	        "soundfile"                 "sounds/weapons/hero/vengeful_spirit/magic_missile_impact.vsnd"        
 		}
 	}
+	"drain_stamina"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_TOGGLE | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+	    "ScriptFile"                    "abilities/drain_stamina"
+		"AbilityTextureName"			"emberspirit_flameguard"
+		"BaseClass"						"ability_lua"
+	    "FightRecapLevel"				"2"
+	    
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+	    //"Keywords"                      ""
+		"AbilityCastPoint"				"0.0"
+		"AbilityCooldown"				"0"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+		"AbilityManaCost"				"0"
+	    "StaminaCost"                   "50"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+	
+		}
+	}
 	"example_ability"
 	{
 		"ID"							"1852"
@@ -565,7 +594,7 @@
 			"03"
 			{
 				"var_type"				"FIELD_FLOAT"
-				"duration"				"1.7"
+				"duration"				"2"
 			}
 	        
 	        "04"
