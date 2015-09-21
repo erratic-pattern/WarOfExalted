@@ -5,10 +5,9 @@ LinkLuaModifier("modifier_flameshaper_lava_wake_mr_reduction", "modifiers/modifi
 function flameshaper_lava_wake:OnSpellStart()
     local caster = self:GetCaster()
     local data = self:GetSpecials()
-    local pathLength = self:GetMaxDistance()
     
     local startPos = self:GetInitialPosition()
-    local endPos = startPos + self:GetDirectionVector() * pathLength
+    local endPos = startPos + self:GetDirectionVector() * data.effect_length
     
     local expireTime = GameRules:GetGameTime() + data.effect_duration
     
