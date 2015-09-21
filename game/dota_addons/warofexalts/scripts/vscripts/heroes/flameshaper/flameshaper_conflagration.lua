@@ -11,6 +11,7 @@ function flameshaper_conflagration:OnSpellStart()
         radius = self:GetSpecialValueFor("radius"),
         interval = self:GetSpecialValueFor("burn_interval"),
         fireballSpeedBonus = self:GetSpecialValueFor("fireball_speed_bonus"),
-        lavaWakeDurationBonus = self:GetSpecialValueFor("lava_wake_duration_bonus")
+        lavaWakeDurationBonus = self:GetSpecialValueFor("lava_wake_duration_bonus"),
+        lavaWakeLengthBonus = self:GetSpecialValueFor("lava_wake_length_bonus"),
     })
 end

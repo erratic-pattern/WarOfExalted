@@ -16,20 +16,20 @@
         "01"
         {
             "var_type"                  "FIELD_INTEGER"
-            "spell_speed"               "30"
+            "spell_speed"               "12 18 24 30"
         }
         
         "02"
         {
             "var_type"                  "FIELD_INTEGER"
-            "max_stacks"                "2 3 4 5"
+            "max_stacks"                "5"
         
         }
         
         "03"
         {
             "var_type"                  "FIELD_INTEGER"
-            "duration"                  "8"
+            "duration"                  "7"
         }
 	}
     

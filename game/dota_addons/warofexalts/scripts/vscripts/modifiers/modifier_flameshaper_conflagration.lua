@@ -9,6 +9,7 @@ modifier_flameshaper_conflagration:Init({
     OnCreated = function(self, params)
         self.fireballSpeedBonus = params.fireballSpeedBonus or 0
         self.lavaWakeDurationBonus = params.lavaWakeDurationBonus or 0
+        self.lavaWakeLengthBonus = params.lavaWakeLengthBonus or 0
         self.interval = params.interval or 0.1
         self.radius = params.radius or 100
         self.damage = params.damage or 0

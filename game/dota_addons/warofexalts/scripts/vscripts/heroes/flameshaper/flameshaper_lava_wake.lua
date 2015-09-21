@@ -6,6 +6,13 @@ function flameshaper_lava_wake:OnSpellStart()
     local caster = self:GetCaster()
     local data = self:GetSpecials()
     
+    --check for conflagration buff and adjust duration/length
+    local conflagration = caster:FindModifierByName("modifier_flameshaper_conflagration")
+    if conflagration then
+        data.effect_length = data.effect_length + conflagration.lavaWakeLengthBonus
+        data.effect_duration = data.effect_duration + conflagration.lavaWakeDurationBonus
+    end
+    
     local startPos = self:GetInitialPosition()
     local endPos = startPos + self:GetDirectionVector() * data.effect_length
     
@@ -29,11 +36,6 @@ function flameshaper_lava_wake:OnSpellStart()
         local pos = startPos + self:GetDirectionVector() * (i-1) * stepLength
         GridNav:DestroyTreesAroundPoint(pos, pathRadius, false)
         --DebugDrawCircle(pos, Vector(255,0,0), 1, pathRadius, true, data.effect_duration)
-    end
-    --check for conflagration buff and adjust duration
-    local conflagration = caster:FindModifierByName("modifier_flameshaper_conflagration")
-    if conflagration and conflagration.lavaWakeDurationBonus then
-        data.effect_duration = data.effect_duration + conflagration.lavaWakeDurationBonus
     end
     --start effect timer
     local elapsed = 0

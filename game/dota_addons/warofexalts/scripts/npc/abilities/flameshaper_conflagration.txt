@@ -9,7 +9,7 @@
     
     "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
     "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
-    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
 
 	// Stats
 	//-------------------------------------------------------------------------------------------------------------
@@ -57,10 +57,16 @@
         
         "05"
         {
+            "var_type"                  "FIELD_INTEGER"
+            "lava_wake_length_bonus"    "800"
+        }
+        
+        "06"
+        {
             "var_type"      "FIELD_FLOAT"
             "burn_interval" "0.2"
         }
-        "06"
+        "07"
         {
             "var_type"      "FIELD_INTEGER"
             "damage"        "60 80 100"
