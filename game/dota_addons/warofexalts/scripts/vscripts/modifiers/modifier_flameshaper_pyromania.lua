@@ -46,7 +46,7 @@ modifier_flameshaper_pyromania:Init({
                     return 0
                 end
                 local ability = params.ability 
-                if ability ~= nil and (ability.IsWoeAbility and ability:GetKeywords():Has("spell") and ( not ability:IsItem() ) and ( not ability:IsToggle() ) then
+                if ability ~= nil and ( ability.isWoeAbility and ability:GetKeywords():Has("spell") ) and ( not ability:IsItem() ) and ( not ability:IsToggle() ) then
                     if self:GetStackCount() < self:GetAbility():GetSpecialValueFor("max_stacks") then
                         self:IncrementStackCount()
                     else
