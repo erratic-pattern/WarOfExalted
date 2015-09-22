@@ -31,9 +31,9 @@
 	"drain_stamina"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_TOGGLE | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
-	    "ScriptFile"                    "abilities/drain_stamina"
 		"AbilityTextureName"			"emberspirit_flameguard"
 		"BaseClass"						"ability_lua"
+	    "ScriptFile"                    "abilities/drain_stamina"
 	    "FightRecapLevel"				"2"
 	    
 	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"

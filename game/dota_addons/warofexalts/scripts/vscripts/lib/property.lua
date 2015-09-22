@@ -330,7 +330,7 @@ function Property.CheckDebugMode(unit, pName)
             if cache then
                 local entry = cache[pName]
                 if entry and entry.debugMode ~= nil then
-                    return cache.debugMode
+                    return entry.debugMode
                 end
             end
         end
@@ -390,6 +390,7 @@ function Property.PropGetter(pName, opts)
         local t = CacheTime(opts.useGameTime)
         local cached = GetCache(unit)[pName]
         local old = cached.value
+        local v
         if t > cached.cacheTime + opts.cacheLifetime then
             Msg(unit, pName, "PropGetter: fetching new value for ", pName)
             v = Property._ComputeProperty(unit, pName, opts)
@@ -398,7 +399,7 @@ function Property.PropGetter(pName, opts)
                 cached.value = v
                 cached.cacheTime = t
                 if opts.onChange ~= nil then
-                    local changedV = opts.onChange(unit, v, old, pName, opts) or v
+                    local changedV = opts.onChange(unit, v, old, pName, opts)
                     if changedV ~= nil then
                         v = changedV
                     end
@@ -407,7 +408,7 @@ function Property.PropGetter(pName, opts)
                 Property._SendUpdateEvent(unit, pName, v, opts)
             end
         else
-            Msg(unit, pName, "PropGetter: fetching cached value for", cached.value)
+            Msg(unit, pName, "PropGetter: fetching cached value for", pName, cached.value)
             v = cached.value
         end 
         return v
@@ -598,7 +599,7 @@ end
 
 Msg = function(unit, pName, ...) --debug helper
     if Property.CheckDebugMode(unit, pName) then
-        if unit ~= nil then
+        if unit == nil then
             print(...)
         else
             print(unit:GetName(), ...)

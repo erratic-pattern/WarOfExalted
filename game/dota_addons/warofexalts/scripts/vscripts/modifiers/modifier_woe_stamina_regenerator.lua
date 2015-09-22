@@ -23,7 +23,7 @@ modifier_woe_stamina_regenerator:Init({
                 if sMax > sCur then
                     local stamPerSec = unit:GetStaminaRegen()
                     if unit:IsStaminaRecharging() then
-                        stamPerSec = stamPerSec + xMax * unit:GetStaminaRechargeRate()
+                        stamPerSec = stamPerSec + sMax * unit:GetStaminaRechargeRate()
                     end
                     unit:SetStamina(sCur + self.Interval * stamPerSec)
                 end

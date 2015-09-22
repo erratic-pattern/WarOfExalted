@@ -130,7 +130,7 @@ function util.getOppositeTeam( unit )
 	end
 end
 
-function util.DebugTableProxy(name, t)
+function util.debugTableProxy(name, t)
     local out = { __isDebugTable = true, __debugTableName = name or "table" }
     setmetatable(out, {
         isDebugMetaTable = true,
@@ -149,7 +149,7 @@ function util.DebugTableProxy(name, t)
     return out
 end
 
-function util.DebugTable(name, t)
+function util.debugTable(name, t)
     if t.__isDebugTable then
         return t
     end
