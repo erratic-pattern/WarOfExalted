@@ -23,7 +23,7 @@
             panel.visible = data.isWoeUnit;
         }
         //update numeric displays
-        $("#StaminaCurrentMaxOverlay").text = currentStamina.toString() + " / " + maxStamina.toString();
+        $("#StaminaCurrentMaxOverlay").text = Math.floor(currentStamina).toString() + " / " + Math.floor(maxStamina).toString();
     }
     
     function GetStaminaPercent() {
