@@ -473,7 +473,7 @@
 	"flameshaper_conflagration"
 	{
 	    "AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
 	    "ScriptFile"                    "heroes/flameshaper/flameshaper_conflagration"
 		"AbilityTextureName"			"emberspirit_flameguard"
 		"BaseClass"						"ability_lua"
@@ -486,7 +486,7 @@
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
 	    "Keywords"                      "spell buff duration area dot"
-		"AbilityCastPoint"				"0.3"
+		"AbilityCastPoint"				"0.0"
 	    "AbilityCastRange"              "%radius"
 		"AbilityCooldown"				"140"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
@@ -561,7 +561,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		//"AbilityCastRange"		        "1700"
 	    "Keywords"                      "spell projectile area"
-		"AbilityCastPoint"				"0.3"
+		"AbilityCastPoint"				"0.2"
 		"AbilityCooldown"				"6"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
@@ -624,8 +624,8 @@
 		//-------------------------------------------------------------------------------------------------------------
 	    "Keywords"                      "spell area duration dot debuff"
 		"AbilityCastRange"				"750"
-		"AbilityCastPoint"				"0.3"
-		"AbilityCooldown"				"20 18 16 14"
+		"AbilityCastPoint"				"0.2"
+		"AbilityCooldown"				"25"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_3"
 	    "AbilityManaCost"				"115 125 135 145"
@@ -713,7 +713,7 @@
 	        "02"
 	        {
 	            "var_type"                  "FIELD_INTEGER"
-	            "max_stacks"                "5"
+	            "max_stacks"                "8"
 	        
 	        }
 	        
@@ -721,6 +721,11 @@
 	        {
 	            "var_type"                  "FIELD_INTEGER"
 	            "duration"                  "7"
+	        }
+	        "04"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "stamina_cost"              "50 75 100 125"
 	        }
 		}
 	    

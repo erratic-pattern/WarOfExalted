@@ -45,17 +45,17 @@ modifier_flameshaper_pyromania:Init({
                 if self:GetParent():PassivesDisabled() then
                     return 0
                 end
-                local ability = params.ability 
+                local ability = params.ability
+                local data = self:GetAbility():GetSpecials() 
                 if ability ~= nil and ( ability.isWoeAbility and ability:GetKeywords():Has("spell") ) and ( not ability:IsItem() ) and ( not ability:IsToggle() ) then
-                    if self:GetStackCount() < self:GetAbility():GetSpecialValueFor("max_stacks") then
+                    if self:GetStackCount() < data.max_stacks and self:GetParent():SpendStamina(data.stamina_cost) then
                         self:IncrementStackCount()
                     else
                         self:SetStackCount( self:GetStackCount() )
                         self:ForceRefresh()
                     end
-                    local duration = self:GetAbility():GetSpecialValueFor("duration")
-                    self:SetDuration(duration, true)
-                    self:StartIntervalThink(duration)
+                    self:SetDuration(data.duration, true)
+                    self:StartIntervalThink(data.duration)
                     self:GetParent():GetSpellSpeed() -- force UI update
                 end
             end

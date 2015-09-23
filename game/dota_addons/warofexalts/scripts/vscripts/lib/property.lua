@@ -11,31 +11,6 @@ end
 --Local function declarations (code defined at bottom of file)
 local Msg, GetProps, GetCache, CacheTime, TitleCase
 
-function Property.SetDebug(flag, unit, pName)
-    --[[ Sets debug mode for a given unit (or globally), providing detailed console output for property behaviors.
-    
-    Parameters:
-        flag  - true or false, indicating whether or not to provide debug messages.
-        
-        unit  - (optional) the unit to disable/enable debugging on. If nil, sets the global
-                debug flag for all units (Note: unit-specific settings take precedence over global settings)
-                
-        pName - (optional) the name of the property to disable/enable debugging on. If nil, sets the unit's
-                debug flag (Note: property-specific settings take precedence over both unit and global settings)
-    ]]
-    if unit == nil then
-        Property.debugMode = flag --global flag
-    elseif pName == nil then
-        unit._propertyDebugMode = flag -- unit flag
-    else
-        _InitUnit(unit)
-        local cache = GetCache(unit)[pName]
-        if cache then
-            cache.debugMode = flag
-        end
-    end
-end
-
 function Property:constructor(unit, pName, opts)
     --[[ Adds a custom property to a game unit, providing getter/setter methods as well as providing a mechanism for unit modifiers to transform property values.
         
@@ -114,9 +89,7 @@ function Property:constructor(unit, pName, opts)
             -- A numeric property that sends an update event to all clients when changed
             Property(unit, "myPropertyName", {
                 type = "number",
-                onChange = function(unit, newValue, oldValue)
-                    CustomGameEventMananger:Send_ServerToAllClients("property_changed", {unitId = unit, value = newValue})
-                end
+                updateEvent = "property_changed"
             })
             
             -- Make all properties on this unit, by default, send an update event when changed
@@ -308,6 +281,31 @@ end
 ]]
 function Property.ignoreModifiers(m, a, b)
     return a
+end
+
+function Property.SetDebug(flag, unit, pName)
+    --[[ Sets debug mode for a given unit (or globally), providing detailed console output for property behaviors.
+    
+    Parameters:
+        flag  - true or false, indicating whether or not to provide debug messages.
+        
+        unit  - (optional) the unit to disable/enable debugging on. If nil, sets the global
+                debug flag for all units (Note: unit-specific settings take precedence over global settings)
+                
+        pName - (optional) the name of the property to disable/enable debugging on. If nil, sets the unit's
+                debug flag (Note: property-specific settings take precedence over both unit and global settings)
+    ]]
+    if unit == nil then
+        Property.debugMode = flag --global flag
+    elseif pName == nil then
+        unit._propertyDebugMode = flag -- unit flag
+    else
+        _InitUnit(unit)
+        local cache = GetCache(unit)[pName]
+        if cache then
+            cache.debugMode = flag
+        end
+    end
 end
 
 --[[ 

@@ -4,7 +4,7 @@ modifier_woe_attributes = class({}, nil, modifier_base)
 SS_PER_AGI = 0.5           -- amount of spell speed increased per point of agility
 MR_PER_INT = 0.14          -- amount of base magic resist increased per point of intelligence
 STAM_PER_AGI = 5           -- amount of max stamina increased per point of agility
-STAM_REGEN_PER_AGI = 0.02  -- amount of flat stamina regen increased per point of agility
+STAM_REGEN_PER_AGI = 0.08  -- amount of flat stamina regen increased per point of agility
 
 
 modifier_woe_attributes:Init({

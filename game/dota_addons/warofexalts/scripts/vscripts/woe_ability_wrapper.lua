@@ -140,7 +140,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     
     --helper function for CastFilters
     function abi:CastFilterSpendStamina(cb, ...)
-        if not self:CanSpendStaminaCost() then --insufficient stamina
+        if not self:CanPayStaminaCost() then --insufficient stamina
             return UF_FAIL_CUSTOM
         elseif cb then
             return cb(self, ...)
@@ -168,7 +168,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
     
     --helper function for GetCustomCastError
     function abi:GetCustomCastErrorBase(cb, ...)
-        if not self:CanSpendStaminaCost() then
+        if not self:CanPayStaminaCost() then
             return "#woe_cast_error_insufficient_stamina"
         elseif cb then
             return cb(self, ...)
@@ -186,7 +186,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         return self:_GetLevelScalableKey(self._woeKeys.StaminaCost, iLvl)
     end
     
-    function abi:SetBaseStaminaCost(v)
+    function abi:SetStaminaCost(v)
         self._woeKeys.StaminaCost = v
     end
     
@@ -199,7 +199,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         return m * self:GetBaseStaminaCost()
     end
     
-    function abi:SpendStaminaCost()
+    function abi:PayStaminaCost()
         caster = caster or self:GetCaster()
         if caster and caster.isWoeUnit then
             return caster:SpendStamina(self:GetStaminaCost(), {ability = self})
@@ -207,7 +207,7 @@ function WarOfExalts:WoeAbilityWrapper(abi, extraKeys)
         return true
     end
     
-    function abi:CanSpendStaminaCost()
+    function abi:CanPayStaminaCost()
         caster = self:GetCaster()
         if caster and caster.isWoeUnit then
             return caster:CanSpendStamina(self:GetStaminaCost())

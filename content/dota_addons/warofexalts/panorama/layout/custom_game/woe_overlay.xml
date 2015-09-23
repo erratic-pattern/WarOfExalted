@@ -55,9 +55,13 @@
             </Panel>
         </Panel>
         <Panel id="StaminaContainer">
-            <Panel class="ResourceBar" id="StaminaBarContainer">
-                <Panel class="ResourceBar" id="StaminaBar"/>
-                <Label class="StaminaNumbersOverlay" id="StaminaCurrentMaxOverlay" />
+            <Panel class="ResourceBar OverlayShadow" id="StaminaBarContainer">
+                <Panel class="ResourceBar StaminaYellowGradient" id="StaminaBar"/>
+                <Label class="StaminaNumbers" id="StaminaCurrentMaxDisplay" />
+                <Label class="StaminaNumbers" id="StaminaRegenDisplay" />
+            </Panel>
+            <Panel class="StaminaTimer OverlayShadow" id="StaminaTimerOverlay" >
+                <Panel class="StaminaTimer BorderGlow StaminaYellowGradient" id="StaminaTimerProgress" />
             </Panel>
         </Panel>       
     </Panel>

@@ -14,7 +14,7 @@
 	//-------------------------------------------------------------------------------------------------------------
 	//"AbilityCastRange"		        "1700"
     "Keywords"                      "spell projectile area"
-	"AbilityCastPoint"				"0.3"
+	"AbilityCastPoint"				"0.2"
 	"AbilityCooldown"				"6"
 	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
 	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"

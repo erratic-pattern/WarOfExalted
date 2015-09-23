@@ -1,9 +1,22 @@
+.OverlayShadow
+{
+    border: 1px solid #343421;
+    box-shadow: fill #000000 -1px -1px 2px 5px;
+    
+}
+
+.StaminaYellowGradient
+{
+    background-color: gradient(linear, 100% 100%, 0% 100%, from( #C4C433 ), to( #D0D039  ));
+    brightness: 0.79;
+}
+
 #StaminaContainer
 {
-    
+    vertical-align: bottom;
     x: 1030px;
-    y: 888px;
-    //height: 5px;
+    margin-bottom: 177px;
+    height: 30px;
     //width: 60px;
     
     //visibility: collapse;
@@ -13,53 +26,62 @@
     //font-size: 15;
 }
 
+#StaminaBarContainer
+{
+    vertical-align: bottom;
+    background-color: black;
+    width: 540px;
+}
+
 .ResourceBar
 {
     height: 18px;
     border-radius: 10px 20px 10px 10px;
-    vertical-align: center;
 }
 
-#StaminaBarContainer
+.StaminaNumbers
 {
-    background-color: black;
-    border: 2px solid #141414;
-    width: 550px;
-    //height: 20px;
-    margin-left: 3px;
-    box-shadow: fill #121230EE 4px 2px 5px 1px;
-    vertical-align: center;
-}
-
-#StaminaBar
-{
-    background-color: gradient(linear, 100% 100%, 0% 100%, from( #C4C433 ), to( #D0D039  ));
-    //saturation: 1.4;
-    //wash-color: white;
-    brightness: 0.79;
-    //width: 500px;
-    x: 0%;
-    y: 0%;
-    z-index: 1;
-}
-
-#StaminaIcon
-{
-    color: #DDDD11;
-    font-weight: bold;
-    vertical-align: center;
-    horizontal-align: center;
-    text-shadow: 2px 2px 6px 4.1 #121212;
-}
-
-
-.StaminaNumbersOverlay
-{
-    z-index: 3;
+    //z-index: 3;
     color: #FFFFFF;
     font-weight: bold;
     horizontal-align: center;
-    //vertical-align: center;
-    font-size: 13;
-    text-shadow: 0px 0px 5px 4.1 #444422;
+    vertical-align: center;
+    font-size: 14;
+    text-shadow: 0px 0px 5px 2.1 #3F3F22;
 }
+
+#StaminaRegenDisplay
+{
+    horizontal-align: right;
+    font-size: 11;
+}
+
+#StaminaTimerOverlay
+{
+    vertical-align: top;
+    border-radius: 13px;
+    background-color: #000000;
+}
+
+
+#StaminaTimerProgress
+{
+    border: 2px solid #DFDF00;
+}
+
+.StaminaTimer
+{
+    height: 26px;
+    width: 26px;
+}
+
+#StaminaTimerProgress.Glow
+{
+    
+    //border: 0;
+    //border: 3px solid white;
+    //box-shadow: #FFFF00 -1px 0px 3px 1px;
+}
+
+
+

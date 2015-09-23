@@ -20,12 +20,13 @@ modifier_woe_stamina_regenerator:Init({
             Property.BatchUpdateEvents(unit, function()
                 local sMax = unit:GetMaxStamina()
                 local sCur = unit:GetStamina()
-                if sMax > sCur then
+                local recharging = unit:IsStaminaRecharging() -- calling this before the conditional to make sure panorama UI stays up-to-date
+                if sMax >= sCur then
                     local stamPerSec = unit:GetStaminaRegen()
-                    if unit:IsStaminaRecharging() then
+                    if recharging then
                         stamPerSec = stamPerSec + sMax * unit:GetStaminaRechargeRate()
                     end
-                    unit:SetStamina(sCur + self.Interval * stamPerSec)
+                    unit:SetStamina(math.min(sMax, sCur + self.Interval * stamPerSec))
                 end
             end)
         end  
