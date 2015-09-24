@@ -61,7 +61,8 @@
                 <Label class="StaminaNumbers" id="StaminaRegenDisplay" />
             </Panel>
             <Panel class="StaminaTimer OverlayShadow" id="StaminaTimerOverlay" >
-                <Panel class="StaminaTimer BorderGlow StaminaYellowGradient" id="StaminaTimerProgress" />
+                <Panel class="StaminaTimer StaminaYellowGradient" id="StaminaTimerProgress" />
+                <Label class="StaminaNumbers" id="StaminaTimerNumber" />
             </Panel>
         </Panel>       
     </Panel>

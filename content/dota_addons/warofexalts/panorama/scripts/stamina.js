@@ -69,9 +69,12 @@
                 ratio = TIMER_END_THRESHOLD;
             }
             $("#StaminaTimerProgress").style.width = ratio * 100 + "%";
+            $("#StaminaTimerNumber").visible = true;
+            $("#StaminaTimerNumber").text = Math.ceil(remaining);
         }
         else {
             $("#StaminaTimerProgress").style.width = "100%";
+            $("#StaminaTimerNumber").visible = false;
         }
         
         //update regen display
