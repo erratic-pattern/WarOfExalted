@@ -97,7 +97,7 @@
 		},
 		{
 			_class = "C_INIT_RandomLifeTime"
-			m_fLifetimeMin = 0.400000
+			m_fLifetimeMin = 0.600000
 			m_fLifetimeMax = 0.600000
 		},
 		{
@@ -154,10 +154,6 @@
 			m_flRadiusMax = 80.000000
 			m_flRadiusMin = 30.000000
 		},
-		{
-			_class = "C_INIT_VelocityFromCP"
-			m_nControlPoint = 1
-		},
 	]
 	m_Emitters =
 	[
@@ -165,16 +161,6 @@
 			_class = "C_OP_NoiseEmitter"
 			m_flOutputMax = 60.000000
 			m_flOutputMin = 40.000000
-		},
-	]
-	m_ForceGenerators =
-	[
-		{
-			_class = "C_OP_AttractToControlPoint"
-			m_fForceAmount = 500.000000
-			m_fFalloffPower = 1.200000
-			m_nControlPointNumber = 1
-			m_bDisableOperator = true
 		},
 	]
 }
