@@ -661,7 +661,7 @@ function Property._ComputeProperty(unit, pName, opts)
     return out
 end
 
-function property._ComputeDerivedProperty(unit, pName, opts)
+function Property._ComputeDerivedProperty(unit, pName, opts)
     --[[ Computes the value of a derived property by calling its user-supplied getter function, along with a little bit of magic plumbing
          to automatically detect sub-property usage.
     ]]
