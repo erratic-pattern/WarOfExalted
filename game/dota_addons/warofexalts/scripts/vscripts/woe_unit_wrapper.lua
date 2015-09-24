@@ -41,9 +41,9 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end
     end
     
-    --[[ unit-wide property settings ]]
+    --[[ unit-wide Property settings ]]
     Property.UnitOptions(unit, {
-        --debug = true,
+        debug = PROP_DEBUG_EVENTS,
         defaultPropertyOptions = { -- default options for properties on this unit
             type = "number",
             useGameTime = true, -- use GetGameTime instead of Time for caching
@@ -64,9 +64,9 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     ]]
     
     --Returns the total magic resist rating for this unit, analogous to dota's armor stat.
-    function unit:GetMagicResist() 
+    Property.Derived(unit, "MagicResist", function(self) 
         return (1 + self:GetMagicResistModifier()) * (self:GetMagicResistBase() + self:GetMagicResistBonus())
-    end
+    end)
     
     Property(unit, "MagicResistBase", {
         onChange = recalculateMagicReduction
@@ -79,10 +79,9 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     })
     
     
-    --Returns the total spell speed for this unit, analogous to dota's attack speed stat.
-    function unit:GetSpellSpeed()
+    Property.Derived(unit, "SpellSpeed", function(self)
         return (1 + self:GetSpellSpeedModifier()) * (self:GetSpellSpeedBase() + self:GetSpellSpeedBonus())
-    end
+    end)
     Property(unit, "SpellSpeedBase", {
         onChange = updateCooldowns
     })
@@ -98,34 +97,36 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     Property(unit, "CurrentStamina", {
         get = "GetStamina",
         set = "SetStamina",
-        --debug = false,
-        default = 100,
+        debug = PROP_DEBUG_CHANGES + PROP_DEBUG_EVENTS,
+        default = 0,
         onChange = onCurrentStaminaChanged,
         combine = Property.ignoreModifiers,
     })
     --Maximum stamina pool.
     Property(unit, "MaxStamina", {
-        default = 100,
-        --debug = false,
+        default = 0,
+        --debug = true,
         onChange = onMaxStaminaChange
     })
+    
     --Returns the effective ratio between current and max stamina
-    function unit:GetStaminaPercent()
+    Property.Derived(unit, "StaminaPercent", --{debug = true},
+    function(self)
         local sMax = self:GetMaxStamina()
         if sMax == 0 then -- avoid division by 0; no max stamina means that stamina ratio is considered to always be 100%
             return 1
         end
-        return self:GetStamina() / sMax
-    end
+        return self:GetStamina() / sMax 
+    end)
     
     --[[ Sets max stamina without adjusting current stamina by percentage. 
         Current stamina will be clipped at the new max if it exceeds the new max.
     ]]
-    unit.SetMaxStaminaNoPercentAdjust = Property.PropSetter("MaxStamina", {
+    unit.SetMaxStaminaNoPercentAdjust = Property.Setter("MaxStamina", {
         onChange = function(self, v)
-            v = math.min(0, v)
+            v = math.max(0, v)
             if self:GetStamina() > v then
-                self.SetStamina(v)
+                self:SetStamina(v)
             end
             initializeStaminaRegenerator(self)
             return v
@@ -134,68 +135,82 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     
     
     --Returns the flat regen per second applied to stamina at all times, regardless of recharge mode.
-    function unit:GetStaminaRegen()
+    Property.Derived(unit, "StaminaRegen", --{debug = true},
+    function(self)
         return self:GetStaminaRegenBase() * (1 + self:GetStaminaRegenBaseModifier()) + self:GetStaminaRegenBonus()
-    end   
+    end)   
     Property(unit, "StaminaRegenBase", {
-        default = 0.01,
+        default = 0.1,
+        --debug = false,
         onChange = initializeStaminaRegenerator
     })
     Property(unit, "StaminaRegenBonus", {
+        --debug = false,
         onChange = initializeStaminaRegenerator
     })
-    Property(unit, "StaminaRegenBaseModifier")
+    Property(unit, "StaminaRegenBaseModifier", {
+        --debug = false,
+    })
     
     
     --Returns the time in seconds that we must wait, in total, before entering recharge mode
-    function unit:GetStaminaRechargeDelay()
+    Property.Derived(unit, "StaminaRechargeDelay", --{debug = true},
+    function(self)
         return self:GetStaminaRechargeDelayBase() * (1 + self:GetStaminaRechargeDelayModifier())
-    end
+    end)
     Property(unit, "StaminaRechargeDelayBase", {
-        default = 5
+        default = 5,
+        debug = false,
     })
-    Property(unit, "StaminaRechargeDelayModifier")
+    Property(unit, "StaminaRechargeDelayModifier", {
+        debug = false
+    })
     
     --returns the number of seconds until stamina will enter recharge mode. 0 indicates that we are in recharge mode.
-    function unit:GetStaminaRechargeDelayRemaining()
+    Property.Derived(unit, "StaminaRechargeDelayRemaining", --{debug = true},
+    function(self)
         if self:IsStaminaRechargeForced() then
             return 0
         end
-        local t = self:GetStaminaRechargeDelay() - GameRules:GetGameTime() - self:GetStaminaTimer()
-        if t < 0 then
-            t = 0
-        end
-        return t
-    end
+        return math.max(0, self:GetStaminaRechargeDelay() - (GameRules:GetGameTime() - self:GetStaminaTimer()))
+    end)
     
     
     --Returns the % of max stamina that's restored per second when in stamina recharge mode
-    function unit:GetStaminaRechargeRate()
+    Property.Derived(unit, "StaminaRechargeRate", --{debug = true},
+    function(self)
         return self:GetStaminaRechargeRateBase() * (1 + self:GetStaminaRechargeRateBonus())
-    end
+    end)
     Property(unit, "StaminaRechargeRateBase", {
-        default = 0.01,
-        onChange = initializeStaminaRegenerator
+        default = 0.2,
+        onChange = initializeStaminaRegenerator,
+        debug = false,
     })
     
     Property(unit, "StaminaRechargeRateBonus", {
-        onChange = initializeStaminaRegenerator
+        onChange = initializeStaminaRegenerator,
+        debug = false,
     })
     
     --Time in seconds since stamina was last spent/drained
-    Property(unit, "StaminaTimer")
+    Property(unit, "StaminaTimer", {
+        --debug = true,
+    })
     
     --If true, forces stamina to enter recharge mode regardless of the current timer value.
     Property(unit, "ForceStaminaRecharge", {
         type = "bool",
+        default = false,
+        --debug = true,
         get = "IsStaminaRechargeForced",
         set = "ForceStaminaRecharge",
     })
     
     --Returns true if stamina is in recharge mode
-    function unit:IsStaminaRecharging()
+    Property.Derived(unit, "IsStaminaRecharging", {get = "IsStaminaRecharging" }, 
+    function(self)
         return self:GetStaminaRechargeDelayRemaining() == 0
-    end
+    end)
     
     --[[ Puts stamina recharge on cooldown. If already on cooldown, will reset the duration.
         The optional offset parameter is a number of seconds to increase or decrease the delay time before
@@ -203,7 +218,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
     ]]
     function unit:TriggerStaminaRechargeCooldown(offset)
         self:ForceStaminaRecharge(false)
-        self.staminaTimer = GameRules:GetGameTime() + (offset or 0)
+        self:SetStaminaTimer(GameRules:GetGameTime() + (offset or 0))
     end
     
     --Percentage modifier on projectile speed of unit's abilities. A value of 0 indicates 100% projectile speed.
@@ -239,7 +254,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         if amountDrained > 0 then
             self:TriggerStaminaRechargeCooldown()
         end
-        self:SetCurrentStamina(newStamina)
+        self:SetStamina(newStamina)
         return amountDrained
     end
     
@@ -253,7 +268,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
         end  
     end
     
-    --update property data from KV data
+    --update Property data from KV data
     if unit:IsHero() then
         util.updateTable(unit._props, self.datadriven.heroes[unit:GetUnitName()])
     else
@@ -266,7 +281,7 @@ function WarOfExalts:WoeUnitWrapper(unit, extraKeys)
 end
 
 
---[[ local property onChange event handlers ]]
+--[[ local Property onChange event handlers ]]
 
 recalculateMagicReduction = function(self, mr)
     self:SetBaseMagicalResistanceValue(0.06 * mr / (1 + 0.06 * mr))
