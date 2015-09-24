@@ -15,6 +15,7 @@
         CurrentStamina: 0,
         MaxStamina: 0,
         StaminaRechargeDelay: 0,
+        StaminaRechargeDelayRemaining: 0,
         StaminaTimer: 0,
         ForceStaminaRecharge: false,
         StaminaRegen: 0,
@@ -27,12 +28,6 @@
                     this[key] = data[key];
                 }
             }
-        },
-        
-        getStaminaRechargeDelayRemaining: function() {
-            if(this.ForceStaminaRecharge)
-                return 0;
-            return Math.max(0, this.StaminaRechargeDelay - (Game.GetGameTime() - this.StaminaTimer))
         },
         getStaminaPercent:  function() {
             if (staminaHistory.MaxStamina == 0) //catch divison by zero
@@ -57,7 +52,7 @@
         
         
         //update recharge cooldown timer
-        var remaining = staminaHistory.getStaminaRechargeDelayRemaining();
+        var remaining = staminaHistory.StaminaRechargeDelayRemaining;
         var delay = staminaHistory.StaminaRechargeDelay;
         if(remaining > 0 && delay > 0) {
             var ratio = 1 - (remaining / delay);
