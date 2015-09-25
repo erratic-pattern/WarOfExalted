@@ -17,8 +17,9 @@
         * Automatic generation of an object-oriented Javascript API, based on your property definitions, that fetches property values from server asynchronously.
         
         
-    Usage examples pulled directly from my current custom game project:
-        Primary API Usage: 
+    Here are some examples of the library in action, taken from my in-progress custom game project:
+        Primary API:  https://github.com/kallisti-dev/WarOfExalts/blob/aa047b756da0dbe77f5c70caa8f02b5db80fe788/game/dota_addons/warofexalts/scripts/vscripts/woe_unit_wrapper.lua
+        Lua Modifier API Example: https://github.com/kallisti-dev/WarOfExalts/blob/0470e6853d47ae3aee4ef748630c0878b2d5aa29/game/dota_addons/warofexalts/scripts/vscripts/modifiers/modifier_woe_attributes.lua
         
 ]]
 
