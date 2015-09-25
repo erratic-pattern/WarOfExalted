@@ -166,7 +166,7 @@
 	[
 		{
 			_class = "C_OP_AttractToControlPoint"
-			m_fForceAmount = 500.000000
+			m_fForceAmount = 1000.000000
 			m_fFalloffPower = 1.200000
 			m_nControlPointNumber = 3
 		},

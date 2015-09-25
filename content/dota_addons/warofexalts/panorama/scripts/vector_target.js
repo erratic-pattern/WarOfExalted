@@ -1,8 +1,19 @@
+/*  
+    AUTHOR: Adam Curtis, Copyright 2015
+    CONTACT: kallisti.dev@gmail.com
+    WEBSITE: https://github.com/kallisti-dev/baregrills
+    
+    Client-side handlers to accompany the server-side vector_target.lua library. Aside from including this script,
+    no other client-side initialization is currently necessary.
+    
+*/
+
+VECTOR_TARGET_VERSION = 0.1;
+
 'use strict';
 (function() {
     //constants
-    var UPDATE_RANGE_INDICATOR_RATE = 1/60;
-    var DEFAULT_PARTICLE = "particles/vector_target_range_finder_line.vpcf"
+    var UPDATE_RANGE_INDICATOR_RATE = 1/30;
     var DEFAULT_CONTROL_POINTS = {
         0 : "initial",
         1 : "initial",
@@ -13,8 +24,8 @@
     var eventKeys = { };
     
     GameEvents.Subscribe("vector_target_order_start", function(keys) {
-        //$.Msg("vector_target_order_start event");
-        //$.Msg(keys);
+        $.Msg("vector_target_order_start event");
+        $.Msg(keys);
         if(Game.GetLocalPlayerID() != keys.playerId)
             return;
         //initialize local state
@@ -22,7 +33,6 @@
         var p = keys.initialPosition;
         keys.initialPosition = [p.x, p.y, p.z];
         //set defaults
-        keys.particleName = keys.particleName || DEFAULT_PARTICLE;
         keys.cpMap = keys.cpMap || DEFAULT_CONTROL_POINTS;
         
         showRangeFinder();
@@ -30,8 +40,8 @@
     });
     
     function showRangeFinder() {
-        if(!rangeFinderParticle) {
-            rangeFinderParticle = Particles.CreateParticle(eventKeys.particleName, ParticleAttachment_t.PATTACH_WORLDORIGIN, eventKeys.unitId);
+        if(!rangeFinderParticle && eventKeys.particleName) {
+            rangeFinderParticle = Particles.CreateParticle(eventKeys.particleName, ParticleAttachment_t.PATTACH_ABSORIGIN, eventKeys.unitId);
             mapToControlPoints({"initial": eventKeys.initialPosition});
         }
     }
@@ -111,11 +121,6 @@
         eventKeys = { };
     }
     
-    GameUI.SetMouseCallback(function(event, arg) {
-        //TODO: click-and-drag option for vector targeting
-    });
-    
-    //GameEvents.Subscribe("vector_target_order_finish", finalize);
     GameEvents.Subscribe("vector_target_order_cancel", function(keys) {
         if(Game.GetLocalPlayerID() != keys.playerId)
             return;
@@ -123,15 +128,7 @@
             finalize();
         }
     });
-    /*
-    GameEvents.Subscribe("vector_target_order_finish", function(keys) {
-        if(Game.GetLocalPlayerID() != keys.playerId)
-            return;
-        if(keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
-            finalize();
-        }
-    });
-    */
+
     GameEvents.Subscribe("dota_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
         if(selected[0] !== eventKeys.unitId) {

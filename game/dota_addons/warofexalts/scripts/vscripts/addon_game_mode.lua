@@ -7,13 +7,13 @@ requires = {
     "lib.affectors",
     "lib.storage",
     "lib.property",
+    "lib.vector_target",
 	'warofexalts',
     'woe_link_modifiers',
     'woe_keywords',
     'woe_damage',
     'woe_unit_wrapper',
     'woe_ability_wrapper',
-    "vector_target",
     "lua_modifier_utils",
 }
 
