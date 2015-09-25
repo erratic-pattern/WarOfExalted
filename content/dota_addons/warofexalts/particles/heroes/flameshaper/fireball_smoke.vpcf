@@ -115,7 +115,6 @@
 				0.000000,
 			]
 			m_nControlPointNumber = 3
-			m_fRadiusMax = 1.000000
 		},
 		{
 			_class = "C_INIT_InitialVelocityNoise"
@@ -161,6 +160,15 @@
 			_class = "C_OP_NoiseEmitter"
 			m_flOutputMax = 60.000000
 			m_flOutputMin = 40.000000
+		},
+	]
+	m_ForceGenerators =
+	[
+		{
+			_class = "C_OP_AttractToControlPoint"
+			m_fForceAmount = 500.000000
+			m_fFalloffPower = 1.200000
+			m_nControlPointNumber = 3
 		},
 	]
 }
