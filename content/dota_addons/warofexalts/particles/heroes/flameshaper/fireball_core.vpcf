@@ -67,7 +67,7 @@
 		{
 			_class = "C_INIT_RandomLifeTime"
 			m_fLifetimeMin = 0.400000
-			m_fLifetimeMax = 0.600000
+			m_fLifetimeMax = 0.400000
 		},
 		{
 			_class = "C_INIT_CreateWithinSphere"

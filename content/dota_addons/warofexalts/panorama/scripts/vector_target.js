@@ -1,3 +1,15 @@
+/*  
+    AUTHOR: Adam Curtis, Copyright 2015
+    CONTACT: kallisti.dev@gmail.com
+    WEBSITE: https://github.com/kallisti-dev/baregrills
+    
+    Client-side handlers to accompany the server-side vector_target.lua library. Aside from including this script,
+    no other client-side initialization is currently necessary.
+    
+*/
+
+VECTOR_TARGET_VERSION = 0.1;
+
 'use strict';
 (function() {
     //constants
@@ -16,8 +28,8 @@
     var updatingRangeFinder = false;
     
     GameEvents.Subscribe("vector_target_order_start", function(keys) {
-        //$.Msg("vector_target_order_start event");
-        //$.Msg(keys);
+        $.Msg("vector_target_order_start event");
+        $.Msg(keys);
         if(Game.GetLocalPlayerID() != keys.playerId)
             return;
         //initialize local state
@@ -25,7 +37,6 @@
         var p = keys.initialPosition;
         keys.initialPosition = [p.x, p.y, p.z];
         //set defaults
-        keys.particleName = keys.particleName || DEFAULT_PARTICLE;
         keys.cpMap = keys.cpMap || DEFAULT_CONTROL_POINTS;
         
         Abilities.ExecuteAbility(keys.abilId, keys.unitId, false); //make ability our active ability so that a left-click will complete cast
@@ -120,11 +131,6 @@
         eventKeys = { };
     }
     
-    GameUI.SetMouseCallback(function(event, arg) {
-        //TODO: click-and-drag option for vector targeting
-    });
-    
-    //GameEvents.Subscribe("vector_target_order_finish", finalize);
     GameEvents.Subscribe("vector_target_order_cancel", function(keys) {
         if(Game.GetLocalPlayerID() != keys.playerId)
             return;
@@ -132,6 +138,7 @@
             finalize();
         }
     });
+    
     GameEvents.Subscribe("vector_target_order_finish", function(keys) {
         if(Game.GetLocalPlayerID() != keys.playerId)
             return;
@@ -139,6 +146,7 @@
             finalize();
         }
     });
+
     GameEvents.Subscribe("dota_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
         if(selected[0] !== eventKeys.unitId) {
