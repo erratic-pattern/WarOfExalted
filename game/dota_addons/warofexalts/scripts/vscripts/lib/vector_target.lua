@@ -10,13 +10,13 @@
             
         * Call InitVectorTarget somewhere in your initialization code.
         
-            InitVectorTarget()
+            VectorTarget:Init()
         
         * If you plan on using the default range finder particle, you need to call PrecacheVectorTarget in your Precache     
           function, like this:
         
             function Precache( context ) 
-                PrecacheVectorTarget( context )
+                VectorTarget:Precache( context )
             end
             
         * Finally, you need to include vector_target.js in the <scripts> of one of your panorama layouts. 
@@ -30,9 +30,9 @@
     
         This library uses a KV file to specify ability vector-targeting behavior. 
         This KV file uses the same structure as npc_abilities_custom.txt, and by default this is the file we load KV data from.
-        However, if you'd like to load vector targeting information from another KV file, you can use the kv option when calling InitVectorTarget:
+        However, if you'd like to load vector targeting information from another KV file, you can use the kv option when calling VectorTarget:Init
             
-            InitVectorTarget({kv = "my_custom_kv_file.txt"})
+            VectorTarget:Init({ kv = "my_custom_kv_file.txt" })
             
         With that aside, we can talk about the KV file format. For default, vector targeting behavior, all you need to do is add a VectorTarget key to the ability's definition block.
         
@@ -96,13 +96,13 @@
     ExecuteOrderFilter:
     
         This library uses the ExecuteOrderFilter. If you have other code that needs to run during this filter, you'll need to
-        add an option to InitVectorTarget to disable the SetExecuteOrderFilter initialization, and then call the function
+        add an option to VectorTarget:Init to disable the SetExecuteOrderFilter initialization, and then call the function
         yourself.
         
-            InitVectorTarget({ noOrderFilter = true })
+            VectorTarget:Init({ noOrderFilter = true })
             
             function MyExecuteOrderFilter(ctx, params)
-                if not VectorTargetOrderFilter(ctx, params) then
+                if not VectorTarget:OrderFilter(params) then
                     return false
                 end
                 --insert your order filter logic here
