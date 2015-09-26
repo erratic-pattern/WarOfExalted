@@ -479,7 +479,7 @@ function WarOfExalts:InitWarOfExalts()
     
     self:LinkModifiers() --Initialize custom Lua modifiers
     
-    InitVectorTarget() --Initialize vector targeting system
+    VectorTarget:Init() --Initialize vector targeting system
     
     --Property.SetDebug(true)
     

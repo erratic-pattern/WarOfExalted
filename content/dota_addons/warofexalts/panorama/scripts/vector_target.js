@@ -1,7 +1,8 @@
 'use strict';
 (function() {
     //constants
-    var UPDATE_RANGE_INDICATOR_RATE = 1/60;
+    var UPDATE_RANGE_FINDER_RATE = 1/30; // rate in seconds to update range finder control points
+    var CANCEL_ORDER_DELAY = 0.01 // number of seconds to wait before the UI senda the cancel order event (prevents some race conditons between client/server handling)
     var DEFAULT_PARTICLE = "particles/vector_target_range_finder_line.vpcf"
     var DEFAULT_CONTROL_POINTS = {
         0 : "initial",
@@ -11,6 +12,8 @@
     //state variables
     var rangeFinderParticle;
     var eventKeys = { };
+    var prevEventKeys = { };
+    var updatingRangeFinder = false;
     
     GameEvents.Subscribe("vector_target_order_start", function(keys) {
         //$.Msg("vector_target_order_start event");
@@ -25,15 +28,17 @@
         keys.particleName = keys.particleName || DEFAULT_PARTICLE;
         keys.cpMap = keys.cpMap || DEFAULT_CONTROL_POINTS;
         
-        showRangeFinder();
         Abilities.ExecuteAbility(keys.abilId, keys.unitId, false); //make ability our active ability so that a left-click will complete cast
+        showRangeFinder();
     });
     
     function showRangeFinder() {
-        if(!rangeFinderParticle) {
-            rangeFinderParticle = Particles.CreateParticle(eventKeys.particleName, ParticleAttachment_t.PATTACH_WORLDORIGIN, eventKeys.unitId);
+        if(!rangeFinderParticle && eventKeys.particleName) {
+            rangeFinderParticle = Particles.CreateParticle(eventKeys.particleName, ParticleAttachment_t.PATTACH_ABSORIGIN, eventKeys.unitId);
             mapToControlPoints({"initial": eventKeys.initialPosition});
-        }
+            if (!updatingRangeFinder)
+                updateRangeFinder();
+        };
     }
     
     function hideRangeFinder() {
@@ -45,8 +50,8 @@
     }
     
     function updateRangeFinder() {
+        updatingRangeFinder = true;
         var activeAbil = Abilities.GetLocalPlayerActiveAbility();
-        //$.Msg("active ability: ", Abilities.GetLocalPlayerActiveAbility());
         if(eventKeys.abilId === activeAbil) {
             showRangeFinder();
         }
@@ -61,14 +66,17 @@
             }
         }
         if(activeAbil === -1) {
-            cancelVectorTargetOrder()
+            updatingRangeFinder = false;
+            $.Schedule(CANCEL_ORDER_DELAY, cancelVectorTargetOrder);
         }
-        $.Schedule(UPDATE_RANGE_INDICATOR_RATE, updateRangeFinder);
+        else {
+            $.Schedule(UPDATE_RANGE_FINDER_RATE, updateRangeFinder);
+        }
     }
-    updateRangeFinder();
     
     function cancelVectorTargetOrder() {
         if(eventKeys.abilId === undefined) return;
+        $.Msg("Canceling ", eventKeys)
         GameEvents.SendCustomGameEventToServer("vector_target_order_cancel", eventKeys);
         finalize();
     }
@@ -108,6 +116,7 @@
     function finalize() {
         //$.Msg("finalizer called");
         hideRangeFinder();
+        prevEventKeys = eventKeys;
         eventKeys = { };
     }
     
@@ -123,7 +132,6 @@
             finalize();
         }
     });
-    /*
     GameEvents.Subscribe("vector_target_order_finish", function(keys) {
         if(Game.GetLocalPlayerID() != keys.playerId)
             return;
@@ -131,11 +139,21 @@
             finalize();
         }
     });
-    */
     GameEvents.Subscribe("dota_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
         if(selected[0] !== eventKeys.unitId) {
             cancelVectorTargetOrder();
+        }
+    });
+    
+    GameEvents.Subscribe("dota_hud_error_message", function(keys) {
+        if(keys.reason == 105) { // reason code for a full order queue
+            GameEvents.SendCustomGameEventToServer("vector_target_queue_full", {
+                playerId: Game.GetLocalPlayerID(),
+                unitId: Players.GetLocalPlayerPortraitUnit(),
+                abilId: prevEventKeys.abilId,
+                seqNum: prevEventKeys.seqNum
+            })
         }
     });
 })()
