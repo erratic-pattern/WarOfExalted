@@ -7,15 +7,13 @@
     no other client-side initialization is currently necessary.
     
 */
-
-VECTOR_TARGET_VERSION = 0.1;
-
 'use strict';
+var VECTOR_TARGET_VERSION = 0.1;
 (function() {
     //constants
     var UPDATE_RANGE_FINDER_RATE = 1/30; // rate in seconds to update range finder control points
     var CANCEL_ORDER_DELAY = 0.01 // number of seconds to wait before the UI senda the cancel order event (prevents some race conditons between client/server handling)
-    var DEFAULT_PARTICLE = "particles/vector_target_range_finder_line.vpcf"
+    var DEFAULT_PARTICLE = "particles/vector_target/vector_target_range_finder_line.vpcf"
     var DEFAULT_CONTROL_POINTS = {
         0 : "initial",
         1 : "initial",
@@ -30,14 +28,13 @@ VECTOR_TARGET_VERSION = 0.1;
     GameEvents.Subscribe("vector_target_order_start", function(keys) {
         $.Msg("vector_target_order_start event");
         $.Msg(keys);
-        if(Game.GetLocalPlayerID() != keys.playerId)
-            return;
         //initialize local state
         eventKeys = keys;
         var p = keys.initialPosition;
         keys.initialPosition = [p.x, p.y, p.z];
         //set defaults
         keys.cpMap = keys.cpMap || DEFAULT_CONTROL_POINTS;
+        keys.particleName = keys.particleName || DEFAULT_PARTICLE;
         
         Abilities.ExecuteAbility(keys.abilId, keys.unitId, false); //make ability our active ability so that a left-click will complete cast
         showRangeFinder();
@@ -61,7 +58,6 @@ VECTOR_TARGET_VERSION = 0.1;
     }
     
     function updateRangeFinder() {
-        updatingRangeFinder = true;
         var activeAbil = Abilities.GetLocalPlayerActiveAbility();
         if(eventKeys.abilId === activeAbil) {
             showRangeFinder();
@@ -76,13 +72,11 @@ VECTOR_TARGET_VERSION = 0.1;
                     mapToControlPoints({"terminal" : pos}, true);
             }
         }
-        if(activeAbil === -1) {
+        /*if(activeAbil === -1) {
             updatingRangeFinder = false;
-            $.Schedule(CANCEL_ORDER_DELAY, cancelVectorTargetOrder);
-        }
-        else {
-            $.Schedule(UPDATE_RANGE_FINDER_RATE, updateRangeFinder);
-        }
+            cancelVectorTargetOrder()
+        }*/
+        $.Schedule(UPDATE_RANGE_FINDER_RATE, updateRangeFinder);
     }
     
     function cancelVectorTargetOrder() {
@@ -132,36 +126,30 @@ VECTOR_TARGET_VERSION = 0.1;
     }
     
     GameEvents.Subscribe("vector_target_order_cancel", function(keys) {
-        if(Game.GetLocalPlayerID() != keys.playerId)
-            return;
-        if(keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
+        $.Msg("canceling");
+        if(keys.seqNum === eventKeys.seqNum && keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
             finalize();
         }
     });
     
     GameEvents.Subscribe("vector_target_order_finish", function(keys) {
-        if(Game.GetLocalPlayerID() != keys.playerId)
-            return;
-        if(keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
+        $.Msg("finished")
+        if(keys.seqNum === eventKeys.seqNum && keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
             finalize();
         }
     });
 
     GameEvents.Subscribe("dota_update_selected_unit", function(keys) {
         var selection = Players.GetSelectedEntities(Game.GetLocalPlayerID());
-        if(selected[0] !== eventKeys.unitId) {
+        $.Msg("update selected unit")
+        if(selection[0] !== eventKeys.unitId) {
             cancelVectorTargetOrder();
         }
     });
     
     GameEvents.Subscribe("dota_hud_error_message", function(keys) {
         if(keys.reason == 105) { // reason code for a full order queue
-            GameEvents.SendCustomGameEventToServer("vector_target_queue_full", {
-                playerId: Game.GetLocalPlayerID(),
-                unitId: Players.GetLocalPlayerPortraitUnit(),
-                abilId: prevEventKeys.abilId,
-                seqNum: prevEventKeys.seqNum
-            })
+            GameEvents.SendCustomGameEventToServer("vector_target_queue_full", prevEventKeys);
         }
     });
 })()

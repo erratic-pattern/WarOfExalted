@@ -154,6 +154,8 @@ elseif VectorTarget.initializedOrderFilter then
     VectorTarget:InitOrderFilter()
 end
 
+local queue = class({})
+
 -- call this in your Precache() function to precache vector targeting particles
 function VectorTarget:Precache(context)
     if self.initializedPrecache then return end
@@ -204,9 +206,11 @@ function VectorTarget:InitEventListeners()
             self:WrapUnit(EntIndexToHScript(keys.entindex))
     end, {})
     CustomGameEventManager:RegisterListener("vector_target_order_cancel", function(eventSource, keys)
-        local inProgress = self.inProgressOrders[keys.playerId] 
+        print("order cancel event")
+        local inProgress = self.inProgressOrders[eventSource] 
         if inProgress ~= nil and inProgress.seqNum == keys.seqNum then
-            self.inProgressOrders[keys.playerId] = nil
+            print("canceling")
+            self.inProgressOrders[eventSource - 1] = nil
         end
     end)
     CustomGameEventManager:RegisterListener("vector_target_queue_full", function(eventSource, keys)
@@ -279,12 +283,7 @@ function VectorTarget.castQueues:getMaxSequenceNumber(unitId)
     return out
 end
 
--- This is the order filter we use to handle vector targeting.
--- If you don't use any other order filters, you can simply call SetExecuteOrderFilter on this function.
--- Otherwise, call this function from within your own callback.
 function VectorTarget:OrderFilter(data)
-    --print("--order data--")
-    util.printTable(data)
     local playerId = data.issuer_player_id_const
     local abilId = data.entindex_ability
     local inProgress = self.inProgressOrders[playerId] -- retrieve any in-progress orders for this player
@@ -300,23 +299,18 @@ function VectorTarget:OrderFilter(data)
     if nUnits == 0 then
         return true
     end
-    print("seq num: ", seqNum, "order type: ", data.order_type, "queue: ", data.queue)
-    if abilId ~= nil and abilId >= 0 then
+    --print("seq num: ", seqNum, "order type: ", data.order_type, "queue: ", data.queue)
+    if abilId ~= nil and abilId > 0 then
         local abil = EntIndexToHScript(abilId)
         if abil.isVectorTarget and data.order_type == DOTA_UNIT_ORDER_CAST_POSITION then
-            local unitId = data.units["0"] or data.units[0]
+            local unitId = units["0"] or units[0]
             local targetPos = {x = data.position_x, y = data.position_y, z = data.position_z}
             if inProgress == nil or inProgress.abilId ~= abilId or inProgress.unitId ~= unitId then -- if no in-progress order, this order selects the initial point of a vector cast
-                print("inProgress", abilId, unitId, type(abilId), type(unitId))
-                --util.printTable(inProgress)
-                if inProgress ~= nil then
-                    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerId), "vector_target_order_cancel", inProgress)
-                end
+                print("inProgress", playerId, abilId, unitId)
                 local orderData = {
                     abilId = abilId,
                     orderType = data.order_type,
                     unitId = unitId,
-                    playerId = playerId,
                     initialPosition = targetPos,
                     shiftPressed = data.queue,
                     minDistance = abil:GetMinDistance(),
@@ -325,36 +319,41 @@ function VectorTarget:OrderFilter(data)
                     cpMap = abil._vectorTargetKeys.cpMap,
                     seqNum = seqNum,
                 }
-                CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerId), "vector_target_order_start", orderData)
                 self.inProgressOrders[playerId] = orderData --set this order as our player's current in-progress order
+                CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerId), "vector_target_order_start", orderData)
                 return false
             else --in-progress order (initial point has been selected)
                 if inProgress.shiftPressed == 1 then --make this order shift-queued if previous order was
                     data.queue = 1
-                end
-                if data.queue == 0 then -- if not shift queued, clear cast queue before we add to it
+                elseif data.queue == 0 then -- if not shift queued, clear cast queue before we add to it
                     self.castQueues:clearQueuesForUnits(units)
                 end
-                inProgress.abilId = abilId
                 inProgress.terminalPosition = targetPos
-                CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerId), "vector_target_order_finish", inProgress)
-                self.castQueues:get(unitId, abilId):push(inProgress, seqNum)
-                abil:SetInitialPosition(inProgress.initialPosition)
-                abil:SetTerminalPosition(inProgress.terminalPosition)
-                local p = abil:GetPointOfCast()
+                local p = VectorTarget._CalcPointOfCast(abil._vectorTargetKeys.pointOfCast, inProgress.initialPosition, inProgress.terminalPosition)
                 data.position_x = p.x
                 data.position_y = p.y
                 data.position_z = p.z
+                self.castQueues:get(unitId, abilId):push(inProgress, seqNum)
                 self.inProgressOrders[playerId] = nil
-                --local tempAbil = SpawnEntityFromTableSynchronous("ability_lua", abil)
-                --util.printTable(tempAbil)
-                --data.entindex_ability = tempAbil:GetEntityIndex()
-                return true -- end early to avoid clearing queue below
+                -- something in the inProgress table causes the event system to crash the game, so we need to make a new table and pick out
+                -- only the important values.
+                CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerId), "vector_target_order_finish", {
+                    --terminalPosition = inProgress.initialPosition,
+                    --initialPosition = inProgress.terminalPosition,
+                    unitId = inProgress.unitId,
+                    abilId = inProgress.abilId,
+                    seqNum = inProgress.seqNum,
+                })
+                return true -- exit early
             end
         end
     end
     if data.queue == 0 then -- if shift was not pressed, clear our cast queues for the unit(s) in question
         self.castQueues:clearQueuesForUnits(units)
+    end
+    if inProgress ~= nil then
+        self.inProgressOrders[playerId] = nil
+        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(playerId), "vector_target_order_cancel", inProgress)
     end
     return true
 end
@@ -406,9 +405,7 @@ function VectorTarget:WrapAbility(abil, keys)
     end
     
     function abil:GetMidpointPosition()
-        local i = self:GetInitialPosition()
-        local t = self:GetTerminalPosition()
-        return Vector((i.x + t.x)/2, (i.y + t.y)/2, (i.z + t.z)/2)
+        return VectorTarget._CalcMidPoint(self:GetInitialPosition(), self:GetTerminalPosition())
     end
     
     function abil:GetTargetVector()
@@ -436,16 +433,7 @@ function VectorTarget:WrapAbility(abil, keys)
     
     if not abil.GetPointOfCast then
         function abil:GetPointOfCast()
-            local mode = self._vectorTargetKeys.pointOfCast
-            if mode == "initial" then
-                return self:GetInitialPosition()
-            elseif mode == "terminal" then
-                return self:GetTerminalPosition()
-            elseif mode == "midpoint" then
-                return self:GetMidpointPosition()
-            else
-                error("[VECTORTARGET] invalid point-of-cast mode: " .. string(mode))
-            end
+            return VectorTarget._CalcPointOfCast(abil._VectorTargetKeys.pointOfCast, abil:GetInitialPosition(), abil:GetTerminalPosition())
         end
     end
     
@@ -476,11 +464,25 @@ function VectorTarget:WrapAbility(abil, keys)
         local data = VectorTarget.castQueues:get(unitId, abilId):popFirst()
         self:SetInitialPosition(data.initialPosition)
         self:SetTerminalPosition(data.terminalPosition)
-        return true
-        --return _OnAbilityPhaseStart(self)
+        return _OnAbilityPhaseStart(self)
     end
 end
 
+function VectorTarget._CalcPointOfCast(mode, initial, terminal)
+    if mode == "initial" then
+        return initial
+    elseif mode == "terminal" then
+        return terminal
+    elseif mode == "midpoint" then
+        return VectorTarget._CalcMidPoint(initial, terminal)
+    else
+        error("[VECTORTARGET] invalid point-of-cast mode: " .. string(mode))
+    end
+end
+
+function VectorTarget._CalcMidPoint(a, b)
+    return Vector((a.x + b.x)/2, (a.y + b.y)/2, (a.z + b.z)/2)
+end
 -- a sparse queue implementation
 function queue.constructor(q)
     q.first = 0
