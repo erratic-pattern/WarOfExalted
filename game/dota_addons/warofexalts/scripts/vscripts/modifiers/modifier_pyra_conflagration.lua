@@ -1,10 +1,10 @@
 require("modifiers/modifier_base")
-modifier_flameshaper_conflagration = class({}, nil, modifier_base)
+modifier_pyra_conflagration = class({}, nil, modifier_base)
 
-modifier_flameshaper_conflagration:Init({
+modifier_pyra_conflagration:Init({
     IsHidden = false,
     IsPurgable = false,
-    EffectName = "particles/heroes/flameshaper/conflagration.vpcf",
+    EffectName = "particles/heroes/pyra/conflagration.vpcf",
     
     OnCreated = function(self, params)
         self.fireballSpeedBonus = params.fireballSpeedBonus or 0

@@ -7,7 +7,7 @@
 
 .StaminaYellowGradient
 {
-    background-color: gradient(linear, 100% 75%, 0% 25%, from( #E4B433 ), to( #EDDE34  ));
+    background-color: gradient(linear, 100% 75%, 0% 25%, from( #EDDE34 ), to( #E4B433  ));
     brightness: 0.70;
     saturation: 1;
     

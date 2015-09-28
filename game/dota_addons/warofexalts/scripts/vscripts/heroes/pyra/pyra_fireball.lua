@@ -1,13 +1,13 @@
-flameshaper_fireball = class({})
+pyra_fireball = class({})
 
-function flameshaper_fireball:GetAreaRadius()
+function pyra_fireball:GetAreaRadius()
     return self:GetSpecialValueFor("area_radius") * 1
 end
 
-function flameshaper_fireball:GetProjectileSpeed()
+function pyra_fireball:GetProjectileSpeed()
     local speed = self:GetSpecialValueFor("speed")
     if IsServer() then 
-        local conflagration = self:GetCaster():FindModifierByName("modifier_flameshaper_conflagration")
+        local conflagration = self:GetCaster():FindModifierByName("modifier_pyra_conflagration")
         if conflagration then
             speed = speed + conflagration.fireballSpeedBonus
         end
@@ -15,12 +15,12 @@ function flameshaper_fireball:GetProjectileSpeed()
     return speed
 end
 
-function flameshaper_fireball:GetCastRange()
+function pyra_fireball:GetCastRange()
 
     return self:GetSpecialValueFor("duration") * self:GetProjectileSpeed()
 end
 
-function flameshaper_fireball:OnSpellStart()
+function pyra_fireball:OnSpellStart()
     local height = 70
     local caster = self:GetCaster()
     local data = self:GetSpecials()
@@ -32,7 +32,7 @@ function flameshaper_fireball:OnSpellStart()
     local endPos = GetGroundPosition(startPos + velocity*data.duration, caster) + Vector(0,0,height)
     
     function Explode(p)
-        local pfx = ParticleManager:CreateParticle("particles/heroes/flameshaper/fireball_explosion.vpcf", PATTACH_ABSORIGIN, caster)
+        local pfx = ParticleManager:CreateParticle("particles/heroes/pyra/fireball_explosion.vpcf", PATTACH_ABSORIGIN, caster)
         ParticleManager:SetParticleControl(pfx, 1, p.vel)
         ParticleManager:SetParticleControl(pfx, 3, p.pos)
         ParticleManager:SetParticleControl(pfx, 4, Vector(1,1,1))
@@ -51,7 +51,7 @@ function flameshaper_fireball:OnSpellStart()
     
     Projectiles:CreateProjectile({
         Ability             = self,
-        EffectName			= "particles/heroes/flameshaper/fireball.vpcf",
+        EffectName			= "particles/heroes/pyra/fireball.vpcf",
         Source				= caster,
         fGroundOffset       = height,
         bGroundLock         = true,

@@ -1,9 +1,9 @@
-"flameshaper_pyromania"
+"pyra_pyromania"
 {
 	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 	"BaseClass"						"ability_lua"
-	"AbilityTextureName"			"lina_fierysoul"
-    "ScriptFile"                    "heroes/flameshaper/flameshaper_pyromania.lua"
+	"AbilityTextureName"			"pyra_pyromania"
+    "ScriptFile"                    "heroes/pyra/pyra_pyromania.lua"
 
 	// Stats
 	//-------------------------------------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
-"flameshaper_fireball"
+"pyra_fireball"
 {
 	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DIRECTIONAL"
-    "ScriptFile"                    "heroes/flameshaper/flameshaper_fireball"
-	"AbilityTextureName"			"ogremagi_ignite"
+    "ScriptFile"                    "heroes/pyra/pyra_fireball"
+	"AbilityTextureName"			"pyra_fireball"
 	"BaseClass"						"ability_lua"
     "FightRecapLevel"				"1"
     
@@ -23,8 +23,8 @@
 	
 	"precache"
 	{
-		"particle"					"particles/heroes/flameshaper/fireball.vpcf"
-        "particle"                  "particles/heroes/flameshaper/fireball_explosion.vpcf"
+		"particle"					"particles/heroes/pyra/fireball.vpcf"
+        "particle"                  "particles/heroes/pyra/fireball_explosion.vpcf"
 		"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 	}
 	

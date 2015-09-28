@@ -1,13 +1,13 @@
-flameshaper_lava_wake = class({})
+pyra_lava_wake = class({})
 
-LinkLuaModifier("modifier_flameshaper_lava_wake_mr_reduction", "modifiers/modifier_flameshaper_lava_wake_mr_reduction", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_pyra_lava_wake_mr_reduction", "modifiers/modifier_pyra_lava_wake_mr_reduction", LUA_MODIFIER_MOTION_NONE)
 
-function flameshaper_lava_wake:OnSpellStart()
+function pyra_lava_wake:OnSpellStart()
     local caster = self:GetCaster()
     local data = self:GetSpecials()
     
     --check for conflagration buff and adjust duration/length
-    local conflagration = caster:FindModifierByName("modifier_flameshaper_conflagration")
+    local conflagration = caster:FindModifierByName("modifier_pyra_conflagration")
     if conflagration then
         data.effect_length = data.effect_length + conflagration.lavaWakeLengthBonus
         data.effect_duration = data.effect_duration + conflagration.lavaWakeDurationBonus
@@ -52,7 +52,7 @@ function flameshaper_lava_wake:OnSpellStart()
                     Ability = self,
                     MagicalDamage = data.damage * data.burn_interval
                 })
-                ent:AddNewModifier(caster, self, "modifier_flameshaper_lava_wake_mr_reduction", {
+                ent:AddNewModifier(caster, self, "modifier_pyra_lava_wake_mr_reduction", {
                     duration = data.debuff_duration,
                     value = data.mr_reduction,
                     Test = "Test"

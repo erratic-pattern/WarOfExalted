@@ -1,7 +1,7 @@
 require("modifiers/modifier_base")
-modifier_flameshaper_pyromania = class({}, nil, modifier_base)
+modifier_pyra_pyromania = class({}, nil, modifier_base)
 
-modifier_flameshaper_pyromania:Init({
+modifier_pyra_pyromania:Init({
     IsPurgable = false,
     DestroyOnExpire = false,
     DeclareFunctions = { MODIFIER_EVENT_ON_ABILITY_EXECUTED },

@@ -1,9 +1,9 @@
-flameshaper_conflagration = class({})
+pyra_conflagration = class({})
 
-local modName = "modifier_flameshaper_conflagration"
+local modName = "modifier_pyra_conflagration"
 LinkLuaModifier(modName, "modifiers/" .. modName, LUA_MODIFIER_MOTION_NONE)
 
-function flameshaper_conflagration:OnSpellStart()
+function pyra_conflagration:OnSpellStart()
     local caster = self:GetCaster()
     caster:AddNewModifier(caster, self, modName, {
         duration = self:GetSpecialValueFor("duration"),

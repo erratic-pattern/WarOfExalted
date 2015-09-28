@@ -1,9 +1,9 @@
-"flameshaper_conflagration"
+"pyra_conflagration"
 {
     "AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
 	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
-    "ScriptFile"                    "heroes/flameshaper/flameshaper_conflagration"
-	"AbilityTextureName"			"emberspirit_flameguard"
+    "ScriptFile"                    "heroes/pyra/pyra_conflagration"
+	"AbilityTextureName"			"pyra_conflagration"
 	"BaseClass"						"ability_lua"
     "FightRecapLevel"				"2"
     
@@ -23,7 +23,7 @@
 	
 	"precache"
 	{
-		"particle"					"particles/heroes/flameshaper/conflagration.vpcf"
+		"particle"					"particles/heroes/pyra/conflagration.vpcf"
 		"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 	}
 	

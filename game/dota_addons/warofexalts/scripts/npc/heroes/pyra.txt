@@ -1,11 +1,11 @@
-"flameshaper"
+"pyra"
 {
 	"override_hero"			"npc_dota_hero_lina"
     
-	"Ability1"				"flameshaper_fireball" 
-	"Ability2"				"flameshaper_lava_wake"
-    "Ability3"              "flameshaper_pyromania"
-    "Ability4"              "flameshaper_conflagration"
+	"Ability1"				"pyra_fireball" 
+	"Ability2"				"pyra_lava_wake"
+    "Ability3"              "pyra_pyromania"
+    "Ability4"              "pyra_conflagration"
 
 	"ArmorPhysical"				"-1"
 	"MagicResistBase"		    "-1"

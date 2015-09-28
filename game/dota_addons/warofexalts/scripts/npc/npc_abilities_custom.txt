@@ -470,12 +470,12 @@
 	        }
 	    }
 	}
-	"flameshaper_conflagration"
+	"pyra_conflagration"
 	{
 	    "AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
-	    "ScriptFile"                    "heroes/flameshaper/flameshaper_conflagration"
-		"AbilityTextureName"			"emberspirit_flameguard"
+	    "ScriptFile"                    "heroes/pyra/pyra_conflagration"
+		"AbilityTextureName"			"pyra_conflagration"
 		"BaseClass"						"ability_lua"
 	    "FightRecapLevel"				"2"
 	    
@@ -495,7 +495,7 @@
 		
 		"precache"
 		{
-			"particle"					"particles/heroes/flameshaper/conflagration.vpcf"
+			"particle"					"particles/heroes/pyra/conflagration.vpcf"
 			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 		}
 		
@@ -545,11 +545,11 @@
 	        }
 		}
 	}
-	"flameshaper_fireball"
+	"pyra_fireball"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DIRECTIONAL"
-	    "ScriptFile"                    "heroes/flameshaper/flameshaper_fireball"
-		"AbilityTextureName"			"ogremagi_ignite"
+	    "ScriptFile"                    "heroes/pyra/pyra_fireball"
+		"AbilityTextureName"			"pyra_fireball"
 		"BaseClass"						"ability_lua"
 	    "FightRecapLevel"				"1"
 	    
@@ -570,8 +570,8 @@
 		
 		"precache"
 		{
-			"particle"					"particles/heroes/flameshaper/fireball.vpcf"
-	        "particle"                  "particles/heroes/flameshaper/fireball_explosion.vpcf"
+			"particle"					"particles/heroes/pyra/fireball.vpcf"
+	        "particle"                  "particles/heroes/pyra/fireball_explosion.vpcf"
 			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
 		}
 		
@@ -609,7 +609,7 @@
 	        }
 		}
 	}
-	"flameshaper_lava_wake"
+	"pyra_lava_wake"
 	{
 	    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
@@ -617,8 +617,8 @@
 	    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
 	    "FightRecapLevel"               "1"
 	    "BaseClass"                     "ability_lua"
-	    "AbilityTextureName"            "jakiro_macropyte"
-	    "ScriptFile"                    "heroes/flameshaper/flameshaper_lava_wake.lua"
+	    "AbilityTextureName"            "pyra_lava_wake"
+	    "ScriptFile"                    "heroes/pyra/pyra_lava_wake.lua"
 	
 	    // Stats
 	    //-------------------------------------------------------------------------------------------------------------
@@ -686,12 +686,12 @@
 	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf"
 	    }
 	}
-	"flameshaper_pyromania"
+	"pyra_pyromania"
 	{
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"BaseClass"						"ability_lua"
-		"AbilityTextureName"			"lina_fierysoul"
-	    "ScriptFile"                    "heroes/flameshaper/flameshaper_pyromania.lua"
+		"AbilityTextureName"			"pyra_pyromania"
+	    "ScriptFile"                    "heroes/pyra/pyra_pyromania.lua"
 	
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 require("modifiers/modifier_base")
-modifier_flameshaper_lava_wake_mr_reduction = class({}, nil, modifier_base)
+modifier_pyra_lava_wake_mr_reduction = class({}, nil, modifier_base)
 
-modifier_flameshaper_lava_wake_mr_reduction:Init({
+modifier_pyra_lava_wake_mr_reduction:Init({
     IsDebuff = true,
     IsPurgable = true,
     IsHidden = false,
@@ -10,7 +10,7 @@ modifier_flameshaper_lava_wake_mr_reduction:Init({
     EffectAttachType = PATTACH_ABSORIGIN_FOLLOW
 })
 
-modifier_flameshaper_lava_wake_mr_reduction:Properties({
+modifier_pyra_lava_wake_mr_reduction:Properties({
     MagicResistBonus = function(modifier, params)
         return -params.value
     end
