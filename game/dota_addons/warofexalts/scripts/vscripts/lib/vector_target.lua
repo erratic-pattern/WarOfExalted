@@ -6,6 +6,11 @@
 --]]
 
 DEFAULT_VECTOR_TARGET_PARTICLE = "particles/vector_target/vector_target_range_finder_line.vpcf"
+DEFAULT_VECTOR_TARGET_CONTROL_POINTS = {
+    [0] = "initial",
+    [1] = "initial",
+    [2] = "terminal"
+}
 
 reloaded = reloaded ~= nil
 if VectorTarget == nil then
@@ -18,7 +23,7 @@ elseif VectorTarget.initializedOrderFilter then
     VectorTarget:InitOrderFilter()
 end
 
-VectorTarget.VERSION = {0,1,1};
+VectorTarget.VERSION = {0,1,2};
 
 local queue = class({})
 
@@ -36,7 +41,7 @@ end
 function VectorTarget:Init(opts)
     print("[VECTORTARGET] initializing")
     if not self.initializedPrecache then
-        print("[VECTORTARGET] warning: PrecacheVectorTargetLib was not called.")
+        print("[VECTORTARGET] warning: VectorTarget:Precache was not called before Init.")
     end
     opts = opts or { }
     if not opts.noEventListeners then
@@ -81,7 +86,7 @@ function VectorTarget:InitEventListeners()
     end)
     CustomGameEventManager:RegisterListener("vector_target_queue_full", function(eventSource, keys)
         --print("queue full")
-        util.printTable(keys)
+        --util.printTable(keys)
     end)
     self.initializedEventListeners = true
 end
@@ -99,9 +104,10 @@ end
 function VectorTarget:LoadKV(kv)
     print("[VECTORTARGET] loading KV data")
     if type(kv) == "string" then
-        kv = LoadKeyValues(kv)
+        local kvFile = kv
+        kv = LoadKeyValues(kvFile)
         if kv == nil then
-            error("[VECTORTARGET] Error when loading KV from file: " .. kv)
+            error("[VECTORTARGET] Error when loading KV from file: " .. kvFile)
         end
     elseif type(kv) ~= "table" then
         error("[VECTORTARGET] LoadKV: expected table but got " .. type(kv) .. ": " .. tostring(kv))
@@ -253,7 +259,7 @@ function VectorTarget:WrapAbility(abil, keys)
         maxDistance = keys.MaxDistance,
         pointOfCast = keys.PointOfCast or "initial",
         particleName = keys.ParticleName or DEFAULT_VECTOR_TARGET_PARTICLE,
-        cpMap = keys.ControlPoints
+        cpMap = keys.ControlPoints or DEFAULT_VECTOR_TARGET_CONTROL_POINTS
     }
     
     function abil:GetInitialPosition()
