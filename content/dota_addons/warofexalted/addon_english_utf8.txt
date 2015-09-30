@@ -1,0 +1,131 @@
+﻿"lang"
+{
+	"Language"		"English"
+	"Tokens"
+	{	
+		"addon_game_name"			"War of Exalted"
+        "game_mode_15"				"War of Exalted" // shows on tooltips. maybe other stuff?
+        "game_mode_15_desc"         "Aeon of Strife Styled Fortress Assault Game Going on Both Sides"
+		
+		// ******************** HEROES ********************
+		"woe_test_hero_generic"                     "Generic Test Hero"
+        "woe_test_hero_stamina_ui"                  "Stamina UI Test"
+        "woe_test_hero_vector_targeting"            "Vector Target Test"
+        
+        "npc_dota_hero_lina"                        "Pyra"
+
+		// ******************** UNITS ********************
+		"npc_dummy_unit"                            "Dummy Unit"
+		"npc_dummy_blank"                           "Dummy Blank"
+		"npc_precache_everything"                   "Precache Everything"
+        
+        // ******************** CAST ERRORS ********************  
+        "woe_cast_error_insufficient_stamina"                                  "Insufficient Stamina"
+
+
+		// ******************** ABILITIES ********************
+
+		"DOTA_Tooltip_Ability_warofexalted_dummy_unit"                                          "WarOfExalted Dummy Unit"
+		"DOTA_Tooltip_Ability_warofexalted_dummy_unit_Description"                              ""
+		"DOTA_Tooltip_Ability_warofexalted_dummy_unit_Note0"                                    ""
+		"DOTA_Tooltip_Ability_warofexalted_dummy_unit_Lore"                                     ""
+
+		"DOTA_Tooltip_Ability_warofexalted_empty1"                                              "Empty Ability Slot"
+		"DOTA_Tooltip_Ability_warofexalted_empty1_Description"                                  ""
+		"DOTA_Tooltip_Ability_warofexalted_empty1_Note0"                                        ""
+		"DOTA_Tooltip_Ability_warofexalted_empty1_Lore"                                         ""
+
+		"DOTA_Tooltip_Ability_warofexalted_empty2"                                              "Empty Ability Slot"
+		"DOTA_Tooltip_Ability_warofexalted_empty2_Description"                                  ""
+		"DOTA_Tooltip_Ability_warofexalted_empty2_Note0"                                        ""
+		"DOTA_Tooltip_Ability_warofexalted_empty2_Lore"                                         ""
+
+		"DOTA_Tooltip_Ability_warofexalted_empty3"                                              "Empty Ability Slot"
+		"DOTA_Tooltip_Ability_warofexalted_empty3_Description"                                  ""
+		"DOTA_Tooltip_Ability_warofexalted_empty3_Note0"                                        ""
+		"DOTA_Tooltip_Ability_warofexalted_empty3_Lore"                                         ""
+
+		"DOTA_Tooltip_Ability_warofexalted_empty4"                                              "Empty Ability Slot"
+		"DOTA_Tooltip_Ability_warofexalted_empty4_Description"                                  ""
+		"DOTA_Tooltip_Ability_warofexalted_empty4_Note0"                                        ""
+		"DOTA_Tooltip_Ability_warofexalted_empty4_Lore"                                         ""
+
+		"DOTA_Tooltip_Ability_warofexalted_empty5"                                              "Empty Ability Slot"
+		"DOTA_Tooltip_Ability_warofexalted_empty5_Description"                                  ""
+		"DOTA_Tooltip_Ability_warofexalted_empty5_Note0"                                        ""
+		"DOTA_Tooltip_Ability_warofexalted_empty5_Lore"                                         ""
+
+		"DOTA_Tooltip_Ability_warofexalted_empty6"                                              "Empty Ability Slot"
+		"DOTA_Tooltip_Ability_warofexalted_empty6_Description"                                  ""
+		"DOTA_Tooltip_Ability_warofexalted_empty6_Note0"                                        ""
+		"DOTA_Tooltip_Ability_warofexalted_empty6_Lore"                                         ""
+        
+        "DOTA_Tooltip_Ability_test_woe_damage"                  "Woe Damage Test"
+        "DOTA_Tooltip_Ability_test_woe_damage_Description"      "Tests the WoE damage system"
+        "DOTA_Tooltip_Ability_test_woe_damage_missile_speed"    "MISSILE SPEED: "
+        "DOTA_Tooltip_Ability_test_woe_damage_stun_duration"    "STUN DURATION: "
+        "DOTA_Tooltip_Ability_test_woe_damage_Lore"             "Ghost Ride the Whip"
+
+		"DOTA_Tooltip_Ability_pyra_conflagration"                                  "Conflagration"
+		"DOTA_Tooltip_Ability_pyra_conflagration_Description"                      "While active, deals magic damage over time in an area around Pyra while augmenting Fireball projectile speed and Lava Wake effect duration."
+		"DOTA_Tooltip_Ability_pyra_conflagration_Note0"                            ""
+		"DOTA_Tooltip_Ability_pyra_conflagration_Lore"                             ""
+        "DOTA_Tooltip_Ability_pyra_conflagration_duration"                         "EFFECT DURATION:"
+        "DOTA_Tooltip_Ability_pyra_conflagration_damage"                           "DAMAGE PER SECOND:"
+		"DOTA_Tooltip_Ability_pyra_conflagration_radius"                           "BURN RADIUS:"
+		"DOTA_Tooltip_Ability_pyra_conflagration_fireball_speed_bonus"             "FIREBALL SPEED BONUS:"
+		"DOTA_Tooltip_Ability_pyra_conflagration_lava_wake_duration_bonus"         "LAVA WAKE DURATION BONUS:"
+        "DOTA_Tooltip_Ability_pyra_conflagration_lava_wake_length_bonus"           "LAVA WAKE LENGTH BONUS:"
+		"DOTA_Tooltip_Ability_pyra_conflagration_burn_interval"                    "BURN INTERVAL:"
+
+		"DOTA_Tooltip_Ability_pyra_fireball"                                       "Fireball"
+		"DOTA_Tooltip_Ability_pyra_fireball_Description"                           "Launches a fireball in the targeted direction, which destroys trees along its path and explodes upon contact with an enemy."
+		"DOTA_Tooltip_Ability_pyra_fireball_Note0"                                 ""
+		"DOTA_Tooltip_Ability_pyra_fireball_Lore"                                  ""
+		"DOTA_Tooltip_Ability_pyra_fireball_speed"                                 "PROJECTILE SPEED:"
+		"DOTA_Tooltip_Ability_pyra_fireball_projectile_radius"                     "PROJECTILE RADIUS:"
+		"DOTA_Tooltip_Ability_pyra_fireball_duration"                              "PROJECTILE DURATION:"
+		"DOTA_Tooltip_Ability_pyra_fireball_area_radius"                           "EXPLOSION RADIUS:"
+		"DOTA_Tooltip_Ability_pyra_fireball_vision_radius"                         "VISION RADIUS:"
+
+		"DOTA_Tooltip_Ability_pyra_lava_wake"                                      "Lava Wake"
+		"DOTA_Tooltip_Ability_pyra_lava_wake_Description"                          "Conjures lasting flames along a path, dealing magic damage per second to enemy units in the affected area and reducing their magic resistance."
+		"DOTA_Tooltip_Ability_pyra_lava_wake_Note0"                                ""
+		"DOTA_Tooltip_Ability_pyra_lava_wake_Lore"                                 ""
+		"DOTA_Tooltip_Ability_pyra_lava_wake_effect_duration"                      "EFFECT DURATION:"
+		"DOTA_Tooltip_Ability_pyra_lava_wake_damage"                               "DAMAGE PER SECOND:"
+		"DOTA_Tooltip_Ability_pyra_lava_wake_effect_radius"                        "EFFECT RADIUS:"
+		"DOTA_Tooltip_Ability_pyra_lava_wake_mr_reduction"                         "MR REDUCTION:"
+		"DOTA_Tooltip_Ability_pyra_lava_wake_debuff_duration"                      "MR DEBUFF DURATION:"
+        "DOTA_Tooltip_Ability_pyra_lava_wake_effect_length"                        "EFFECT LENGTH:"
+
+		"DOTA_Tooltip_Ability_pyra_pyromania"                                      "Pyromania"
+		"DOTA_Tooltip_Ability_pyra_pyromania_Description"                          "Grants increased spell speed each time Pyra casts a spell."
+		"DOTA_Tooltip_Ability_pyra_pyromania_Note0"                                ""
+		"DOTA_Tooltip_Ability_pyra_pyromania_Lore"                                 ""
+		"DOTA_Tooltip_Ability_pyra_pyromania_spell_speed"                          "SPELL SPEED PER STACK:"
+		"DOTA_Tooltip_Ability_pyra_pyromania_max_stacks"                           "MAX STACKS:"
+		"DOTA_Tooltip_Ability_pyra_pyromania_duration"                             "BUFF DURATION:"
+
+		"DOTA_Tooltip_Ability_woe_attributes"                                             "Woe Attributes"
+		"DOTA_Tooltip_Ability_woe_attributes_Description"                                 ""
+		"DOTA_Tooltip_Ability_woe_attributes_Note0"                                       ""
+		"DOTA_Tooltip_Ability_woe_attributes_Lore"                                        ""
+        
+        // ******************** ABILITY MODIFIERS ********************
+		"DOTA_Tooltip_modifier_dummy_fill_ui"                                             "Dummy Fill Ui"
+		"DOTA_Tooltip_modifier_dummy_fill_ui_Description"                                 ""
+        
+        "DOTA_Tooltip_modifier_pyra_lava_wake_mr_reduction"                        "Lava Wake"
+        "DOTA_Tooltip_modifier_pyra_lava_wake_mr_reduction_Description"            "Magic Resist reduced"
+        "DOTA_Tooltip_modifier_pyra_pyromania"                                     "Pyromania"
+        "DOTA_Tooltip_modifier_pyra_pyromania_Description"                         "Spell Speed increased"
+        "DOTA_Tooltip_modifier_pyra_conflagration"                                 "Conflagration"
+        "DOTA_Tooltip_modifier_pyra_conflagration_Description"                     "Deals magic damage over time in an area around caster, augments Fireball projectile speed, and Lava Wake effect duration."
+
+
+		// ******************** ITEMS ********************
+        
+        // ******************** ITEM MODIFIERS ********************
+
+}

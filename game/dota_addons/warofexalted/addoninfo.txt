@@ -1,0 +1,14 @@
+"AddonInfo"
+{
+	"addonSteamAppID"				"816"
+	"addontitle"					"War of Exalted"
+	"addonversion"					"v0.1"
+	"addontagline"					"5v5 PvP ARTS/MOBA"
+	"addonauthor"					"kallisti"
+	"addonSteamGroupName"			""
+	"addonauthorSteamID"			"STEAM_0:0:39207873"
+	"addonContent_Campaign"			"0"
+	"addonURL0"						""
+	"addonDescription"				"A unique MOBA/ARTS concept exploring new gameplay mechanics."
+    "storageApiKey"                 "dfc05b0335e1cf89736c6e9a2c74ecb29a595822"
+}

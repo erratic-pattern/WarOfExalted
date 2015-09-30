@@ -1,0 +1,102 @@
+"DOTAHeroes"
+{
+	"pyra"
+	{
+		"override_hero"			"npc_dota_hero_lina"
+	    
+		"Ability1"				"pyra_fireball" 
+		"Ability2"				"pyra_lava_wake"
+	    "Ability3"              "pyra_pyromania"
+	    "Ability4"              "pyra_conflagration"
+	
+		"ArmorPhysical"				"-1"
+		"MagicResistBase"		    "-1"
+	    
+		"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED_ATTACK"
+	    "ProjectileModel"           "particles/units/heroes/hero_lina/lina_base_attack.vpcf"
+	    "ProjectileSpeed"           "1000"
+	    
+	    "AttackRange"               "550"
+	    "AttackAcquisitionRange"    "550"
+		"AttackDamageMin"			"12"										// Damage range min.
+		"AttackDamageMax"			"32"										// Damage range max.
+	    "AttackRangeBuffer"         "250"
+	    
+	    
+		"AttributePrimary"			"DOTA_ATTRIBUTE_INTELLECT"
+		"AttributeBaseStrength"		"16"									// Base strength
+		"AttributeStrengthGain"		"1.5"	    							// Strength bonus per level.
+		"AttributeBaseIntelligence"	"25"									// Base intelligence
+		"AttributeIntelligenceGain"	"3.1"   								// Intelligence bonus per level.
+		"AttributeBaseAgility"		"14"								    // Base agility
+		"AttributeAgilityGain"		"2.3"									// Agility bonus per level.
+	    
+		"MovementSpeed"				"310"									// Speed.
+		"MovementTurnRate"			"0.5"									// Turning rate.
+	    "FollowRange"               "100"
+	    
+	    "AttackAnimationPoint"      "0.55"
+	    "AttackRate"                "1.7"
+	    
+	}
+	"woe_test_hero_generic"
+	{
+		"AbilityLayout" 		"6"
+		"override_hero"			"npc_dota_hero_ancient_apparition"
+		"SoundSet"				"0"	
+		"Ability1"				"example_ability" 
+		"Ability2"				"example_ability_josh" 
+		"Ability3"				"test_woe_damage"
+		"Ability4"				"debug_projectiles"
+		"Ability5"				"warofexalted_empty5"
+		"Ability6"				"warofexalted_empty6"
+	
+		"ArmorPhysical"				"0"									// Physical protection.
+		"MagicalResistance"		    "0"									// Magical protection (percentage).
+	
+		"AttackCapabilities"		"DOTA_UNIT_CAP_RANGED_ATTACK"
+		"AttackDamageMin"			"40"										// Damage range min.
+		"AttackDamageMax"			"50"										// Damage range max.
+	
+		//"AttributePrimary"			"DOTA_ATTRIBUTE_STRENGTH"
+		"AttributeBaseStrength"		"20"									// Base strength
+		"AttributeStrengthGain"		"3"										// Strength bonus per level.
+		"AttributeBaseIntelligence"	"20"									// Base intelligence
+		"AttributeIntelligenceGain"	"3"										// Intelligence bonus per level.
+		"AttributeBaseAgility"		"50"								    // Base agility
+		"AttributeAgilityGain"		"2"										// Agility bonus per level.
+	
+		"BountyXP"					"0"									// Experience earn.
+		"BountyGoldMin"				"0"										// Gold earned min.
+		"BountyGoldMax"				"0"										// Gold earned max.
+	
+		//"BoundsHullName"			"DOTA_HULL_SIZE_HERO"
+		//"RingRadius"				"70"
+	
+		"MovementCapabilities"		"DOTA_UNIT_CAP_MOVE_GROUND"
+		"MovementSpeed"				"360"									// Speed.
+		"MovementTurnRate"			"1.0"									// Turning rate.
+	
+		"StatusHealth"				"981"									// Base health.
+		"StatusHealthRegen"			"0.0"									// Health regeneration rate.
+		"StatusMana"				"387"										// Base mana.
+		"StatusManaRegen"			"99.96"									// Mana regeneration rate.
+	
+		"VisionNighttimeRange"		"1800"									// Range of vision at night time.
+	}
+	"woe_test_hero_stamina_ui"
+	{
+		"override_hero"			"npc_dota_hero_enchantress"
+	    "Ability1"              "drain_stamina"
+		"Ability5"				"fill_modifier_ui"
+	    
+		"MovementSpeed"				"360"									// Speed.
+		"MovementTurnRate"			"1.0"									// Turning rate.
+		//"StatusHealth"			"2000"									// Base health.
+		//"StatusHealthRegen"		"99"									// Health regeneration rate.
+		//"StatusMana"				"2000"								    // Base mana.
+		//"StatusManaRegen"			"99"									// Mana regeneration rate.
+	
+		"VisionNighttimeRange"		"1800"									// Range of vision at night time.
+	}
+}

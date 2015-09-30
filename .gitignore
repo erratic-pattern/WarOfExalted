@@ -10,5 +10,5 @@ game/*
 
 content/dota_addons/*
 game/dota_addons/*
-!content/dota_addons/warofexalts/
-!game/dota_addons/warofexalts/
+!content/dota_addons/warofexalted/
+!game/dota_addons/warofexalted/

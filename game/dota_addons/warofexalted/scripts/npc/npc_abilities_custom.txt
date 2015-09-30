@@ -1,0 +1,874 @@
+"DOTAAbilities"
+{
+	"debug_projectiles"
+	{
+		"ID"							"1853"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+	    "AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "FightRecapLevel"				"1"
+		"BaseClass"						"ability_lua"
+		"AbilityTextureName"			"vengefulspirit_magic_missile"
+	    "ScriptFile"                    "abilities/debug_projectiles"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastPoint"				"0.3"
+		"AbilityCooldown"				"0"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+		"AbilityDamage"					"100"
+	    "AbilityManaCost"				"10"
+		
+		"precache"
+		{
+			"particle"					"particles/units/heroes/hero_vengeful/vengeful_magic_missle.vpcf"
+	        "particle"                  "particles/units/heroes/hero_vengeful/vengeful_magic_missle_end.vpcf"
+	        "soundfile"                 "sounds/weapons/hero/vengeful_spirit/magic_missile1.vsnd"
+	        "soundfile"                 "sounds/weapons/hero/vengeful_spirit/magic_missile_impact.vsnd"        
+		}
+	}
+	"drain_stamina"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_TOGGLE | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityTextureName"			"emberspirit_flameguard"
+		"BaseClass"						"ability_lua"
+	    "ScriptFile"                    "abilities/drain_stamina"
+	    "FightRecapLevel"				"2"
+	    
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+	    //"Keywords"                      ""
+		"AbilityCastPoint"				"0.0"
+		"AbilityCooldown"				"0"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+		"AbilityManaCost"				"0"
+	    "StaminaCost"                   "50"
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+	
+		}
+	}
+	"example_ability"
+	{
+		"ID"							"1852"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_CHANNELLED"
+		"BaseClass"						"ability_datadriven"
+		"AbilityTextureName"			"holdout_blade_fury"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"1000"
+		"AbilityCastPoint"				"0.0"
+		"AbilityCooldown"				"10.0"
+		"AbilityChannelTime"			"2.0 1.8 1.6 1.5"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_PURE"
+		"AbilityCastAnimation"			"ACT_DOTA_DISABLED"
+		"AbilityDamage"					"400 600 800 1000"
+		
+		"precache"
+		{
+			"particle"					"particles/econ/generic/generic_aoe_explosion_sphere_1/generic_aoe_explosion_sphere_1.vpcf"
+			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_gyrocopter.vsndevts"
+		}
+	
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"300"
+		"SideShop"						"1"
+		
+		"OnSpellStart"
+		{
+			"ApplyModifier"
+			{
+				"Target"		"CASTER"
+				"ModifierName"	"modifier_channel_start"
+			}
+			"FireSound"
+			{
+				"EffectName"		"Hero_Gyrocopter.CallDown.Fire"
+				"Target"			"CASTER"
+			}
+		}
+		
+		"OnChannelSucceeded"
+		{
+			"RemoveModifier"
+			{
+				"Target"				"CASTER"
+				"ModifierName"			"modifier_channel_start"
+			}
+			"AttachEffect"
+			{
+				"EffectName"			"particles/econ/generic/generic_aoe_explosion_sphere_1/generic_aoe_explosion_sphere_1.vpcf"
+				"EffectAttachType"		"follow_origin"
+				"EffectRadius"			"%radius"
+				"EffectDurationScale"	"1"
+				"EffectLifeDurationScale" "1"
+				"EffectColorA"			"255 0 0"
+				"EffectColorB"			"255 0 0"
+				"Target"			"CASTER"
+			}
+			
+			"Damage"
+			{
+				"Type"					"DAMAGE_TYPE_PURE"
+				"Damage"				"%damage"
+				"Target"
+				{
+					"Center"			"CASTER"
+					"Radius"			"%radius"
+					"Teams"				"DOTA_UNIT_TARGET_TEAM_ENEMY"
+					"Types"				"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+				}
+			}
+			
+			"Knockback"
+			{
+				"Center" 	"CASTER"
+				"Target"
+				{
+					"Center"	"CASTER"
+					"Radius"	"%radius"
+					"Teams"		"DOTA_UNIT_TARGET_TEAM_ENEMY"
+				}
+				"Duration"	"%duration"
+				"Distance"	"%distance"
+				"Height"	"%height"
+			}
+			
+			"FireSound"
+			{
+				"EffectName"		"Hero_Gyrocopter.CallDown.Damage"
+				"Target"			"CASTER"
+			}
+		}
+		
+		"OnChannelFinish"
+		{
+			"RemoveModifier"
+			{
+				"Target"				"CASTER"
+				"ModifierName"			"modifier_channel_start"
+			}
+		}
+		
+		"OnChannelInterrupted"
+		{
+			"RemoveModifier"
+			{
+				"Target"		"CASTER"
+				"ModifierName"	"modifier_channel_start"
+			}
+		}
+		
+		"Modifiers"
+		{
+			"modifier_channel_start"
+			{
+				"OnCreated"
+				{
+					"AttachEffect"
+					{
+						"IsHidden" "1"
+						"EffectName"		"particles/test_particle/channel_field_2.vpcf"//"gyro_calldown_marker_c"//"gyrocopter_call_down"
+						"EffectAttachType"	"follow_origin"
+						"Target"			"CASTER"
+						
+						"EffectRadius"			"%radius"
+						"EffectColorA"			"255 0 0"
+						"EffectColorB"			"255 0 0"
+					
+						"ControlPoints"
+						{
+							"00"		"50 100 5"
+						}
+					}
+				}
+			}
+		}
+		
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"0.5"
+			}
+			
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"damage"				"400 600 800 1000"
+			}
+			
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"550 550 600 650"
+			}
+			
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"distance"				"400 500 600 700"
+			}
+			
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"height"				"100 200 300 400"
+			}
+		}
+	}
+	"example_ability_josh"
+	{
+		"ID"							"1852"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_CHANNELLED"
+		"BaseClass"						"ability_datadriven"
+		"AbilityTextureName"			"holdout_blade_fury"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"1000"
+		"AbilityCastPoint"				"0.0"
+		"AbilityCooldown"				"1.0"
+		"AbilityChannelTime"			".5 1 1.5 2"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_PURE"
+		"AbilityCastAnimation"			"ACT_DOTA_DISABLED"
+		"AbilityDamage"					"400 600 800 1000"
+		
+		"precache"
+		{
+			"particle"					"particles/units/heroes/hero_invoker/invoker_chaos_meteor.vpcf"
+			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_gyrocopter.vsndevts"
+		}
+	
+		// Item Info
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityManaCost"				"300"
+		"SideShop"						"1"
+		
+		"OnSpellStart"
+		{
+			"ApplyModifier"
+			{
+				"Target"		"CASTER"
+				"ModifierName"	"modifier_channel_start"
+			}
+			"FireSound"
+			{
+				"EffectName"		"Hero_Gyrocopter.CallDown.Fire"
+				"Target"			"CASTER"
+			}
+		}
+		
+		"OnChannelSucceeded"
+		{
+			"RemoveModifier"
+			{
+				"Target"				"CASTER"
+				"ModifierName"			"modifier_channel_start"
+			}
+			"AttachEffect"
+			{
+				"EffectName"			"particles/units/heroes/hero_invoker/invoker_chaos_meteor.vpcf"
+				"EffectAttachType"		"follow_origin"
+				"EffectRadius"			"%radius"
+				"EffectDurationScale"	"1"
+				"EffectLifeDurationScale" "1"
+				"EffectColorA"			"255 0 0"
+				"EffectColorB"			"255 0 0"
+				"Target"			"CASTER"
+			}
+			
+			"Damage"
+			{
+				"Type"					"DAMAGE_TYPE_PURE"
+				"Damage"				"%damage"
+				"Target"
+				{
+					"Center"			"CASTER"
+					"Radius"			"%radius"
+					"Teams"				"DOTA_UNIT_TARGET_TEAM_ENEMY"
+					"Types"				"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+				}
+			}
+			
+			"Knockback"
+			{
+				"Center" 	"CASTER"
+				"Target"
+				{
+					"Center"	"CASTER"
+					"Radius"	"%radius"
+					"Teams"		"DOTA_UNIT_TARGET_TEAM_ENEMY"
+				}
+				"Duration"	"%duration"
+				"Distance"	"%distance"
+				"Height"	"%height"
+			}
+			
+			"FireSound"
+			{
+				"EffectName"		"Hero_Gyrocopter.CallDown.Damage"
+				"Target"			"CASTER"
+			}
+		}
+		
+		"OnChannelFinish"
+		{
+			"RemoveModifier"
+			{
+				"Target"				"CASTER"
+				"ModifierName"			"modifier_channel_start"
+			}
+		}
+		
+		"OnChannelInterrupted"
+		{
+			"RemoveModifier"
+			{
+				"Target"		"CASTER"
+				"ModifierName"	"modifier_channel_start"
+			}
+		}
+		
+		"Modifiers"
+		{
+			"modifier_channel_start"
+			{
+				"OnCreated"
+				{
+					"AttachEffect"
+					{
+						"IsHidden" "1"
+						"EffectName"		"particles/test_particle/channel_field_2.vpcf"//"gyro_calldown_marker_c"//"gyrocopter_call_down"
+						"EffectAttachType"	"follow_origin"
+						"Target"			"CASTER"
+						
+						"EffectRadius"			"%radius"
+						"EffectColorA"			"255 0 0"
+						"EffectColorB"			"255 0 0"
+					
+						"ControlPoints"
+						{
+							"00"		"50 100 5"
+						}
+					}
+				}
+			}
+		}
+		
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"0.5"
+			}
+			
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"damage"				"400 600 800 1000"
+			}
+			
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"				"550 550 600 650"
+			}
+			
+			"04"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"distance"				"400 500 600 700"
+			}
+			
+			"05"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"height"				"100 200 300 400"
+			}
+		}
+	}
+	"fill_modifier_ui"
+	{
+	    "AbilityType"           "DOTA_ABILITY_TYPE_HIDDEN"
+	    "AbilityBehavior" 		"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	    "BaseClass"             "ability_datadriven"
+	    "MaxLevel"              "1"
+	    
+	    "Modifiers"
+	    {
+	        "modifier_dummy_fill_ui"
+	        {
+	            "Attributes"    "MODIFIER_ATTRIBUTE_MULTIPLE | MODIFIER_ATTRIBUTE_PERMANENT | MODIFIER_ATTRIBUTE_IGNORE_INVULNERABLE"      
+	        }
+	    
+	    }
+	    
+	    "OnCreated"
+	    {
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_dummy_fill_ui"
+	            "Target"        "CASTER"
+	        }
+	    }
+	}
+	"pyra_conflagration"
+	{
+	    "AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+	    "ScriptFile"                    "heroes/pyra/pyra_conflagration"
+		"AbilityTextureName"			"pyra_conflagration"
+		"BaseClass"						"ability_lua"
+	    "FightRecapLevel"				"2"
+	    
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+	    "Keywords"                      "spell buff duration area dot"
+		"AbilityCastPoint"				"0.0"
+	    "AbilityCastRange"              "%radius"
+		"AbilityCooldown"				"140"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+		"AbilityManaCost"				"150 250 350"
+		
+		"precache"
+		{
+			"particle"					"particles/heroes/pyra/conflagration.vpcf"
+			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
+		}
+		
+		// Special
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"duration"    			"20"
+			}
+			
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"radius"		        "800"
+			}
+			
+			"03"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"fireball_speed_bonus"  "350 500 650"
+			}
+	        
+	        "04"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "lava_wake_duration_bonus"  "2 3 4"
+	        }
+	        
+	        "05"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "lava_wake_length_bonus"    "700 800 900"
+	        }
+	        
+	        "06"
+	        {
+	            "var_type"      "FIELD_FLOAT"
+	            "burn_interval" "0.2"
+	        }
+	        "07"
+	        {
+	            "var_type"      "FIELD_INTEGER"
+	            "damage"        "60 80 100"
+	        }
+		}
+	}
+	"pyra_fireball"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DIRECTIONAL"
+	    "ScriptFile"                    "heroes/pyra/pyra_fireball"
+		"AbilityTextureName"			"pyra_fireball"
+		"BaseClass"						"ability_lua"
+	    "FightRecapLevel"				"1"
+	    
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		//"AbilityCastRange"		        "1700"
+	    "Keywords"                      "spell projectile area"
+		"AbilityCastPoint"				"0.2"
+		"AbilityCooldown"				"6"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+		"AbilityDamage"					"120 200 280 360"
+		"AbilityManaCost"				"85 100 115 130"
+		
+		"precache"
+		{
+			"particle"					"particles/heroes/pyra/fireball.vpcf"
+	        "particle"                  "particles/heroes/pyra/fireball_explosion.vpcf"
+			"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
+		}
+		
+		// Special	
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+			"01"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"speed"      			"1000"
+			}
+			
+			"02"
+			{
+				"var_type"				"FIELD_INTEGER"
+				"projectile_radius"		"100"
+			}
+			
+			"03"
+			{
+				"var_type"				"FIELD_FLOAT"
+				"duration"				"2"
+			}
+	        
+	        "04"
+	        {
+	            "var_type"              "FIELD_INTEGER"
+	            "area_radius"           "275"
+	        }
+	        "05"
+	        {
+	            "var_type"              "FIELD_INTEGER"
+	            "vision_radius"         "450"
+	        }
+		}
+	}
+	"pyra_lava_wake"
+	{
+	    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+	    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+	    "FightRecapLevel"               "1"
+	    "BaseClass"                     "ability_lua"
+	    "AbilityTextureName"            "pyra_lava_wake"
+	    "ScriptFile"                    "heroes/pyra/pyra_lava_wake.lua"
+	
+	    // Stats
+	    //-------------------------------------------------------------------------------------------------------------
+	    "Keywords"                      "spell area duration dot debuff"
+	    "AbilityCastRange"              "750"
+	    "AbilityCastPoint"              "0.2"
+	    "AbilityCooldown"               "25"
+	    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+	    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_3"
+	    "AbilityManaCost"               "115 125 135 145"
+	    
+	    "VectorTarget"                  "1"
+	    
+	    // Special
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilitySpecial"
+	    {
+	        "01"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "damage"                    "25 30 35 40"
+	        }
+	        "02"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "effect_duration"           "6"
+	        }           
+	        "03"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "effect_radius"             "240"
+	        }
+	        "04"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "burn_duration"             "0.5"
+	        }
+	        "05"
+	        {
+	            "var_type"                  "FIELD_FLOAT"
+	            "burn_interval"             "0.5"
+	        }
+	        "06"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "mr_reduction"              "3 4 5 6"
+	        }
+	        "07"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "debuff_duration"           "4"
+	        }
+	        "08"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "effect_length"             "800"
+	        }
+	    }
+	    
+	    "precache"
+	    {
+	        "soundfile"                 "soundevents/game_sounds_heroes/game_sounds_jakiro.vsndevts"
+	        "particle"                  "particles/units/heroes/hero_jakiro/jakiro_macropyre.vpcf"
+	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn.vpcf"
+	        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf"
+	    }
+	}
+	"pyra_pyromania"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"BaseClass"						"ability_lua"
+		"AbilityTextureName"			"pyra_pyromania"
+	    "ScriptFile"                    "heroes/pyra/pyra_pyromania.lua"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+	    "Keywords"                      "passive buff duration"
+		
+	    // Special
+	    //-------------------------------------------------------------------------------------------------------------
+		"AbilitySpecial"
+		{
+	        "01"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "spell_speed"               "12 18 24 30"
+	        }
+	        
+	        "02"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "max_stacks"                "8"
+	        
+	        }
+	        
+	        "03"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "duration"                  "7"
+	        }
+	        "04"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "stamina_cost"              "50 75 100 125"
+	        }
+		}
+	    
+	    "precache"
+		{
+	        "particle"      "particles/units/heroes/hero_lina/lina_fiery_soul.vpcf"
+	        "soundfile"		"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
+		}
+	}
+	"test_woe_damage"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+	    "AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	    "AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "FightRecapLevel"				"1"
+		"BaseClass"						"ability_lua"
+		"AbilityTextureName"			"vengefulspirit_magic_missile"
+	    "ScriptFile"                    "abilities/test_woe_damage"
+	
+		// Stats
+		//-------------------------------------------------------------------------------------------------------------
+		"AbilityCastRange"				"500"
+		"AbilityCastPoint"				"0.3"
+		"AbilityCooldown"				"13 12 11 10"
+		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+		"AbilityDamage"					"400 600 800 1000"
+	    "AbilityManaCost"				"110 120 130 140"
+		
+		"precache"
+		{
+			"particle"					"particles/units/heroes/hero_vengeful/vengeful_magic_missle.vpcf"
+	        "particle"                  "particles/units/heroes/hero_vengeful/vengeful_magic_missle_end.vpcf"
+	        "soundfile"                 "sounds/weapons/hero/vengeful_spirit/magic_missile1.vsnd"
+	        "soundfile"                 "sounds/weapons/hero/vengeful_spirit/magic_missile_impact.vsnd"        
+		}
+		
+	    // Special
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilitySpecial"
+	    {
+	        "01"
+	        {
+	            "var_type"				"FIELD_INTEGER"
+	            "missile_speed"	        "1250"
+	        }
+	        "02"
+	        {
+	            "var_type"				"FIELD_FLOAT"
+	            "stun_duration"	        "1.45 1.55 1.65 1.75"
+	        }
+	    }
+	}
+	//-------------------
+	// Dummy stuff
+	//-------------------
+	  
+	"warofexalted_dummy_unit"
+	{
+		"AbilityBehavior" 		"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"BaseClass" 			"ability_datadriven"
+		"AbilityTextureName"            "rubick_empty1"
+		"MaxLevel"                      "1"
+	
+		"Modifiers"
+		{
+			"dummy_unit"
+			{
+				"Passive"                        "1"
+				"IsHidden"                        "1"    
+				"States"
+				{
+					"MODIFIER_STATE_UNSELECTABLE"		"MODIFIER_STATE_VALUE_ENABLED"
+					"MODIFIER_STATE_INVULNERABLE"		"MODIFIER_STATE_VALUE_ENABLED"
+					"MODIFIER_STATE_NOT_ON_MINIMAP"		"MODIFIER_STATE_VALUE_ENABLED"
+				}
+			}
+		}
+	}
+	"warofexalted_empty1"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		//"ID"							"5343"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"MaxLevel"						"0"
+		"BaseClass" 					"ability_datadriven"
+		"AbilityTextureName"            "rubick_empty1"
+	}
+	"warofexalted_empty2"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		//"ID"							"5343"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"MaxLevel"						"0"
+		"BaseClass" 					"ability_datadriven"
+		"AbilityTextureName"            "rubick_empty1"
+	}
+	"warofexalted_empty3"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		//"ID"							"5343"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"MaxLevel"						"0"
+		"BaseClass" 					"ability_datadriven"
+		"AbilityTextureName"            "rubick_empty1"
+	}
+	"warofexalted_empty4"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		//"ID"							"5343"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"MaxLevel"						"0"
+		"BaseClass" 					"ability_datadriven"
+		"AbilityTextureName"            "rubick_empty1"
+	}
+	"warofexalted_empty5"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		//"ID"							"5343"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"MaxLevel"						"0"
+		"BaseClass" 					"ability_datadriven"
+		"AbilityTextureName"            "rubick_empty1"
+	}
+	"warofexalted_empty6"
+	{
+		// General
+		//-------------------------------------------------------------------------------------------------------------
+		//"ID"							"5343"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"MaxLevel"						"0"
+		"BaseClass" 					"ability_datadriven"
+		"AbilityTextureName"            "rubick_empty1"
+	}
+	"woe_attributes"
+	{
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+	    "AbilityType"                   "DOTA_ABILITY_TYPE_HIDDEN"
+		"BaseClass"						"ability_lua"
+	    "ScriptFile"                    "abilities/woe_attributes.lua"    
+	}
+}
