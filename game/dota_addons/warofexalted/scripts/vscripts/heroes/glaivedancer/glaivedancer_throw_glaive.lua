@@ -52,6 +52,7 @@ function glaivedancer_throw_glaive:OnSpellStart()
         bCutTrees           = true,
         bZCheck             = false,
         draw                = true,
+        bMultipleHits       = true,
     })
     
     p.checkFirstHit = { }
@@ -59,22 +60,21 @@ function glaivedancer_throw_glaive:OnSpellStart()
     
     p.OnUnitHit = function(p, unit)
         local kw = WoeKeywords(self:GetKeywords())
+        local notFirstHit
         if p.attackPhase ~= 1 then -- non-dot phase
-            if p.checkFirstHit[unit:GetEntityIndex()] then -- skip if unit already hit
-                return
-            end
+            notFirstHit = p.checkFirstHit[unit:GetEntityIndex()]
             p.checkFirstHit[unit:GetEntityIndex()] = true
-            kw:Remove("dot")
-        else -- dot phase
-            kw:Add("dot")
         end
         local dmg
-        if p.attackPhase == 0 then
-            dmg = self:GetInitialDamage()
-        elseif p.attackPhase == 1 then
+        if p.attackPhase == 1 or notFirstHit then
             dmg = self:GetDotDamage()
+            kw.Add("dot")
+        elseif p.attackPhase == 0 then
+            dmg = self:GetInitialDamage()
+            kw.Remove("dot")
         elseif p.attackPhase == 2 then
             dmg = self:GetReturnDamage()
+            kw.Remove("dot")
         end
         
         ApplyWoeDamage({
