@@ -29,7 +29,6 @@ function pyra_fireball:OnSpellStart()
     local forward = (self:GetCursorPosition() - self:GetAbsOrigin()):Normalized()
     forward.z = 0
     local velocity = forward * self:GetProjectileSpeed()
-    local endPos = GetGroundPosition(startPos + velocity*data.duration, caster) + Vector(0,0,height)
     
     function Explode(p)
         local pfx = ParticleManager:CreateParticle("particles/heroes/pyra/fireball_explosion.vpcf", PATTACH_ABSORIGIN, caster)
@@ -51,16 +50,16 @@ function pyra_fireball:OnSpellStart()
     
     Projectiles:CreateProjectile({
         Ability             = self,
-        EffectName			= "particles/heroes/pyra/fireball.vpcf",
-        Source				= caster,
+        EffectName          = "particles/heroes/pyra/fireball.vpcf",
+        Source              = caster,
         fGroundOffset       = height,
         bGroundLock         = true,
-        vSpawnOrigin		= startPos,
-        fDistance			= maxDistance,
-        fStartRadius		= data.projectile_radius,
-        fEndRadius			= data.projectile_radius,
-        fExpireTime			= GameRules:GetGameTime() + data.duration,
-        vVelocity			= velocity,
+        vSpawnOrigin        = startPos,
+        fDistance           = maxDistance,
+        fStartRadius        = data.projectile_radius,
+        fEndRadius          = data.projectile_radius,
+        fExpireTime         = GameRules:GetGameTime() + data.duration,
+        vVelocity           = velocity,
         GroundBehavior      = PROJECTILES_NOTHING,
         WallBehavior        = PROJECTILES_NOTHING,
         TreeBehavior        = PROJECTILES_NOTHING,

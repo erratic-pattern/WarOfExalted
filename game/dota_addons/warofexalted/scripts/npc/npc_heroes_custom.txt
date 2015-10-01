@@ -1,5 +1,33 @@
 "DOTAHeroes"
 {
+	"glaivedancer"
+	{
+		"override_hero"			"npc_dota_hero_luna"
+	    
+		"Ability1"				"glaivedancer_throw_glaive"
+	
+		"ArmorPhysical"				"0"
+		"MagicResistBase"		    "0"
+	    
+		"AttackDamageMin"			"28"										// Damage range min.
+		"AttackDamageMax"			"34"										// Damage range max.
+	    
+	    
+		"AttributePrimary"			"DOTA_ATTRIBUTE_AGILITY"
+		"AttributeBaseStrength"		"18"									// Base strength
+		"AttributeStrengthGain"		"2"	          							// Strength bonus per level.
+		"AttributeBaseIntelligence"	"15"									// Base intelligence
+		"AttributeIntelligenceGain"	"1.5"   								// Intelligence bonus per level.
+		"AttributeBaseAgility"		"20"								    // Base agility
+		"AttributeAgilityGain"		"2.8"									// Agility bonus per level.
+	    
+		"MovementSpeed"				"310"									// Speed.
+		"MovementTurnRate"			"0.6"									// Turning rate.
+	    
+	    "AttackAnimationPoint"      "0.55"
+	    "AttackRate"                "1.7"
+	    
+	}
 	"pyra"
 	{
 		"override_hero"			"npc_dota_hero_lina"
