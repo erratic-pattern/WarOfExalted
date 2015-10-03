@@ -112,12 +112,12 @@ PROJECTILES_FOLLOW = 3
 function Projectiles:CreateProjectile(projectile)
   -- set defaults
   projectile.vVelocity = projectile.vVelocity or Vector(0,0,0)
-  projectile.fDistance = projectile.fDistance or 1000
+  --projectile.fDistance = projectile.fDistance or 1000
   projectile.fStartRadius = projectile.fStartRadius or 100
   projectile.fEndRadius = projectile.fEndRadius or 100
   projectile.iPositionCP = projectile.iPositionCP or 0
   projectile.iVelocityCP = projectile.iVelocityCP or 1
-  projectile.fExpireTime = projectile.fExpireTime or 10
+  --projectile.fExpireTime = projectile.fExpireTime or 10
   projectile.ControlPoints = projectile.ControlPoints or {}
   projectile.UnitBehavior = projectile.UnitBehavior or PROJECTILES_DESTROY
   if projectile.bIgnoreSource == nil then projectile.bIgnoreSource = true end
@@ -199,8 +199,10 @@ function Projectiles:CreateProjectile(projectile)
 
   if projectile.fRadiusStep then
     projectile.radiusStep = projectile.fRadiusStep / 30
-  else
+  elseif projectile.fDistance ~= nil then
     projectile.radiusStep = (projectile.fEndRadius - projectile.fStartRadius) / (projectile.fDistance / projectile.vel:Length())
+  else
+    projectile.radiusStep = 0
   end
 
   projectile.id = ParticleManager:CreateParticle(projectile.EffectName, PATTACH_CUSTOMORIGIN, nil)
@@ -313,7 +315,7 @@ function Projectiles:CreateProjectile(projectile)
       end
 
       -- checks
-      if curTime > projectile.spawnTime + projectile.fExpireTime or projectile.distanceTraveled > projectile.fDistance then
+      if projectile.fExpireTime ~= nil and curTime > projectile.spawnTime + projectile.fExpireTime or projectile.fDistance ~= nil and projectile.distanceTraveled > projectile.fDistance then
         ParticleManager:DestroyParticle(projectile.id, false)
         if projectile.OnFinish then
           local status, out = pcall(projectile.OnFinish, projectile, pos)
@@ -342,7 +344,7 @@ function Projectiles:CreateProjectile(projectile)
       -- frame and sub-frame collision checks
       local subpos = pos
       local velLength = vel:Length()
-      local tot = math.ceil(velLength / 32) -- lookahead number
+      local tot = math.max(1, math.ceil(velLength / 32)) -- lookahead number
       local div = 1 / tot
 
       -- unit detection prep
@@ -404,7 +406,7 @@ function Projectiles:CreateProjectile(projectile)
           if IsValidEntity(v) and v.GetUnitName and v:IsAlive() and (not projectile.bIgnoreSource or (projectile.bIgnoreSource and v ~= projectile.Source)) and nozCheck and zCheck then
             --VectorDistanceSq(nozpos, org) <= rad2 and subpos.z >= orgz + zOffset and subpos.z <= orgz + height then
             local time = projectile.rehit[v:entindex()]
-            if time==nil or curTime > time then
+            if time==nil or curTime >= time then
               local status, test = pcall(projectile.UnitTest, projectile, v)
 
               if not status then
@@ -561,7 +563,7 @@ function Projectiles:CreateProjectile(projectile)
         --DebugDrawCircle(subpos, Vector(200,200,200), 100, 10, true, .01)
         subpos = pos + vel * (div * index)
 
-        if projectile.distanceTraveled + (subpos-pos):Length() > projectile.fDistance then
+        if projectile.fDistance ~= nil and projectile.distanceTraveled + (subpos-pos):Length() > projectile.fDistance then
           ParticleManager:DestroyParticle(projectile.id, false)
           if projectile.OnFinish then
             local status, out = pcall(projectile.OnFinish, projectile, subpos)

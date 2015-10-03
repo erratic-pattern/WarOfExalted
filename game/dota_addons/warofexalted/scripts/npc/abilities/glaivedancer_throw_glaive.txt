@@ -34,31 +34,31 @@
 		"01"
 		{
 			"var_type"				"FIELD_INTEGER"
-			"speed"      			"700"
+			"speed"      			"1200"
 		}
 		
 		"02"
 		{
 			"var_type"				"FIELD_INTEGER"
-			"projectile_radius"		"200"
+			"projectile_radius"		"175"
 		}
 		
 		"03"
 		{
 			"var_type"				"FIELD_FLOAT"
-			"hover_duration"		"2"
+			"hover_duration"		"1"
 		}
         
         "04"
         {
             "var_type"              "FIELD_FLOAT"
-            "travel_duration"       "2.5"
+            "travel_duration"       "1"
         }
         
         "05"
         {
             "var_type"              "FIELD_INTEGER"
-            "initial_base_damage"   "25 / 30 / 35 / 40"
+            "initial_base_damage"   "25 30 35 40"
         }
         
         "06"
@@ -70,7 +70,7 @@
         "07"
         {
             "var_type"              "FIELD_INTEGER"
-            "return_base_damage"   "50 / 60 / 70 / 80"
+            "return_base_damage"   "50 60 70 80"
         }
         
         "08"
@@ -82,7 +82,7 @@
         "09"
         {
             "var_type"              "FIELD_INTEGER"
-            "base_damage"           "12 / 18 / 24 / 30"
+            "base_damage"           "18 24 30 36"
         }
         
         "10"
