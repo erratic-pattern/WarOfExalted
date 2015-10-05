@@ -76,6 +76,33 @@ function util.isTableEmpty(t)
     return not next(t)
 end
 
+-- sorted iteration of a table
+function util.sorted(t, sortBy, sortFunc)
+    local list = { }
+    if sortFunc == nil then --default ascending order
+        sortFunc = function(a, b) return a < b end
+    end
+    if sortBy == nil then -- default sort by key
+        sortBy = function(k,v) return k end
+    elseif type(sortBy) == "string" then -- if string, sort by an inner table key
+        local sortKey = sortBy
+        sortBy = function(k,v) return v[sortKey] end
+    end
+    for k,v in pairs(t) do table.insert(list, {k,v}) end
+    table.sort(list, function(a, b) 
+        return sortFunc(sortBy(a[0], a[1]), sortBy(b[0], b[1])) 
+    end)
+    local i = 0
+    local iter = function()
+        i = i + 1
+        local pair = list[i]
+        if pair == nil then return nil
+        else return pair[0], pair[1]
+        end
+    end
+    return iter
+end
+
 -- Remove all abilities on a unit.
 function util.clearAbilities( unit )
 	for i=0, unit:GetAbilityCount()-1 do

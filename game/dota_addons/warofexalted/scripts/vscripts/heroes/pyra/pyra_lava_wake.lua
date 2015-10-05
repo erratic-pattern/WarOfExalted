@@ -29,6 +29,7 @@ function pyra_lava_wake:OnSpellStart()
 	local projectileRadius = pathRadius
 	local numProjectiles = math.floor( data.effect_length / (pathRadius*2) + 0.5) + 1
 	local stepLength = data.effect_length / ( numProjectiles - 1 )
+    local directionVector = self:GetDirectionVector()
 
     
     --destroy trees in area upon cast
@@ -41,7 +42,7 @@ function pyra_lava_wake:OnSpellStart()
     local elapsed = 0
     Timers:CreateTimer(data.burn_interval, function()
         for i=1, numProjectiles do
-            local pos = startPos + self:GetDirectionVector() * (i-1) * stepLength
+            local pos = startPos + directionVector * (i-1) * stepLength
             
             local ents = 
                 FindUnitsInRadius(caster:GetTeam(), pos, nil, pathRadius, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)

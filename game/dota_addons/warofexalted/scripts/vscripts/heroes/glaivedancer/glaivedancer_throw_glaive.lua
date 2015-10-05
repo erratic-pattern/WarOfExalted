@@ -94,8 +94,8 @@ function glaivedancer_throw_glaive:OnSpellStart()
     --glaive thinker
     Timers:CreateTimer(GLAIVE_THINK_RATE, function()
         if p.attackPhase == 0 then -- initial phase
-            local delta = casterPos - p:GetAbsOrigin()
-            if p.distanceTraveled >= targetDistance then -- has reached end of initial phase
+            local delta = startPos - p:GetAbsOrigin()
+            if delta:Length2D() >= maxDistance then -- has reached end of initial phase
                 p:SetPhysicsVelocity(Vector(0,0,0))
                 --ParticleManager:SetParticleControl(p.id, 2, Vector(0,0,0))
                 p.attackPhase = 1             
