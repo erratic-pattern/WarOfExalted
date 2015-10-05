@@ -32,86 +32,71 @@ function glaivedancer_throw_glaive:OnSpellStart()
     local targetPos = startPos + targetDelta
     targetDistance = targetDelta:Length2D() -- account for rounding errors
     
-    local p = Projectiles:CreateProjectile({
-        Ability             = self,
-        EffectName          = "particles/heroes/glaivedancer/glaivedancer_throw_glaive.vpcf",
-        ControlPoints       = {
-            [1] = targetPos,
-            [2] = Vector(data.speed,0,0)
-        },
-        Source              = caster,
-        fGroundOffset       = height,
-        bGroundLock         = true,
-        vSpawnOrigin        = startPos,
-        --fDistance           = maxDistance * 2,
-        fStartRadius        = data.projectile_radius,
-        fEndRadius          = data.projectile_radius,
-        fStartRadius        = data.projectile_radius,
-        fEndRadius          = data.projectile_radius,
-        --fExpireTime         = GameRules:GetGameTime() + 9999,
-        bRecreateOnChange   = false,
-        --fChangeDelay        = GLAIVE_RETURN_VELOCITY_CHANGE_DELAY,
-        vVelocity           = velocity,
-        iVelocityCP         = 4,  --unused
-        fRehitDelay         = data.tick_rate,
-        GroundBehavior      = PROJECTILES_NOTHING,
-        WallBehavior        = PROJECTILES_NOTHING,
-        TreeBehavior        = PROJECTILES_NOTHING,
-        UnitBehavior        = PROJECTILES_NOTHING,
-        WallBehavior        = PROJECTILES_NOTHING,
-        nChangeMax          = 9999999999999,
-        bCutTrees           = true,
-        bZCheck             = false,
-        draw                = true,
-        bMultipleHits       = true,
-        bProvidesVision     = true,
-        fVisionRadius       = data.projectile_radius,
-        fVisionLingerDuration = 0.5
-    })
-    p.checkFirstHit = { }
-    p.attackPhase = 0   -- 0 = initial, 1 = dot, 2 = return
-    
-    p.OnUnitHit = function(p, unit)
-        local kw = WoeKeywords(self:GetKeywords())
-        kw:Remove("dot")
-        print(p.attackPhase)
-        local notFirstHit
-        if p.attackPhase ~= 1 then -- non-dot phase
-            notFirstHit = p.checkFirstHit[unit:GetEntityIndex()]
-            p.checkFirstHit[unit:GetEntityIndex()] = true
-            local dmg
-            if p.attackPhase == 0 then
-            dmg = self:GetInitialDamage()
-            kw:Remove("dot")
-            elseif p.attackPhase == 2 then
-                dmg = self:GetReturnDamage()
-                kw:Remove("dot")
-            end
-            if dmg then -- apply non-dot hit
-                ApplyWoeDamage({
-                    Victim = unit,
-                    Attacker = caster,
-                    Ability = self,
-                    Keywords = kw,
-                    PhysicalDamage = dmg
-                })
-            end
-        end
-        
-        --apply dot damage
-        ApplyWoeDamage({
-            Victim = unit,
-            Attacker = caster,
-            Keywords = WoeKeywords(kw):Add("dot"),
-            PhysicalDamage = self:GetDotDamage() * data.tick_rate
-        })
+    if caster.glaives = nil then
+        caster.glaives = { }
     end
+    
+    
+    local p = CreateUnitByName("npc_dummy_blank", startPos, false, caster, caster, caster:GetTeamNumber())
+    caster.glaives[p:GetEntityIndex()] = p
+    p.fx = ParticleManager:CreateParticle("particles/heroes/glaivedancer/glaivedancer_throw_glaive.vpcf", PATTACH_ABSORIGIN, p)
+    --ParticleManager:SetParticleControl(pfx, 2, Vector(data.speed,0,0))
+    Physics:Unit(p)
+    p:SetPhysicsVelocity(velocity)
+    p:SetGroundBehavior(PHYSICS_GROUND_LOCK)
+    p.checkFirstHit = { }
+    p.rehit = { }
+    p.attackPhase = 0   -- 0 = initial, 1 = dot, 2 = return
+    p.Destroy = function(self)
+        ParticleManager:DestroyParticle(p.fx, false)
+        caster.glaives[self:GetEntityIndex()] = nil
+    end
+    p:OnPhysicaFrame(function()
+        local ents = FindUnitsInRadius(p:GetTeamNumber(), p:GetAbsOrigin(), nil, data.projectile_radius, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+        for _, unit in pairs(ents)
+            local kw = WoeKeywords(self:GetKeywords())
+            kw:Remove("dot")
+            print(p.attackPhase)
+            local notFirstHit
+            if p.attackPhase ~= 1 then -- non-dot phase
+                notFirstHit = p.checkFirstHit[unit:GetEntityIndex()]
+                p.checkFirstHit[unit:GetEntityIndex()] = true
+                local dmg
+                if p.attackPhase == 0 then
+                dmg = self:GetInitialDamage()
+                kw:Remove("dot")
+                elseif p.attackPhase == 2 then
+                    dmg = self:GetReturnDamage()
+                    kw:Remove("dot")
+                end
+                if dmg then -- apply non-dot hit
+                    ApplyWoeDamage({
+                        Victim = unit,
+                        Attacker = caster,
+                        Ability = self,
+                        Keywords = kw,
+                        PhysicalDamage = dmg
+                    })
+                end
+            end
+        
+            --apply dot damage
+            ApplyWoeDamage({
+                Victim = unit,
+                Attacker = caster,
+                Keywords = WoeKeywords(kw):Add("dot"),
+                PhysicalDamage = self:GetDotDamage() * data.tick_rate
+            })
+            
+        end
+    end)
     
     --glaive thinker
     Timers:CreateTimer(GLAIVE_THINK_RATE, function()
         if p.attackPhase == 0 then -- initial phase
+            local delta = casterPos - p:GetAbsOrigin()
             if p.distanceTraveled >= targetDistance then -- has reached end of initial phase
-                p:SetVelocity(Vector(0,0,0))
+                p:SetPhysicsVelocity(Vector(0,0,0))
                 --ParticleManager:SetParticleControl(p.id, 2, Vector(0,0,0))
                 p.attackPhase = 1             
                 return data.hover_duration -- sleep until the end of DoT phase
@@ -122,13 +107,12 @@ function glaivedancer_throw_glaive:OnSpellStart()
             --ParticleManager:SetParticleControl(p.id, 2, Vector(data.speed,0,0))
         elseif p.attackPhase == 2 then -- return phase
             local casterPos = self:GetCaster():GetAbsOrigin()
-            local delta = casterPos - p.pos -- glaive-to-caster delta
+            local delta = casterPos - p:GetAbsOrigin() -- glaive-to-caster delta
             if delta:Length2D() <= data.speed * GLAIVE_THINK_RATE * 1.5 then -- has returned to caster
                 p:Destroy()
                 return -- stop thinking
             end
-            ParticleManager:SetParticleControl(p.id, 1, casterPos) -- move towards caster
-            p:SetVelocity( data.speed * delta:Normalized() )
+            p:SetPhysicsVelocity( data.speed * delta:Normalized() )
         end
         return GLAIVE_THINK_RATE -- continue thinking
     end)
