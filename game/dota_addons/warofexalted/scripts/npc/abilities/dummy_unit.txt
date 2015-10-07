@@ -2,7 +2,7 @@
 // Dummy stuff
 //-------------------
   
-"warofexalted_dummy_unit"
+"dummy_unit"
 {
 	"AbilityBehavior" 		"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 	"BaseClass" 			"ability_datadriven"

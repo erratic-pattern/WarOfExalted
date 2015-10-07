@@ -5,6 +5,7 @@
 		"override_hero"			"npc_dota_hero_luna"
 	    
 		"Ability1"				"glaivedancer_throw_glaive"
+		"Ability2"				"glaivedancer_frost_glaives"
 	
 		"ArmorPhysical"				"0"
 		"MagicResistBase"		    "0"

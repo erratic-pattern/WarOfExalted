@@ -25,10 +25,10 @@
 
 		// ******************** ABILITIES ********************
 
-		"DOTA_Tooltip_Ability_warofexalted_dummy_unit"                                          "WarOfExalted Dummy Unit"
-		"DOTA_Tooltip_Ability_warofexalted_dummy_unit_Description"                              ""
-		"DOTA_Tooltip_Ability_warofexalted_dummy_unit_Note0"                                    ""
-		"DOTA_Tooltip_Ability_warofexalted_dummy_unit_Lore"                                     ""
+		"DOTA_Tooltip_Ability_dummy_unit"                                          "WarOfExalted Dummy Unit"
+		"DOTA_Tooltip_Ability_dummy_unit_Description"                              ""
+		"DOTA_Tooltip_Ability_dummy_unit_Note0"                                    ""
+		"DOTA_Tooltip_Ability_dummy_unit_Lore"                                     ""
 
 		"DOTA_Tooltip_Ability_warofexalted_empty1"                                              "Empty Ability Slot"
 		"DOTA_Tooltip_Ability_warofexalted_empty1_Description"                                  ""

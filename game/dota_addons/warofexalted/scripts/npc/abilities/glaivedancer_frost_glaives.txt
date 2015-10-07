@@ -1,0 +1,52 @@
+"glaivedancer_frost_glaives"
+{
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+    "ScriptFile"                    "heroes/glaivedancer/glaivedancer_frost_glaives"
+	"AbilityTextureName"			"glaivedancer_frost_glaives"
+	"BaseClass"						"ability_lua"
+    "FightRecapLevel"				"1"
+
+	// Stats
+	//-------------------------------------------------------------------------------------------------------------
+    "Keywords"                      "spell buff duration"
+	"AbilityCastPoint"				"0.0"
+	"AbilityCooldown"				"16"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
+	"AbilityManaCost"				"100 115 130 145"
+	
+	"precache"
+	{
+		//"particle"					"particles/heroes/pyra/conflagration.vpcf"
+		//"soundfile"					"soundevents/game_sounds_heroes/game_sounds_lina.vsndevts"
+	}
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilitySpecial"
+	{
+		"01"
+		{
+			"var_type"				"FIELD_INTEGER"
+			"buff_duration"    		"10"
+		}
+		
+		"02"
+		{
+			"var_type"									"FIELD_INTEGER"
+			"bonus_glaive_hover_duration"		        "4"
+		}
+		
+		"03"
+		{
+			"var_type"				"FIELD_FLOAT"
+			"glaive_slow_duration"	"0.3 0.4 0.5 0.6"
+		}
+
+		"04"
+		{
+
+			"var_type"				"FIELD_INTEGER"
+			"glaive_slow_duration"	"0.5"
+		}
+	}
+}
