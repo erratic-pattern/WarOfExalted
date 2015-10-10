@@ -268,7 +268,7 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
             local ics = 0
             local keys = self:GetKeywords()
             if keys:Has("attack") then
-                ics = ics + caster:GetIncreasedAttackSpeed() * self:GetAttackSpeedRatio()
+                ics = ics + caster:GetIncreasedAttackSpeed()*100 * self:GetAttackSpeedRatio()
             end
             if keys:Has("spell") then
                 ics = ics + caster:GetSpellSpeed() * self:GetSpellSpeedRatio()
