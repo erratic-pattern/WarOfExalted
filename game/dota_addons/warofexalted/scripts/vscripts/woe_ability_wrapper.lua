@@ -25,6 +25,7 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     --WoE ability instance variables
     abi._woeKeys = {
         StaminaCost = 0,
+        ChannelledStaminaCostPerSecond = 0,
         SpellSpeedRatio = 1,
         AttackSpeedRatio = 1,
         Keywords = "",
@@ -40,7 +41,7 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     util.updateTable(abi._woeKeys, extraKeys)
     
     abi._woeKeys.Keywords = WoeKeywords(abi._woeKeys.Keywords) --parse keyword string
-    for _, key in pairs({"StaminaCost", "SpellSpeedRatio", "AttackSpeedRatio"}) do -- split these keys by spaces
+    for _, key in pairs({"StaminaCost", "ChannelledStaminaCostPerSecond", "SpellSpeedRatio", "AttackSpeedRatio"}) do -- split these keys by spaces
         abi._woeKeys[key] = string.split(abi._woeKeys[key])
     end
     
@@ -175,6 +176,29 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
         end
         return ""
     end
+
+    local _OnAbilityPhaseStart = abi.OnAbilityPhaseStart
+    function abi:OnAbilityPhaseStart()
+        local result = _OnAbilityPhaseStart(self)
+        if self:CanPayStaminaCost() then
+            return result
+        else
+            self:OnAbilityPhaseInterrupted()
+            self:SetInAbilityPhase(false)
+            return false
+        end
+    end
+
+    local _OnSpellStart = abi.OnSpellStart
+    function abi:OnSpellStart()
+        if self:PayStaminaCost() then
+            _OnSpellStart(self)
+        else
+            self:OnAbilityPhaseInterrupted()
+            self:SetInAbilityPhase(false)
+            self:EndCooldown()
+        end
+    end
     
     --retrieves a value from an array based on ability levels
     function abi:_GetLevelScalableKey(arr, iLvl)
@@ -185,11 +209,7 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     function abi:GetBaseStaminaCost(iLvl)
         return self:_GetLevelScalableKey(self._woeKeys.StaminaCost, iLvl)
     end
-    
-    function abi:SetStaminaCost(v)
-        self._woeKeys.StaminaCost = v
-    end
-    
+
     function abi:GetStaminaCost()
         local caster = self:GetCaster()
         local m = 1

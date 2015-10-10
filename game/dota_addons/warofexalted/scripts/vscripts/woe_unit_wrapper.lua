@@ -308,5 +308,12 @@ onMaxStaminaChange = function(self, new, old)
 end
 
 onCurrentStaminaChange = function(self, v)
-    return math.max(math.min(self:GetMaxStamina(), v), 0)
+    local s = math.max(math.min(self:GetMaxStamina(), v), 0)
+    self:EachAbility(function(abil)
+        if abil.isWoeAbility and abil:GetStaminaCost() > s then
+            abil:SetInAbilityPhase(false)
+            abil:OnAbilityPhaseInterrupted()
+        end
+    end)
+    return s
 end
