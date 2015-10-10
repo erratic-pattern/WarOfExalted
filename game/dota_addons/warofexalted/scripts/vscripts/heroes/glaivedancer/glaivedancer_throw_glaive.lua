@@ -176,7 +176,7 @@ function glaivedancer_throw_glaive:OnSpellStart()
 
         --spawn FoWViewer
         AddFOWViewer(caster:GetTeamNumber(), p:GetAbsOrigin(), data.projectile_radius, 0.3, false)
-        --cute trees
+        --cut trees
         GridNav:DestroyTreesAroundPoint(p:GetAbsOrigin(), data.projectile_radius, false)
     end)
 end

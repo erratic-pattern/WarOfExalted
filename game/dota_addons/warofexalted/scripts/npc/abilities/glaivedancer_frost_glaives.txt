@@ -12,7 +12,7 @@
 	"AbilityCastPoint"				"0.0"
 	"AbilityCooldown"				"16"
 	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
-	"AbilityManaCost"				"100 115 130 145"
+	"AbilityManaCost"				"85 100 115 130"
 	
 	"precache"
 	{
@@ -27,7 +27,7 @@
 		"01"
 		{
 			"var_type"				"FIELD_INTEGER"
-			"buff_duration"    		"5"
+			"buff_duration"    		"3 4 5 6"
 		}
 		"02"
 		{
@@ -38,8 +38,8 @@
 		"03"
 		{
 
-			"var_type"				"FIELD_INTEGER"
-			"glaive_slow_duration"	"2"
+			"var_type"				"FIELD_FLOAT"
+			"glaive_slow_duration"	"1.5"
 		}
 	}
 }

@@ -512,7 +512,7 @@
 		"AbilityCastPoint"				"0.0"
 		"AbilityCooldown"				"16"
 		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
-		"AbilityManaCost"				"100 115 130 145"
+		"AbilityManaCost"				"85 100 115 130"
 		
 		"precache"
 		{
@@ -527,7 +527,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"buff_duration"    		"5"
+				"buff_duration"    		"3 4 5 6"
 			}
 			"02"
 			{
@@ -538,8 +538,8 @@
 			"03"
 			{
 	
-				"var_type"				"FIELD_INTEGER"
-				"glaive_slow_duration"	"2"
+				"var_type"				"FIELD_FLOAT"
+				"glaive_slow_duration"	"1.5"
 			}
 		}
 	}
@@ -553,18 +553,18 @@
 	    "AoeRadius"                     "100"
 	    "FightRecapLevel"				"1"
 	    
-	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
 	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 	
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
-		//"AbilityCastRange"		        "1700"
+		//"AbilityCastRange"		    "1700"
 	    "Keywords"                      "attack projectile area dot"
 		"AbilityCastPoint"				"0.1"
 		"AbilityCooldown"				"4"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_PHYSICAL"
-		"StaminaCost"				    "25 50 75 100"
+		"StaminaCost"				    "75"
 		
 		"precache"
 		{
@@ -597,25 +597,25 @@
 	        "04"
 	        {
 	            "var_type"              "FIELD_INTEGER"
-	            "initial_base_damage"   "10 15 20 25"
+	            "initial_base_damage"   "20 30 40 50"
 	        }
 	        
 	        "05"
 	        {
 	            "var_type"              "FIELD_FLOAT"
-	            "initial_damage_multiplier" "1.0"
+	            "initial_damage_multiplier" "0.5"
 	        }
 	        
 	        "06"
 	        {
 	            "var_type"              "FIELD_INTEGER"
-	            "return_base_damage"   "10 15 20 25"
+	            "return_base_damage"    "20 30 40 50"
 	        }
 	        
 	        "07"
 	        {
 	            "var_type"              "FIELD_FLOAT"
-	            "return_damage_multiplier" "1.0"
+	            "return_damage_multiplier" "0.5"
 	        }
 	        
 	        "08"
