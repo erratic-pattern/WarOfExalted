@@ -1,7 +1,6 @@
 glaivedancer_throw_glaive = class({})
 
 local GLAIVE_THINK_RATE = 1/30
-local GLAIVE_RETURN_VELOCITY_CHANGE_DELAY = 0.1
 
 --attack phases
 local ATTACK_PHASE_START, 
@@ -12,7 +11,7 @@ local ATTACK_PHASE_START,
       = 0,1,2,3,4
 
 function glaivedancer_throw_glaive:GetDotDamage()
-    return self:GetSpecialValueFor("base_damage") + self:GetSpecialValueFor("damage_multiplier") * self:GetCaster():GetAverageTrueAttackDamage()
+    return self:GetSpecialValueFor("dot_base_damage") + self:GetSpecialValueFor("dot_damage_multiplier") * self:GetCaster():GetAverageTrueAttackDamage()
 end
 
 function glaivedancer_throw_glaive:GetInitialDamage()
@@ -24,45 +23,53 @@ function glaivedancer_throw_glaive:GetReturnDamage()
 end
 
 function glaivedancer_throw_glaive:GetFrostModifier()
-    return self:GetCaster():FindModifierByName("glaivedancer_frost_glaives_buff")
+    return self:GetCaster():FindModifierByName("modifier_glaivedancer_frost_glaives_buff")
 end
 
 function glaivedancer_throw_glaive:GetStormModifier()
-    return self:GetCaster():FindModifierByName("glaivedancer_glaive_storm_buff")
+    return self:GetCaster():FindModifierByName("modifier_glaivedancer_glaive_storm_buff")
 end
 
 function glaivedancer_throw_glaive:OnSpellStart()
-    local height = 75
     local caster = self:GetCaster()
     local data = self:GetSpecials()
     local startPos = caster:GetAbsOrigin()
-    local maxDistance = data.speed * data.travel_duration
     local cursorPos = self:GetCursorPosition()
     local cursorDelta = cursorPos - startPos
+    local maxDistance = data.max_average_speed * data.travel_duration
     local targetDistance = math.min(maxDistance, cursorDelta:Length2D())
+    local distanceRatio = targetDistance / maxDistance
     local forward = cursorDelta:Normalized()
     forward.z = 0
-    local targetDelta = forward * targetDistance
-    local velocity = forward * data.speed
-    local targetPos = startPos + targetDelta
-    targetDistance = targetDelta:Length2D() -- account for rounding errors
+    local maxSpeed = data.acceleration_factor * data.max_average_speed
+    local initialSpeed = maxSpeed * distanceRatio
+    local initialVelocity = forward * initialSpeed
+    local initialAcceleration = -initialVelocity * (data.acceleration_factor/2) / data.travel_duration
+    print(targetDistance,  initialSpeed, initialAcceleration:Length2D())
+    --local targetPos = startPos + targetDelta
+    --targetDistance = targetDelta:Length2D() -- account for rounding errors
     
     
-    local p = CreateUnitByName("npc_dummy_blank", startPos, false, caster, caster, caster:GetTeamNumber())
-    p.fx = ParticleManager:CreateParticle("particles/heroes/glaivedancer/glaivedancer_throw_glaive.vpcf", PATTACH_ABSORIGIN, p)
-    --ParticleManager:SetParticleControl(pfx, 2, Vector(data.speed,0,0))
+    local p = CreateUnitByName("npc_dummy_unit", startPos, false, caster, caster, caster:GetTeamNumber())
+    p:GetAbilityByIndex(0):SetLevel(1)
+    p.fx = ParticleManager:CreateParticle("particles/heroes/glaivedancer/glaivedancer_throw_glaive.vpcf", PATTACH_ABSORIGIN_FOLLOW, p)
     Physics:Unit(p)
-    p:SetPhysicsVelocity(velocity)
-    p:SetPhysicsFriction(Vector(0,0,0))
-    p:SetVelocityClamp(-1)
+    p:SetPhysicsVelocityMax(maxSpeed)
+    p:SetPhysicsFriction(0)
+    p:SetVelocityClamp(initialSpeed * GLAIVE_THINK_RATE)
     p:SetGroundBehavior(PHYSICS_GROUND_LOCK)
-    p.checkFirstHit = { }
-    p.rehit = { }
+    p:FollowNavMesh(false)
+    p:GetAutoUnstuck(false)
+    p:Hibernate(false)
     p.attackPhase = ATTACK_PHASE_START
+    p.rehit = { }
+    p.checkFirstHit = { }
+    p:SetPhysicsVelocity(initialVelocity)
+    p:SetPhysicsAcceleration(initialAcceleration)
     p:OnPhysicsFrame(function()
         local frostGlaives = self:GetFrostModifier()
 
-        --check if ulti activated        
+        --check if ulti activated     
         if not p.glaiveStorm then
             local glaiveStorm = self:GetStormModifier()
             if glaiveStorm then
@@ -74,46 +81,48 @@ function glaivedancer_throw_glaive:OnSpellStart()
         end
 
         --handle movement logic
-        print(p.attackPhase)
         if p.attackPhase == ATTACK_PHASE_START then -- initial phase
             local delta = startPos - p:GetAbsOrigin()
-            print(delta:Length2D(), targetDistance, p:GetTotalVelocity())
-            if delta:Length2D() >= targetDistance then -- has reached end of initial phase
-                p:SetPhysicsVelocity(Vector(0,0,0))
-                --ParticleManager:SetParticleControl(p.id, 2, Vector(0,0,0))
-                p.attackPhase = ATTACK_PHASE_HOVER
-                p.hoverStartTime = GameRules:GetGameTime()
-                --return data.hover_duration -- sleep until the end of DoT phase
+            if math.floor(p:GetPhysicsVelocity():Length2D()) == 0 then -- has reached end of initial phase
+                p.attackPhase = ATTACK_PHASE_RETURN
+                p.checkFirstHit = { }
+                p.initialReturnPos = p:GetAbsOrigin()
             end
 
         elseif p.attackPhase == ATTACK_PHASE_HOVER then -- hover phase
-            local totalDuration = data.hover_duration
-            if frostGlaives then
-                totalDuration = totalDuration + frostGlaives.bonus_hover_duration
-            end
-            if GameRules:GetGameTime() - p.hoverStartTime >= totalDuration then 
-                p.attackPhase = ATTACK_PHASE_RETURN -- move from dot phase to return phase
+            if not frostGlaives then 
+                p.attackPhase = ATTACK_PHASE_RETURN -- move from hover phase to return phase
+                p.initialReturnPos = p.initialReturnPos or p:GetAbsOrigin()
                 p.checkFirstHit = { }
             end
-            --ParticleManager:SetParticleControl(p.id, 2, Vector(data.speed,0,0))
 
         elseif p.attackPhase == ATTACK_PHASE_RETURN then -- return phase
-            local casterPos = self:GetCaster():GetAbsOrigin()
-            local delta = casterPos - p:GetAbsOrigin() -- glaive-to-caster delta
-            if delta:Length2D() <= data.speed * GLAIVE_THINK_RATE * 1.5 then -- has returned to caster
-                ParticleManager:DestroyParticle(p.fx, false)
-                p:Destroy()
-                return -- stop thinking
+            if frostGlaives then -- check for frost glaives modifier
+                p.attackPhase = ATTACK_PHASE_HOVER
+                p:SetPhysicsVelocity(Vector(0,0,0))
+                p:SetPhysicsAcceleration(Vector(0,0,0))
+                p.hoverStartTime = GameRules:GetGameTime()
+            else 
+                local casterPos = self:GetCaster():GetAbsOrigin()
+                local delta = casterPos - p:GetAbsOrigin() -- glaive-to-caster delta
+                if delta:Length2D() <= p:GetPhysicsVelocity():Length2D() * GLAIVE_THINK_RATE * 0.5 then -- has returned to caster
+                    ParticleManager:DestroyParticle(p.fx, false)
+                    p:Destroy()
+                    return -- stop thinking
+                end
+                p:SetPhysicsVelocity(delta:Normalized() * p:GetPhysicsVelocity():Length())
+                local distanceRatio = (casterPos - p.initialReturnPos):Length2D() / maxDistance
+                p:SetPhysicsAcceleration(delta:Normalized() * maxSpeed * distanceRatio * (data.acceleration_factor/2) / data.travel_duration)
             end
-            p:SetPhysicsVelocity( data.speed * delta:Normalized() )
         
         elseif p.attackPhase == ATTACK_PHASE_STORM_TARGET then -- ulti homing phase
             local targetPos = p.stormTarget:GetAbsOrigin()
             local delta = targetPos - p:GetAbsOrigin() -- glaive-to-target delta
-            if delta:Length2D() <= data.speed * GLAIVE_THINK_RATE * 1.5 then
+            if delta:Length2D() <= p:GetPhysicsVelocity():Length2D() * GLAIVE_THINK_RATE then
                 p.attackPhase = ATTACK_PHASE_STORM_SPIRAL
             end
-            p:SetPhysicsVelocity( data.speed * delta:Normalized() )
+            p:SetPhysicsVelocity(delta:Normalized() * p:GetPhysicsVelocity():Length())
+            p:SetPhysicsAcceleration(delta:Normalized() * data.max_average_speed * (delta:Length2D() / maxDistance) * (data.acceleration_factor^2 / 2) / data.travel_duration)
         elseif p.attackPhase == ATTACK_PHASE_STORM_SPIRAL then -- ulti spiral phase
 
         end
@@ -155,7 +164,7 @@ function glaivedancer_throw_glaive:OnSpellStart()
                 })
                 --apply slow modifier
                 if frostGlaives then
-                    unit:AddNewModifier(caster, self, "glaivedancer_frost_glaives_slow", {
+                    unit:AddNewModifier(caster, self, "modifier_glaivedancer_frost_glaives_slow", {
                         duration = frostGlaives.slow_duration,
                         slow_amount = frostGlaives.slow_amount,
                     })
@@ -164,5 +173,10 @@ function glaivedancer_throw_glaive:OnSpellStart()
                 p.rehit[unit:GetEntityIndex()] = GameRules:GetGameTime()
             end
         end
+
+        --spawn FoWViewer
+        AddFOWViewer(caster:GetTeamNumber(), p:GetAbsOrigin(), data.projectile_radius, 0.3, false)
+        --cute trees
+        GridNav:DestroyTreesAroundPoint(p:GetAbsOrigin(), data.projectile_radius, false)
     end)
 end

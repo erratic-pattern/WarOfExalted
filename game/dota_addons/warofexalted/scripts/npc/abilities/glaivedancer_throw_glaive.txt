@@ -18,7 +18,7 @@
     "Keywords"                      "attack projectile area dot"
 	"AbilityCastPoint"				"0.1"
 	"AbilityCooldown"				"4"
-	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGIC"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_PHYSICAL"
 	"StaminaCost"				    "25 50 75 100"
 	
 	"precache"
@@ -34,7 +34,7 @@
 		"01"
 		{
 			"var_type"				"FIELD_INTEGER"
-			"speed"      			"1200"
+			"max_average_speed"  	"500"
 		}
 		
 		"02"
@@ -42,59 +42,59 @@
 			"var_type"				"FIELD_INTEGER"
 			"projectile_radius"		"175"
 		}
-		
-		"03"
-		{
-			"var_type"				"FIELD_FLOAT"
-			"hover_duration"		"1"
-		}
+        
+        "03"
+        {
+            "var_type"              "FIELD_INTEGER"
+            "travel_duration"       "2"
+        }
         
         "04"
         {
-            "var_type"              "FIELD_FLOAT"
-            "travel_duration"       "1"
+            "var_type"              "FIELD_INTEGER"
+            "initial_base_damage"   "10 15 20 25"
         }
         
         "05"
-        {
-            "var_type"              "FIELD_INTEGER"
-            "initial_base_damage"   "25 30 35 40"
-        }
-        
-        "06"
         {
             "var_type"              "FIELD_FLOAT"
             "initial_damage_multiplier" "1.0"
         }
         
-        "07"
+        "06"
         {
             "var_type"              "FIELD_INTEGER"
-            "return_base_damage"   "50 60 70 80"
+            "return_base_damage"   "10 15 20 25"
         }
         
-        "08"
+        "07"
         {
             "var_type"              "FIELD_FLOAT"
             "return_damage_multiplier" "1.0"
         }
         
-        "09"
+        "08"
         {
             "var_type"              "FIELD_INTEGER"
-            "base_damage"           "18 24 30 36"
+            "dot_base_damage"       "12 18 24 30"
+        }
+        
+        "09"
+        {
+            "var_type"              "FIELD_FLOAT"
+            "dot_damage_multiplier"     "0.5"
         }
         
         "10"
         {
-            "var_type"              "FIELD_FLOAT"
-            "damage_multiplier"     "0.6"
-        }
-        
-        "11"
-        {
             "var_type"               "FIELD_FLOAT"
             "tick_rate"              "0.25"
+        }
+
+        "11"
+        {
+            "var_type"              "FIELD_FLOAT"
+            "acceleration_factor"   "2.5"
         }
 	}
 }

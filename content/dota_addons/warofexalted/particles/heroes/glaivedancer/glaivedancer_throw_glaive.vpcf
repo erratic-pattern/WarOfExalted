@@ -29,16 +29,19 @@
 		{
 			_class = "C_OP_BasicMovement"
 			m_nOpEndCapState = 0
+			m_bDisableOperator = true
 		},
 		{
 			_class = "C_OP_BasicMovement"
 			m_fDrag = 1.000000
 			m_nOpEndCapState = 1
+			m_bDisableOperator = true
 		},
 		{
 			_class = "C_OP_MaxVelocity"
 			m_flMaxVelocity = 800.000000
 			m_nOverrideCP = 2
+			m_bDisableOperator = true
 		},
 		{
 			_class = "C_OP_Decay"
@@ -61,7 +64,7 @@
 			m_flTolerance = 96.000000
 			m_flTraceOffset = 256.000000
 			m_CollisionGroupName = "DEBRIS"
-			m_nRefCP1 = 3
+			m_nRefCP1 = 0
 			m_nLerpCP = 3
 			m_bIncludeWater = true
 		},
@@ -78,6 +81,9 @@
 			m_flInputMax = 360.000000
 			m_nOutControlPointNumber = 5
 			m_flOutputMax = 360.000000
+		},
+		{
+			_class = "C_OP_PositionLock"
 		},
 	]
 	m_Initializers =
@@ -114,7 +120,7 @@
 			_class = "C_OP_AttractToControlPoint"
 			m_fForceAmount = 100000.000000
 			m_fFalloffPower = 0.000000
-			m_nControlPointNumber = 1
+			m_bDisableOperator = true
 		},
 	]
 	m_Children =
