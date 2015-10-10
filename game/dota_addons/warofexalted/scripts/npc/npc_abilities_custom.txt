@@ -550,7 +550,7 @@
 		"AbilityTextureName"			"glaivedancer_throw_glaive"
 		"BaseClass"						"ability_lua"
 	    "AbilityCastAnimation"			"ACT_DOTA_ATTACK"
-	    "AoeRadius"                     "100"
+	    "AOERadius"                     "100"
 	    "FightRecapLevel"				"1"
 	    
 	    "SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
@@ -564,7 +564,7 @@
 		"AbilityCastPoint"				"0.1"
 		"AbilityCooldown"				"4"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_PHYSICAL"
-		"StaminaCost"				    "75"
+		"StaminaCost"				    "45 55 65 75"
 		
 		"precache"
 		{
@@ -579,7 +579,7 @@
 			"01"
 			{
 				"var_type"				"FIELD_INTEGER"
-				"max_average_speed"  	"500"
+				"max_average_speed"  	"450"
 			}
 			
 			"02"
@@ -591,7 +591,7 @@
 	        "03"
 	        {
 	            "var_type"              "FIELD_INTEGER"
-	            "travel_duration"       "2"
+	            "travel_duration"       "2.5"
 	        }
 	        
 	        "04"
@@ -603,7 +603,7 @@
 	        "05"
 	        {
 	            "var_type"              "FIELD_FLOAT"
-	            "initial_damage_multiplier" "0.5"
+	            "initial_damage_multiplier" "0.45"
 	        }
 	        
 	        "06"
@@ -615,7 +615,7 @@
 	        "07"
 	        {
 	            "var_type"              "FIELD_FLOAT"
-	            "return_damage_multiplier" "0.5"
+	            "return_damage_multiplier" "0.45"
 	        }
 	        
 	        "08"
@@ -627,7 +627,7 @@
 	        "09"
 	        {
 	            "var_type"              "FIELD_FLOAT"
-	            "dot_damage_multiplier"     "0.5"
+	            "dot_damage_multiplier"     "0.35"
 	        }
 	        
 	        "10"

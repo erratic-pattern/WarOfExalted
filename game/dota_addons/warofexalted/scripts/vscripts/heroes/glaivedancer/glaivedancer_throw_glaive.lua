@@ -105,12 +105,12 @@ function glaivedancer_throw_glaive:OnSpellStart()
             else 
                 local casterPos = self:GetCaster():GetAbsOrigin()
                 local delta = casterPos - p:GetAbsOrigin() -- glaive-to-caster delta
-                if delta:Length2D() <= p:GetPhysicsVelocity():Length2D() * GLAIVE_THINK_RATE * 0.5 then -- has returned to caster
+                if delta:Length2D() <= p:GetPhysicsVelocity():Length2D() * GLAIVE_THINK_RATE then -- has returned to caster
                     ParticleManager:DestroyParticle(p.fx, false)
                     p:Destroy()
                     return -- stop thinking
                 end
-                p:SetPhysicsVelocity(delta:Normalized() * p:GetPhysicsVelocity():Length())
+                p:SetPhysicsVelocity(delta:Normalized() * p:GetPhysicsVelocity():Length2D())
                 local distanceRatio = (casterPos - p.initialReturnPos):Length2D() / maxDistance
                 p:SetPhysicsAcceleration(delta:Normalized() * maxSpeed * distanceRatio * (data.acceleration_factor/2) / data.travel_duration)
             end
@@ -121,7 +121,7 @@ function glaivedancer_throw_glaive:OnSpellStart()
             if delta:Length2D() <= p:GetPhysicsVelocity():Length2D() * GLAIVE_THINK_RATE then
                 p.attackPhase = ATTACK_PHASE_STORM_SPIRAL
             end
-            p:SetPhysicsVelocity(delta:Normalized() * p:GetPhysicsVelocity():Length())
+            p:SetPhysicsVelocity(delta:Normalized() * p:GetPhysicsVelocity():Length2D())
             p:SetPhysicsAcceleration(delta:Normalized() * data.max_average_speed * (delta:Length2D() / maxDistance) * (data.acceleration_factor^2 / 2) / data.travel_duration)
         elseif p.attackPhase == ATTACK_PHASE_STORM_SPIRAL then -- ulti spiral phase
 
