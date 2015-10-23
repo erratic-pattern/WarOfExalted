@@ -4,10 +4,10 @@ requires = {
 	'lib.physics',
 	--'lib.statcollection',
     "lib.projectiles",
-    "lib.affectors",
     "lib.storage",
     "lib.property",
     "lib.vector_target",
+    "lib.CosmeticLib",
 	'warofexalted',
     'woe_link_modifiers',
     'woe_keywords',
@@ -28,6 +28,8 @@ function Precache( context )
 	--PrecacheResource("particle", "particles/econ/generic/generic_aoe_explosion_sphere_1/generic_aoe_explosion_sphere_1.vpcf", context)
 	--PrecacheResource("particle_folder", "particles/test_particle", context)
     VectorTarget:Precache(context)
+    PrecacheResource( "model", "models/development/invisiblebox.vmdl", context )
+    PrecacheResource( "model", "models/items/kunkka/gunsword/kunkka_gunsword.vmdl", context)
 
 	-- Models can also be precached by folder or individually
 	--PrecacheModel should generally used over PrecacheResource for individual models
