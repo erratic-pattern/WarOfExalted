@@ -1,0 +1,27 @@
+"samuel_salt_swap_weapon"
+{
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING | DOTA_ABILITY_BEHAVIOR_TOGGLE"
+    "ScriptFile"                    "heroes/samuel_salt/samuel_salt_swap_weapon"
+	"AbilityTextureName"			"samuel_salt_swap_weapon"
+	"BaseClass"						"ability_lua"
+    "FightRecapLevel"				"0"
+
+	// Stats
+	//-------------------------------------------------------------------------------------------------------------
+    "Keywords"                      "stance"
+	"AbilityCastPoint"				"0.0"
+	"AbilityCooldown"				"0"
+	"MaxLevel"						"1"
+	
+	"precache"
+	{
+		"soundfile"					"soundevents/game_sounds_heroes/game_sounds_kunkka.vsndevts"
+	}
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilitySpecial"
+	{
+		
+	}
+}
