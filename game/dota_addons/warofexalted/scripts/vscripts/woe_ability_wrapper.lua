@@ -120,6 +120,11 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     function abi:HasBehavior(...)
         return bit.band(self:GetBehavior(), ...) ~= 0
     end
+
+    function abi:FindUnitsInRadius(pos, radius, findType)
+        findType = findType or FIND_ANY_ORDER
+        return FindUnitsInRadius(self:GetCaster():GetTeam(), pos, nil, radius, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+    end
     
     --override CastFilterResult
     local _CastFilterResult = abi.CastFilterResult

@@ -21,7 +21,7 @@ modifier_pyra_conflagration:Init({
             local center = self:GetParent()
             local abil = self:GetAbility()
             local caster = abil:GetCaster()
-            local units = FindUnitsInRadius(caster:GetTeam(), center:GetAbsOrigin(), nil, self.radius, abil:GetAbilityTargetTeam(), abil:GetAbilityTargetType(), abil:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+            local units = abil:FindUnitsInRadius(center:GetAbsOrigin(), self.radius)
             for _, unit in pairs(units) do
                 ApplyWoeDamage({
                     Victim = unit,

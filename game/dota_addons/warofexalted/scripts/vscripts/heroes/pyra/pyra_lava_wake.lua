@@ -44,8 +44,7 @@ function pyra_lava_wake:OnSpellStart()
         for i=1, numProjectiles do
             local pos = startPos + directionVector * (i-1) * stepLength
             
-            local ents = 
-                FindUnitsInRadius(caster:GetTeam(), pos, nil, pathRadius, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+            local ents = self:FindUnitsInRadius(pos, pathRadius)
             for _, ent in pairs(ents) do
                 ApplyWoeDamage({
                     Attacker = caster,

@@ -36,7 +36,7 @@ function pyra_fireball:OnSpellStart()
         ParticleManager:SetParticleControl(pfx, 3, p.pos)
         ParticleManager:SetParticleControl(pfx, 4, Vector(1,1,1))
         --DebugDrawCircle(p.pos, Vector(200,0,0), 1, self:GetAreaRadius(), false, 2)
-        local ents = FindUnitsInRadius(caster:GetTeam(), p.pos, nil, self:GetAreaRadius(), self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+        local ents = self:FindUnitsInRadius(p.pos, self:GetAreaRadius())
         for _, unit in ipairs(ents) do
             ApplyWoeDamage({
                 Victim = unit,

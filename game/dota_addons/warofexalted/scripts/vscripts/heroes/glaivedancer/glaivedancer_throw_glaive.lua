@@ -128,7 +128,7 @@ function glaivedancer_throw_glaive:OnSpellStart()
         end
 
         -- handle on-hit unit logic
-        local units = FindUnitsInRadius(p:GetTeamNumber(), p:GetAbsOrigin(), nil, data.projectile_radius, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+        local units = self:FindUnitsInRadius(p:GetAbsOrigin(), data.projectile_radius)
         for _, unit in pairs(units) do
             local kw = WoeKeywords(self:GetKeywords())
             if p.attackPhase ~= ATTACK_PHASE_HOVER then -- non-dot phase
