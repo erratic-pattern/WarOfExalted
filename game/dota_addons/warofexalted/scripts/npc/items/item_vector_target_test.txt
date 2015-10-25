@@ -1,0 +1,80 @@
+"item_vector_target_test"
+{
+    "ID"                            "3232"
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_MECHANICAL"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "FightRecapLevel"               "1"
+    "BaseClass"                     "item_lua"
+    "AbilityTextureName"            "pyra_lava_wake"
+    "ScriptFile"                    "abilities/item_vector_target_test.lua"
+    "ItemCost"                      "0"
+    "ItemPurchasable"               "1"
+
+    // Stats
+    //-------------------------------------------------------------------------------------------------------------
+    "Keywords"                      "spell area duration dot debuff"
+    "AbilityCastRange"              "750"
+    "AbilityCastPoint"              "0.2"
+    "AbilityCooldown"               "25"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_3"
+    "AbilityManaCost"               "115 125 135 145"
+    
+    "VectorTarget"                  "1"
+    
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilitySpecial"
+    {
+        "01"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "damage"                    "25 30 35 40"
+        }
+        "02"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "effect_duration"           "6"
+        }           
+        "03"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "effect_radius"             "240"
+        }
+        "04"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "burn_duration"             "0.5"
+        }
+        "05"
+        {
+            "var_type"                  "FIELD_FLOAT"
+            "burn_interval"             "0.5"
+        }
+        "06"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "mr_reduction"              "3 4 5 6"
+        }
+        "07"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "debuff_duration"           "4"
+        }
+        "08"
+        {
+            "var_type"                  "FIELD_INTEGER"
+            "effect_length"             "800"
+        }
+    }
+    
+    "precache"
+    {
+        "soundfile"                 "soundevents/game_sounds_heroes/game_sounds_jakiro.vsndevts"
+        "particle"                  "particles/units/heroes/hero_jakiro/jakiro_macropyre.vpcf"
+        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn.vpcf"
+        "particle"                  "particles/units/heroes/hero_phoenix/phoenix_fire_spirit_burn_creep.vpcf"
+    }
+}

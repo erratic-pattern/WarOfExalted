@@ -16,9 +16,10 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     local WarOfExalted = self
     
     local abiName = abi:GetAbilityName()
-    local isLuaAbility = "ability_lua" == abi:GetClassname()
+    local isLuaItem = "item_lua" == abi:GetClassname()
+    local isLuaAbility = isLuaItem or "ability_lua" == abi:GetClassname()
     if Testing and not isLuaAbility then
-        print("[WAROFEXALTED] warning: " .. abiName .. " is not a Lua ability. Can't implement all WoE functionality.")
+        print("[WAROFEXALTED] warning: " .. abiName .. " is not a Lua ability or item. Can't implement all WoE functionality.")
     end
     abi.isWoeAbility = true --flag we can use to easily test if ability is wrapped
     
@@ -34,7 +35,11 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     }
     
     --the table of custom data parsed from KV files
-    abi._woeDatadriven = WarOfExalted.datadriven.abilities[abiName] or { }
+    if isLuaItem or abi:IsItem() then
+        abi._woeDatadriven = WarOfExalted.datadriven.items[abiName]
+    else
+        abi._woeDatadriven = WarOfExalted.datadriven.abilities[abiName]
+    end
     
     --update our instance variables from KV files and any extra keys that were given
     util.updateTable(abi._woeKeys, abi._woeDatadriven)
@@ -207,7 +212,7 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     
     --retrieves a value from an array based on ability levels
     function abi:_GetLevelScalableKey(arr, iLvl)
-        local index = math.min(table.getn(arr), self:GetMaxLevel(), iLvl or self:GetLevel())
+        local index = math.max(#arr, math.min(self:GetMaxLevel(), iLvl or self:GetLevel()))
         return arr[index]
     end
     

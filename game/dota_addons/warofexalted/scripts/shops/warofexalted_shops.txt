@@ -2,8 +2,7 @@
 {
 	"consumables"
 	{						
-		"item"    "item_example_item"
-        "item"    "item_ultimate_orb"
+		"item"    "item_vector_target_test"
 	}
 
 	"attributes"

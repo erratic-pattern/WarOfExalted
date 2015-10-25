@@ -202,13 +202,14 @@ end
 
 -- An item was picked up off the ground
 function WarOfExalted:OnItemPickedUp(keys)
-	--print ( '[WAROFEXALTED] OnItemPurchased' )
+	--print ( '[WAROFEXALTED] OnItemPickedUp' )
 	--util.printTable(keys)
 
 	local heroEntity = EntIndexToHScript(keys.HeroEntityIndex)
 	local itemEntity = EntIndexToHScript(keys.ItemEntityIndex)
 	local player = PlayerResource:GetPlayer(keys.PlayerID)
-	local itemname = keys.itemname
+	local itemName = keys.itemname
+	self:WoeAbilityWrapper(itemEntity)
 end
 
 -- A player has reconnected to the game.  This function can be used to repaint Player-based particles or change
@@ -224,15 +225,12 @@ function WarOfExalted:OnItemPurchased( keys )
 	--util.printTable(keys)
 
 	-- The playerID of the hero who is buying something
-	local plyID = keys.PlayerID
-	if not plyID then return end
-
-	-- The name of the item purchased
+	local pID = keys.PlayerID
+	local itemCost = keys.itemcost
 	local itemName = keys.itemname
-
-	-- The cost of the item purchased
-	local itemcost = keys.itemcost
-
+	for _, item in ipairs(Entities:FindAllByName(itemName)) do
+		self:WoeAbilityWrapper(item)
+	end
 end
 
 -- An ability was used by a player
@@ -479,7 +477,7 @@ function WarOfExalted:InitWarOfExalted()
     
     self:LinkModifiers() --Initialize custom Lua modifiers
     
-    VectorTarget:Init() --Initialize vector targeting system
+    VectorTarget:Init({kv = {"scripts/npc/npc_abilities_custom.txt", "scripts/npc/npc_items_custom.txt"}}) --Initialize vector targeting system
     
     --Property.SetDebug(true)
     
