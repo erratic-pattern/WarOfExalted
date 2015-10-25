@@ -477,7 +477,7 @@ function WarOfExalted:InitWarOfExalted()
     
     self:LinkModifiers() --Initialize custom Lua modifiers
     
-    VectorTarget:Init({kv = {"scripts/npc/npc_abilities_custom.txt", "scripts/npc/npc_items_custom.txt"}}) --Initialize vector targeting system
+    VectorTarget:Init() --Initialize vector targeting system
     
     --Property.SetDebug(true)
     

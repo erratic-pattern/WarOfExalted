@@ -9,7 +9,7 @@
     
 */
 'use strict';
-var VECTOR_TARGET_VERSION = [0, 1, 5]; //version data
+var VECTOR_TARGET_VERSION = [0, 2, 0]; //version data
 
 var VectorTarget = {} // public API
 
@@ -35,7 +35,7 @@ VectorTarget.IsFastClickDragMode = function() {
     var updatingRangeFinder = false;
     
     GameEvents.Subscribe("vector_target_order_start", function(keys) {
-        $.Msg("vector_target_order_start event");
+        //$.Msg("vector_target_order_start event");
         //$.Msg(keys);
         //initialize local state
         eventKeys = keys;
@@ -128,21 +128,21 @@ VectorTarget.IsFastClickDragMode = function() {
         hideRangeFinder();
         prevEventKeys = eventKeys;
         if(Abilities.GetLocalPlayerActiveAbility() == eventKeys.abilId) {
-            $.Msg("re-execute");
+            //$.Msg("re-execute");
             Abilities.ExecuteAbility(eventKeys.abilId, eventKeys.unitId, false);
         }
         eventKeys = { };
     }
     
     GameEvents.Subscribe("vector_target_order_cancel", function(keys) {
-        $.Msg("canceling");
+        //$.Msg("canceling");
         if(keys.seqNum === eventKeys.seqNum && keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
             finalize();
         }
     });
     
     GameEvents.Subscribe("vector_target_order_finish", function(keys) {
-        $.Msg("finished")
+        //$.Msg("finished")
         if(keys.seqNum === eventKeys.seqNum && keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
             finalize();
         }
