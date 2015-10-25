@@ -35,7 +35,7 @@ VectorTarget.IsFastClickDragMode = function() {
     var updatingRangeFinder = false;
     
     GameEvents.Subscribe("vector_target_order_start", function(keys) {
-        //$.Msg("vector_target_order_start event");
+        $.Msg("vector_target_order_start event");
         //$.Msg(keys);
         //initialize local state
         eventKeys = keys;
@@ -127,18 +127,22 @@ VectorTarget.IsFastClickDragMode = function() {
         //$.Msg("finalizer called");
         hideRangeFinder();
         prevEventKeys = eventKeys;
+        if(Abilities.GetLocalPlayerActiveAbility() == eventKeys.abilId) {
+            $.Msg("re-execute");
+            Abilities.ExecuteAbility(eventKeys.abilId, eventKeys.unitId, false);
+        }
         eventKeys = { };
     }
     
     GameEvents.Subscribe("vector_target_order_cancel", function(keys) {
-        //$.Msg("canceling");
+        $.Msg("canceling");
         if(keys.seqNum === eventKeys.seqNum && keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
             finalize();
         }
     });
     
     GameEvents.Subscribe("vector_target_order_finish", function(keys) {
-        //$.Msg("finished")
+        $.Msg("finished")
         if(keys.seqNum === eventKeys.seqNum && keys.abilId === eventKeys.abilId && keys.unitId === eventKeys.unitId) {
             finalize();
         }
@@ -165,7 +169,7 @@ VectorTarget.IsFastClickDragMode = function() {
         }
     });
     
-    VectorTarget.SetFastClickDragMode(true);
+    VectorTarget.SetFastClickDragMode(false);
     
 })();
 
