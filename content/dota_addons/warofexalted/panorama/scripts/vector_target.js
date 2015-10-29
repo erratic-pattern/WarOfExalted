@@ -9,7 +9,7 @@
     
 */
 'use strict';
-var VECTOR_TARGET_VERSION = [0, 2, 2]; //version data
+var VECTOR_TARGET_VERSION = [0, 2, 3]; //version data
 
 var VectorTarget = {} // public API
 
@@ -49,7 +49,7 @@ VectorTarget.IsFastClickDragMode = function() {
         if(!rangeFinderParticle && eventKeys.particleName) {
             rangeFinderParticle = Particles.CreateParticle(eventKeys.particleName, ParticleAttachment_t.PATTACH_ABSORIGIN, eventKeys.unitId);
             mapToControlPoints({"initial": eventKeys.initialPosition});
-            updateRangeFinder();
+            mapToControlPoints({"terminal": [eventKeys.initialPosition[0] + 1, eventKeys.initialPosition[1], eventKeys.initialPosition[2]]});
         };
     }
     
@@ -72,11 +72,18 @@ VectorTarget.IsFastClickDragMode = function() {
             }
             else {
                 var pos = GameUI.GetScreenWorldPosition(GameUI.GetCursorPosition());
-                if(pos != null)
+                if(pos != null) {
+                    var start = eventKeys.initialPosition;
+
+                    if (pos[0] == start[0] && pos[1] == start[1]) {
+                        pos[0] += 1;
+                    }
+
                     mapToControlPoints({"terminal" : pos}, true);
+                }
             }
         }
-        if(activeAbil === -1) {
+        if(eventKeys.abilId != null && activeAbil === -1) {
             var now = Game.GetGameTime();
             inactiveTimer = inactiveTimer || now;
             if (now - inactiveTimer >= INACTIVE_CANCEL_DELAY ) {
@@ -88,6 +95,7 @@ VectorTarget.IsFastClickDragMode = function() {
         }
         $.Schedule(UPDATE_RANGE_FINDER_RATE, updateRangeFinder);
     }
+    updateRangeFinder();
     
     function cancelVectorTargetOrder() {
         if(eventKeys.abilId === undefined) return;
