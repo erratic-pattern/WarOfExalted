@@ -47,7 +47,13 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     
     abi._woeKeys.Keywords = WoeKeywords(abi._woeKeys.Keywords) --parse keyword string
     for _, key in pairs({"StaminaCost", "ChannelledStaminaCostPerSecond", "SpellSpeedRatio", "AttackSpeedRatio"}) do -- split these keys by spaces
-        abi._woeKeys[key] = string.split(abi._woeKeys[key])
+        local val = abi._woeKeys[key]
+        if type(val) == "number" then
+            val = {val}
+        else
+            val = string.split(val)
+        end
+        abi._woeKeys[key] = val
     end
     
     -- convenience function that collects all of the ability special fields for the given level (or the casters current level if none)
@@ -212,7 +218,9 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     
     --retrieves a value from an array based on ability levels
     function abi:_GetLevelScalableKey(arr, iLvl)
-        local index = math.max(#arr, math.min(self:GetMaxLevel(), iLvl or self:GetLevel()))
+        local index = math.min(#arr, self:GetMaxLevel(), iLvl or self:GetLevel())
+        util.printTable(arr)
+        print(index)
         return arr[index]
     end
     
