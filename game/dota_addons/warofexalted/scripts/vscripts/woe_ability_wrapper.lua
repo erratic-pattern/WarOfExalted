@@ -134,7 +134,7 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
 
     function abi:FindUnitsInRadius(pos, radius, findType)
         findType = findType or FIND_ANY_ORDER
-        return FindUnitsInRadius(self:GetCaster():GetTeam(), pos, nil, radius, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), FIND_ANY_ORDER, false)
+        return FindUnitsInRadius(self:GetCaster():GetTeam(), pos, nil, radius, self:GetAbilityTargetTeam(), self:GetAbilityTargetType(), self:GetAbilityTargetFlags(), findType, false)
     end
     
     --override CastFilterResult

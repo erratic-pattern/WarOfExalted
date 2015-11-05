@@ -1,7 +1,4 @@
-if WarOfExalted == nil then
-	--print ( '[WAROFEXALTED] creating warofexalted game mode' )
-	WarOfExalted = class({})
-end
+require("warofexalted")
 
 --Put links to Lua modifiers here
 function WarOfExalted:LinkModifiers()
