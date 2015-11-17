@@ -2,7 +2,6 @@
     
     AUTHOR: Adam Curtis, Copyright 2015
     CONTACT: kallisti.dev@gmail.com
-    WEBSITE: https://github.com/kallisti-dev/baregrills
     
     A utility module providing debugging tools for tables
     
@@ -75,7 +74,6 @@ _DebugTable = function(outer, inner, name)
     name = name or outer.__debugTableName or "table"
     
     --construct the inner table where we actually store keys
-    local inner = { }
     for k,v in pairs(outer) do
         inner[k] = v
     end
