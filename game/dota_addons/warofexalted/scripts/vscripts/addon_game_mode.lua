@@ -14,7 +14,6 @@ requires = {
     'woe_damage',
     'woe_unit_wrapper',
     'woe_ability_wrapper',
-    "lua_modifier_utils",
 }
 
 function Precache( context )

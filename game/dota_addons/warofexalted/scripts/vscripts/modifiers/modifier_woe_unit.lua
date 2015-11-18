@@ -33,8 +33,6 @@ modifier_woe_attributes:Properties({
 
 function modifier_woe_attributes:GetModifierProjectileSpeedBonus(params)
     if IsServer() then
-        print("GetModifierProjectileSpeedBonus")
-        util.printTable(params)
         return self:GetParent():GetProjectileSpeedModifier() * self.BaseProjectileSpeed
     end
 end

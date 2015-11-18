@@ -219,8 +219,6 @@ function WarOfExalted:WoeAbilityWrapper(abi, extraKeys)
     --retrieves a value from an array based on ability levels
     function abi:_GetLevelScalableKey(arr, iLvl)
         local index = math.min(#arr, self:GetMaxLevel(), iLvl or self:GetLevel())
-        util.printTable(arr)
-        print(index)
         return arr[index]
     end
     
