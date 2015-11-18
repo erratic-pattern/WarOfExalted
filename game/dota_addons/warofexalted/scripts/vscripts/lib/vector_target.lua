@@ -31,9 +31,9 @@ else
     reloading = true
 end
 
-VectorTarget.VERSION = {0,2,3};
+VectorTarget.VERSION = {0,3,0};
 
-local queue = class({}) -- sparse queue implementation (see bottom of file for code)
+local queue = class({}) -- sparse queue implementation
 
 -- call this in your Precache() function to precache vector targeting particles
 function VectorTarget:Precache(context)
@@ -78,6 +78,7 @@ end
 
 -- call this in your init code to initialize the library's SetExecuteOrderFilter
 function VectorTarget:InitOrderFilter()
+    if self.initializedOrderFilter then return end
     print("[VECTORTARGET] registering ExecuteOrderFilter (use noOrderFilter option to prevent this)")
     local mode = GameRules:GetGameModeEntity()
     mode:ClearExecuteOrderFilter()
@@ -237,7 +238,8 @@ function VectorTarget:WrapAbility(abil, reloading)
         maxDistance = keys.MaxDistance,
         pointOfCast = keys.PointOfCast or "initial",
         particleName = keys.ParticleName or DEFAULT_VECTOR_TARGET_PARTICLE,
-        cpMap = keys.ControlPoints or DEFAULT_VECTOR_TARGET_CONTROL_POINTS
+        cpMap = keys.ControlPoints or DEFAULT_VECTOR_TARGET_CONTROL_POINTS,
+        distance3D = keys.Distance3D
     }
     
     function abil:GetInitialPosition()
@@ -276,16 +278,39 @@ function VectorTarget:WrapAbility(abil, reloading)
     function abil:GetDirectionVector()
         return self:GetTargetVector():Normalized()
     end
+
+    function abil:GetDistance()
+        if self:IsDistance3D() then
+            return self:GetTargetVector():Length()
+        else
+            return self:GetTargetVector():Length2D()
+        end
+    end
+
+    if not abil.IsDistance3D then
+        function abil:IsDistance3D()
+            return self._vectorTargetKeys.distance3D
+        end
+    end
+
+
     
     if not abil.GetMinDistance then
         function abil:GetMinDistance()
-            return self._vectorTargetKeys.minDistance
+            return VectorTarget:_GetLevelScalableKey(self, self._vectorTargetKeys.minDistance)
         end
     end
     
     if not abil.GetMaxDistance then
         function abil:GetMaxDistance()
-            return self._vectorTargetKeys.maxDistance
+            return VectorTarget:_GetLevelScalableKey(abil, self._vectorTargetKeys.maxDistance)
+        end
+    end
+
+    if not abil.IsDistanceInRange then
+        function abil:IsDistanceInRange()
+            local d, min, max = self:GetDistance(), self:GetMinDistance(), self:GetMaxDistance()
+            return (min == nil or d >= min) and (max == nil or d <= max)
         end
     end
     
@@ -301,8 +326,8 @@ function VectorTarget:WrapAbility(abil, reloading)
         end
     end
     
-    if not abil.GetVectorTargetControlPointMap then
-        function abil:GetVectorTargetControlPointMap()
+    if not abil.GetVectorTargetControlPoints then
+        function abil:GetVectorTargetControlPoints()
             return self._vectorTargetKeys.cpMap
         end
     end
@@ -335,12 +360,8 @@ function VectorTarget:WrapAbility(abil, reloading)
 
     --override GetCustomCastErrorLocation
     local _GetCustomCastErrorLocation = abil.GetCustomCastErrorLocation
-    function abil:GetCustomCastErrorLocation(location) 
-        local msg = _GetCustomCastErrorLocation(self, location)
-        if (not msg or msg == "" or msg == "CUSTOM ERROR") and self.GetCustomCastErrorVector then
-            msg = self:GetCustomCastErrorVector(self._vectorTargetKeys.castFilterData)
-        end
-        return msg
+    function abil:GetCustomCastErrorLocation(location)
+        return VectorTarget:_GetCastErrorHelper(self, _GetCustomCastErrorLocation, location)
     end
 end
 
@@ -371,11 +392,13 @@ function VectorTarget:OrderFilter(data)
                 local targetPos = {x = data.position_x, y = data.position_y, z = data.position_z}
                 if inProgress == nil or inProgress.abilId ~= abilId or inProgress.unitId ~= unitId then -- if no in-progress order, this order selects the initial point of a vector cast
                     --print("inProgress", playerId, abilId, unitId)
+                    local cpMap = abil._vectorTargetKeys.cpMap
                     local orderData = {
                         initialPosition = targetPos,
                         minDistance = abil:GetMinDistance(),
                         maxDistance = abil:GetMaxDistance(),
-                        cpMap = abil._vectorTargetKeys.cpMap,
+                        cpMap = cpMap,
+                        cpSpecials = VectorTarget._GetAbilitySpecials(abil, cpMap),
                         particleName = abil._vectorTargetKeys.particleName,
                         seqNum = seqNum,
                         abilId = abilId,
@@ -396,7 +419,7 @@ function VectorTarget:OrderFilter(data)
                     
                     inProgress.terminalPosition = targetPos
                     
-                    --temporarily set initial/terminal on the ability so we can all (a possibly overriden) abil:GetPointOfCast
+                    --temporarily set initial/terminal on the ability so we can call (a possibly overriden) abil:GetPointOfCast
                     local p = VectorTarget._WithPoints(abil, inProgress.initialPosition, inProgress.terminalPosition, function() 
                             return abil:GetPointOfCast()
                     end)
@@ -470,6 +493,41 @@ end
 
 --[[ Internal Helper/Utility Functions ]]
 
+function VectorTarget._GetAbilitySpecials(abil, t, lvl)
+    lvl = lvl or abil:GetLevel()
+    local out = { }
+    for _,str in pairs(t) do
+        for _, field in ipairs(VectorTarget._StringSplit(str)) do
+            if VectorTarget:_IsSpecialField(field) then
+                local name = VectorTarget:_ParseSpecialName(field)
+                if out[name] == nil then
+                    out[name] = abil:GetLevelSpecialValueFor(name, lvl)
+                end
+            end
+        end
+    end
+    return out
+end
+
+function VectorTarget:_GetLevelScalableKey(abil, fieldString, lvl)
+    local lvl = lvl or abil:GetLevel()
+    local fields = VectorTarget:_StringSplit(fieldString)
+    local index = math.min(#fields, abil:GetMaxLevel(), lvl)
+    local field = fields[index]
+    if VectorTarget:_IsSpecialField(field) then
+        field = abil:GetLevelSpecialValueFor(VectorTarget:_ParseSpecialName(field), lvl)
+    end
+    return tonumber(field)
+end
+
+function VectorTarget:_IsSpecialField(str)
+    return string.sub(str, 1, 1) == "%"
+end
+
+function VectorTarget:_ParseSpecialName(str)
+    return string.sub(str, 2)
+end
+
 function VectorTarget._CalcPointOfCast(mode, initial, terminal)
     if mode == "initial" then
         return initial
@@ -501,38 +559,45 @@ function VectorTarget._WithPoints(abil, initial, terminal, func, ...)
     end
 end
 
+function VectorTarget._StringSplit(s)
+    local out = {}
+    for word in string.gmatch(s, "%S+") do
+        table.insert(out, word)
+    end
+    return out
+end
+
 function VectorTarget:_CastFilterHelper(abil, parentMethod, ...)
     local abilId = abil:GetEntityIndex()
     local unitId = abil:GetCaster():GetEntityIndex()
-    --[[
-    --check in-progress orders
-    local orders = self:GetInProgressForAbility(abilId)
-    local inProgress
-    for playerId, order in pairs(orders) do -- find oldest in-progress order for this unit with an unhandled cast filter
-        if not order.castFilterHandled and order.unitId == unitId and (inProgress == nil or inProgress.time >= order.time) then
-            inProgress = order
-        end
-    end
-    local data, method
-    if inProgress ~= nil then --handle in-progress order
-        data = inProgress
-        method = abil.CastFilterResultVectorStart or abil.CastFilterResultVector
-        data.castFilterHandled = true
-    else -- handle completed order
-    --]]
     local data = VectorTarget:GetCastQueue(unitId, abilId):peekLast()
-    local method = abil.CastFilterResultVectorFinish or abil.CastFilterResultVector
-    abil._vectorTargetKeys.castFilterData = data
+    abil._vectorTargetKeys.castData = data
     --setup ability state
     abil:SetInitialPosition(data.initialPosition)
     abil:SetTerminalPosition(data.terminalPosition)
     local status = parentMethod(abil, ...) -- call parent method (CastFilterResultLocation, CastFilterResultTarget, etc)
-    if status == UF_SUCCESS and method then -- if successful, call vector target cast filter
-        status = method(abil, data)
+    if status == UF_SUCCESS then
+        if not abil:IsDistanceInRange() then
+            status = UF_FAIL_CUSTOM
+            data.castErrMsg = "#vector_target_distance_out_of_range"
+        elseif abil.CastFilterResultVector then
+            status = abil:CastFilterResultVector(data)
+        end
     end
     return status
 end
 
+function VectorTarget:_GetCastErrorHelper(abil, parentMethod, ...)
+    local data = abil._vectorTargetKeys.castData
+    if data.castErrMsg then
+        return data.castErrMsg
+    end
+    local msg = parentMethod(abil, ...)
+    if (not msg or msg == "" or msg == "CUSTOM ERROR") and self.GetCustomCastErrorVector then
+        msg = self:GetCustomCastErrorVector(data)
+    end
+    return msg
+end
 
 --[[ A sparse queue implementation ]]
 function queue.constructor(q)
