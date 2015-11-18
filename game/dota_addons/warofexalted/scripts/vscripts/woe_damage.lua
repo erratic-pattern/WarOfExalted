@@ -3,7 +3,6 @@ require("woe_keywords")
 
 --Damage instances in WoE are slightly different from those in dota, and thus use an overhauled system. 
 --WoE damage can have multiple damage types per instance, and has special Keywords.
---Additionally, all damage types can have critical strike damage.
 
 
 
@@ -12,11 +11,9 @@ require("woe_keywords")
 --      Victim - the entity receiving damage
 --      Attacker - the entity dealing damage
 --  Damage parameters (not required, but at least one should probably be used):
---      PhysicalDamage - Amount of non-critical physical damage to deal
---      MagicalDamage - amount of non-critical magical damage to deal
---      PureDamage - amount of non-critical pure damage to deal
---      CritDamage - a table containing optional PhysicalDamage, MagicalDamage, and PureDamage keys
---                   representing damage from critical strikes.
+--      PhysicalDamage - Amount of physical damage to deal
+--      MagicalDamage - amount of magical damage to deal
+--      PureDamage - amount of pure damage to deal
 --  Optional parameters:
 --      Keywords     - A list of Keywords associated with this damage. Can be specified as either
 --                     an array of strings or a string of words delimited by spaces
@@ -26,8 +23,9 @@ require("woe_keywords")
 --  ApplyWoeDamage also supports the damage and damage_flags for compatibility with code that uses ApplyDamage, however only
 --  physical, magical, and pure damage types are supported. This may change in the future. For new code that doesn't need to be
 --  compatible with ApplyDamage, using damage and damage_types is discouraged.
-function ApplyWoeDamage(dmgArgs)
-    local dmg = WoeDamage(dmgArgs)
+function ApplyWoeDamage(...)
+    local dmg = WoeDamage(...)
+    util.printTable(getmetatable(dmg)) 
     dmg:Apply()
 end
 
@@ -63,14 +61,6 @@ function WoeDamage:constructor(keys)
             print("WoeDamage doesn't support damage_type " .. keys.damage_type)
         end
     end
-    
-    --critical damage
-    self.CritDamage = {
-        PhysicalDamage = 0,
-        MagicalDamage = 0,
-        PureDamage = 0
-    }
-    util.updateTable(self.CritDamage, keys.CritDamage)
       
     --Ability Keywords
     if keys.Keywords == nil then
@@ -84,8 +74,61 @@ function WoeDamage:constructor(keys)
     end
 end
 
+function WoeDamage:GetKeywords()
+    return self.Keywords
+end
+
+function WoeDamage:GetTotal()
+    return self.GetPhysical() + self.GetMagical() + self.GetPure()
+end
+
+function WoeDamage:GetPhysical()
+    return self.PhysicalDamage
+end
+
+function WoeDamage:GetMagical()
+    return self.MagicalDamage
+end
+
+function WoeDamage:GetPure()
+    return self.PureDamage
+end
+
+function WoeDamage:IsMitigated()
+    return self.isMitigated
+end
+
+function WoeDamage:Zero()
+    if self == nil then
+        return WoeDamage()
+    else
+        return self:Modify(function() return 0 end)
+    end
+end
+
 --Combine multiple damage instances into a new one.
-function WoeDamage.Combine(...)
+function WoeDamage.Add(...)
+    return WoeDamage.CombineWith(function(a,b) return a+b end, ...)
+end
+
+function WoeDamage.Multiply(...)
+    return WoeDamage.CombineWith(function(a,b) return a*b end, ...)
+end
+
+function WoeDamage.Subtract(...)
+    return WoeDamage.CombineWith(function(a,b) return a-b end, ...)
+end
+
+function WoeDamage.Divide(...)
+    return WoeDamage.CombineWith(function(a,b) return a/b end, ...)
+end
+
+function WoeDamage:Negate()
+    return self:Modify(function(x) return -x end)
+end
+
+--Combine multiple damage instances into a new one using the given binary combinator for damage number
+function WoeDamage.CombineWith(f, ...)
     local outDmg = WoeDamage()
     for n=1,select("#", ...) do
         local inDmg = select(n, ...)
@@ -93,15 +136,20 @@ function WoeDamage.Combine(...)
         outDmg.Attacker = outDmg.Attacker or inDmg.Attacker
         outDmg.Ability = outDmg.Ability or inDmg.Ability
         outDmg.DotaDamageFlags = bit.bor(outDmg.DotaDamageFlags, inDmg.DotaDamageFlags)
-        outDmg.PhysicalDamage = outDmg.PhysicalDamage + inDmg.PhysicalDamage
-        outDmg.MagicalDamage = outDmg.MagicalDamage + inDmg.MagicalDamage
-        outDmg.PureDamage = outDmg.PureDamage + inDmg.PureDamage
-        outDmg.CritDamage.PhysicalDamage = outDmg.CritDamage.PhysicalDamage + inDmg.CritDamage.PhysicalDamage
-        outDmg.CritDamage.MagicalDamage = outDmg.CritDamage.MagicalDamage + inDmg.CritDamage.MagicalDamage
-        outDmg.CritDamage.PureDamage = outDmg.CritDamage.PureDamage + inDmg.CritDamage.PureDamage
+        outDmg.PhysicalDamage = f(outDmg.PhysicalDamage, inDmg.PhysicalDamage)
+        outDmg.MagicalDamage = f(outDmg.MagicalDamage, inDmg.MagicalDamage)
+        outDmg.PureDamage = f(outDmg.PureDamage, inDmg.PureDamage)
         outDmg.Keywords:UnionInPlace(inDmg.Keywords)   
     end
     return outDmg
+end
+
+function WoeDamage:Modify(f)
+    local out = self:Clone()
+    out.PhysicalDamage = f(out.PhysicalDamage)
+    out.MagicalDamage = f(out.MagicalDamage)
+    out.PureDamage = f(out.PureDamage)
+    return out
 end
 
 --Create a copy
@@ -109,131 +157,21 @@ function WoeDamage:Clone()
     return WoeDamage(self)
 end
 
-function WoeDamage:IsMitigated()
-    return self.isMitigated
+--iterate over damage types as (dmg_flag, dmg_number) pairs, where
+-- "dmg_flag" is one of DAMAGE_TYPE_PHYSICAL, DAMAGE_TYPE_MAGICAL, etc
+function WoeDamage:IterateDmg()
+    return ipairs({
+        [DAMAGE_TYPE_PHYSICAL] = self:GetPhysical(),
+        [DAMAGE_TYPE_MAGICAL] = self:GetMagical(),
+        [DAMAGE_TYPE_PURE] = self:GetPure()  
+    })
 end
 
-function WoeDamage:GetKeywords()
-    return self.Keywords
-end
-
-function WoeDamage:GetTotalNonCritDamage()
-    return self.PhysicalDamage + self.MagicalDamage + self.PureDamage
-end
-
-function WoeDamage:GetTotalCritDamage()
-    local c = self.CritDamage
-    return c.PhysicalDamage + c.MagicalDamage + c.PureDamage
-end
-
-function WoeDamage:GetTotalDamage()
-    return self:GetTotalNonCritDamage() + self:GetTotalCritDamage()
-end
-
-function WoeDamage:GetPhysicalDamage()
-    return self.PhysicalDamage + self.CritDamage.PhysicalDamage
-end
-
-function WoeDamage:GetMagicalDamage()
-    return self.MagicalDamage + self.CritDamage.MagicalDamage
-end
-
-function WoeDamage:GetPureDamage()
-    return self.PureDamage + self.CritDamage.PureDamage
-end
-
-function WoeDamage:GetNonCritPhysicalPercent()
-    return self.PhysicalDamage / self:GetTotalNonCritDamage()
-end
-
-function WoeDamage:GetNonCritMagicalPercent()
-    return self.MagicalDamage / self:GetTotalNonCritDamage()
-end
-
-function WoeDamage:GetNonCriticalPurePercent()
-    return self.PureDamage / self:GetTotalNonCritDamage()
-end
-
---applies crit damage, fully stacking with any existing crit
-function WoeDamage:AddCritStacking(modifier)
-    local c = self.CritDamage
-    c.PhysicalDamage = c.PhysicalDamage + self.PhysicalDamage * modifier
-    c.MagicalDamage = c.MagicalDamage + self.MagicalDamage * modifier
-    c.PureDamage = c.PureDamage + self.PureDamage * modifier
-end
-
---applies crit damage, replacing any existing crit damage only if the new crit amount is greater than the previous
-function WoeDamage:AddCrit(modifier)
-    if modifier * self:GetTotalNonCritDamage() > self:GetTotalCritDamage() then
-        self:RemoveCritDamage()
-        self:AddCritStacking(modifier)
-    end
-end
-
-function WoeDamage:RemoveCritDamage()
-    self.CritDamage = {
-        PhysicalDamage = 0,
-        MagicalDamage = 0,
-        PureDamage = 0
-    }
-end
-
---Applies percent damage modifier to the non-crit portion of the damage. Note that any crit applied
---afterwards with AddCrit/AddCritStacking calls will still be affected.
-function WoeDamage:ApplyNonCritDamageModifier(modifier)
-    self.PhysicalDamage = self.PhysicalDamage * modifier
-    self.MagicalDamage = self.MagicalDamage * modifier
-    self.PureDamage = self.PureDamage * modifier
-end
-
---Applies damage modifier to all damage (crit and non-crit)
-function WoeDamage:ApplyDamageModifier(modifier)
-    self:ApplyNonCritDamageModifier(modifier)
-    self:AddCritStacking(modifier)
-end
-
---Convert all crit damage into non-crit damage.
-function WoeDamage:FlattenCrit()
-    self.PhysicalDamage = self.PhysicalDamage + self.CritDamage.PhysicalDamage
-    self.MagicalDamage = self.MagicalDamage + self.CritDamage.MagicalDamage
-    self.PureDamage = self.PureDamage + self.CritDamage.PureDamage
-    self:RemoveCritDamage()
-end
-
---Apply the damage from Attacker to Victim
-function WoeDamage:Apply()
-    local mitigated
+function WoeDamage:Mitigated()
     if self:IsMitigated() then
-        mitigated = self
-    else
-        self.Attacker:CallOnModifiers("OnDealWoeDamagePreMitigation", self)
-        self.Victim:CallOnModifiers("OnTakeWoeDamagePreMitigation", self)
-        mitigated = self:_ApplyMitigation()
+        return self
     end
-    self.Attacker:CallOnModifiers("OnDealWoeDamage", mitigated)
-    self.Victim:CallOnModifiers("OnTakeWoeDamage", mitigated)
-    local dmgArgs = {
-        victim = self.Victim,
-        attacker = self.Attacker,
-        ability = self.Ability,
-        damage_flags = bit.bor(DOTA_DAMAGE_FLAG_IGNORES_PHYSICAL_ARMOR, DOTA_DAMAGE_FLAG_IGNORES_MAGIC_ARMOR, self.DotaDamageFlags)
-    }
-    local dmgIter = {
-        [DAMAGE_TYPE_PHYSICAL] = mitigated:GetPhysicalDamage(),
-        [DAMAGE_TYPE_MAGICAL] = mitigated:GetMagicalDamage(),
-        [DAMAGE_TYPE_PURE] = mitigated:GetPureDamage()
-    }
-    for dType, dmg in ipairs(dmgIter) do
-        if dmg > 0 then
-            dmgArgs.damage = dmg
-            dmgArgs.damage_type = dType
-            ApplyDamage(dmgArgs)
-        end
-    end
-end
-
-function WoeDamage:_ApplyMitigation()
-    local mitigated = WoeDamage(self)
+    local mitigated = self:Clone()
     mitigated.isMitigated = true
     mitigated.unmitigated = self
     --print("WoeDamage:_ApplyMitigation")
@@ -243,14 +181,50 @@ function WoeDamage:_ApplyMitigation()
     --print("unmitigated phys: ", self:GetPhysicalDamage())
     --print("phys modifier: ", physReduction)
     mitigated.PhysicalDamage = physReduction * self.PhysicalDamage
-    mitigated.CritDamage.PhysicalDamage = physReduction * self.CritDamage.PhysicalDamage
     --print("mitigated phys: ", self:GetPhysicalDamage())
     local magReduction = 1 - self.Victim:GetMagicalArmorValue()
     --print("mr: ", self.Victim:GetMagicResist())
     --print("unmitigated magic: ", self:GetMagicalDamage())
     --print("magic modifier", magReduction)
     mitigated.MagicalDamage = magReduction * self.MagicalDamage
-    mitigated.CritDamage.MagicalDamage = magReduction * self.CritDamage.MagicalDamage
     --print("mitigated magic: ", self:GetMagicalDamage())
     return mitigated
 end
+
+function WoeDamage:Unmitigated()
+    if self:IsMitigated() then
+        return self.unmitigated
+    else
+        return self
+    end
+end
+
+--Apply the damage from Attacker to Victim
+function WoeDamage:Apply()
+    if not self:IsMitigated() then
+        self.Attacker:CallOnModifiers("OnDealWoeDamagePreMitigation", self)
+        self.Victim:CallOnModifiers("OnTakeWoeDamagePreMitigation", self)
+    end
+    local mitigated = self:Mitigated()
+    mitigated.Attacker:CallOnModifiers("OnDealWoeDamage", mitigated)
+    mitigated.Victim:CallOnModifiers("OnTakeWoeDamage", mitigated)
+    local dmgArgs = {
+        victim = mitigated.Victim,
+        attacker = mitigated.Attacker,
+        ability = mitigated.Ability,
+        damage_flags = bit.bor(DOTA_DAMAGE_FLAG_IGNORES_PHYSICAL_ARMOR, DOTA_DAMAGE_FLAG_IGNORES_MAGIC_ARMOR, self.DotaDamageFlags)
+    }
+    for dType, dmg in mitigated:IterateDmg() do
+        if dmg > 0 then
+            dmgArgs.damage = dmg
+            dmgArgs.damage_type = dType
+            ApplyDamage(dmgArgs)
+        end
+    end
+end
+
+-- operator definitions (this doesn't work)
+WoeDamage.__mul = function(a, b) return a:Multiply(b) end
+WoeDamage.__add = function(a, b) return a:Add(b) end
+WoeDamage.__div = function(a, b) return a:Divide(b) end
+WoeDamage.__unm = function(x) return x:Negate() end
