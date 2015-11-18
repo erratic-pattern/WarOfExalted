@@ -1,3 +1,5 @@
+
+require("declare_functions_map")
 modifier_base = class({})
 
 function modifier_base:Properties(propTable)
